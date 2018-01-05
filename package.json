@@ -1,0 +1,23 @@
+{
+  "name": "nttttt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.17.1",
+    "bufferhelper": "^0.2.1",
+    "cheerio": "^1.0.0-rc.2",
+    "encoding": "^0.1.12",
+    "iconv": "^2.3.0",
+    "iconv-lite": "^0.4.19",
+    "legacy-encoding": "^3.0.0",
+    "querystring": "^0.2.0",
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5"
+  }
+}
