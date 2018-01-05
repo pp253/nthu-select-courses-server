@@ -50,7 +50,6 @@ function grabCoursesByBody (body) {
   let courses = {}
 
   for (let tr of $('table#T1 tbody tr.word').toArray()) {
-    // console.log($(tr).find('td').toArray())
     let trArray = $(tr).find('td')
     let course = {
       number: trArray.get(1).children[0].children[0].data.trim(),
@@ -87,7 +86,11 @@ function grabData (ACIXSTORE) {
   }
 
   let data = {
+    // 記錄各系所，並在其classes中記錄各班
     departments: {},
+    // 紀錄各系、各班所開設課程，僅用`number`連結課程
+    catalog: {},
+    // 紀錄所有課程
     courses: {}
   }
 
@@ -110,7 +113,17 @@ function grabData (ACIXSTORE) {
           encoding: null
         })
         .then(function (body) {
-          data.courses[deptAbbr] = grabCoursesByBody(iconv.decode(body, 'big5'))
+          let courses = grabCoursesByBody(iconv.decode(body, 'big5'))
+          for (let courseNumber in courses) {
+            if (!data.catalog[deptAbbr]) {
+              data.catalog[deptAbbr] = []
+            }
+            data.catalog[deptAbbr].push(courseNumber)
+
+            if (!data.courses[courseNumber]) {
+              data.courses[courseNumber] = courses[courseNumber]
+            }
+          }
           resolve()
         })
         .catch(function (err) {
@@ -132,7 +145,17 @@ function grabData (ACIXSTORE) {
             encoding: null
           })
           .then(function (body) {
-            data.courses[cls.abbr] = grabCoursesByBody(iconv.decode(body, 'big5'))
+            let courses = grabCoursesByBody(iconv.decode(body, 'big5'))
+            for (let courseNumber in courses) {
+              if (!data.catalog[cls.abbr]) {
+                data.catalog[cls.abbr] = []
+              }
+              data.catalog[cls.abbr].push(courseNumber)
+
+              if (!data.courses[courseNumber]) {
+                data.courses[courseNumber] = courses[courseNumber]
+              }
+            }
             resolve()
           })
           .catch(function (err) {
@@ -162,4 +185,4 @@ function grabData (ACIXSTORE) {
   })
 }
 
-grabData('s7akg9bh04q58i0pbbts47d602')
+grabData('s7kpg9558fi1r10uecs26cu5r3')
