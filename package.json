@@ -4,20 +4,29 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node index.js"
   },
-  "author": "",
+  "author": "pp253",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.17.1",
-    "bufferhelper": "^0.2.1",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
+    "body-parser": "^1.18.2",
     "cheerio": "^1.0.0-rc.2",
-    "encoding": "^0.1.12",
-    "iconv": "^2.3.0",
+    "express": "^4.16.2",
     "iconv-lite": "^0.4.19",
     "legacy-encoding": "^3.0.0",
     "querystring": "^0.2.0",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5"
+  },
+  "devDependencies": {},
+  "babel": {
+    "presets": [
+      "env"
+    ]
   }
 }
