@@ -1,5 +1,5 @@
 {
-  "name": "nttttt",
+  "name": "nthu-select-courses-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "start": "babel-node index.js"
   },
   "author": "pp253",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "axios": "^0.17.1",
     "babel-core": "^6.26.0",
@@ -16,9 +16,15 @@
     "babel-register": "^6.26.0",
     "body-parser": "^1.18.2",
     "cheerio": "^1.0.0-rc.2",
+    "compression": "^1.7.1",
+    "cors": "^2.8.4",
     "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "express-validator": "^4.3.0",
+    "helmet": "^3.9.0",
     "iconv-lite": "^0.4.19",
     "legacy-encoding": "^3.0.0",
+    "moment": "^2.20.1",
     "querystring": "^0.2.0",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5"

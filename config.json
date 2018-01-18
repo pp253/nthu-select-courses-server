@@ -1,0 +1,13 @@
+{
+  "grabdata": {
+    "nthuBase": "https://www.ccxp.nthu.edu.tw/ccxp/COURSE/",
+    "authImg": "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/auth_img.php?pwdstr={0}",
+    "authPage": "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/pre_select_entry.php",
+    "inquirePage": "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/",
+    "selectPage": "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/select_entry.php?ACIXSTORE={0}&hint={1}",
+    "errSystemErrorText": "<script>alert('System Error!');</script>",
+    "errAuthCheckCodeWrongText": "<script>alert('Authentication ID Error!');</script>",
+    "errUserInfoWrongText": "<script>alert('Error account or password!');</script>",
+    "scoresPage": "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/8/R/6.3/JH8R63002.php?ACIXSTORE={0}"
+  }
+}
