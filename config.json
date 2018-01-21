@@ -13,11 +13,14 @@
     "currentSelectedCoursesPage": "https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713005.php?ACIXSTORE={0}",
     "scoresPage": "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/8/R/6.3/JH8R63002.php?ACIXSTORE={0}",
     "waitingForRandomProcessText": "未亂數(Wait for random process)",
+    "infoWaitingForRandomProcess": "<script>alert('加選此科目僅列入亂數處理!\\nThis course has size limit.\nThe system will run randomly to decide who will be enrolled in the course after the end of this course selection period.');</script>",
     "errSystemErrorText": "<script>alert('System Error!');</script>",
     "errAuthCheckCodeWrongText": "<script>alert('Authentication ID Error!');</script>",
     "errUserInfoWrongText": "<script>alert('Error account or password!');</script>",
     "errSessionInterrupted": "session is interrupted! <br>",
-    "errDuplicatedCourse": "<script>alert('重複修讀!\nYou have taken this course before！');</script>",
+    "errDuplicatedCourse": "<script>alert('重複修讀!\\nYou have taken this course before！');</script>",
+    "errCoursesTimeConflict": "<script>alert('衝堂!選一般科目，不得與任一科目衝。選志願科目，只能與同類科目衝\\nTime Conflict！');</script>",
+    "errSameCourse": "<script>alert('您已加選過此課程!');</script>",
     "errNotValid": "<script>alert('無效的加選')"
   }
 }

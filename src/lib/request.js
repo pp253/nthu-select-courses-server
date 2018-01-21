@@ -29,13 +29,28 @@ export function correctFormRequest (argu) {
   if (argu.formData) {
     let formDataString = querystring.stringify(argu.formData).replace(/%20/g, '+')
     argu.body = formDataString
-    if (!argu.header) {
-      argu.header = {}
+    if (!argu.headers) {
+      argu.headers = {}
     }
-    argu.header['Content-Length'] = formDataString.length
-    argu.header['Content-Type'] = 'application/x-www-form-urlencoded'
+    argu.headers['Content-Length'] = formDataString.length
+    argu.headers['Content-Type'] = 'application/x-www-form-urlencoded'
     argu.method = 'POST'
+    delete argu.formData
   }
 
-  return correctRequest(argu)
+  return new Promise((resolve, reject) => {
+    if (typeof argu !== 'object') {
+      reject(new Exception('correctRequest: argu should be an object.'))
+    }
+
+    argu.encoding = null
+
+    req(argu)
+    .then(function (body) {
+      resolve(iconv.decode(body, 'big5'))
+    })
+    .catch(function (err) {
+      reject(err)
+    })
+  })
 }

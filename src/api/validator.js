@@ -23,6 +23,25 @@ export default {
     in: 'body',
     notEmpty: true,
     errorMessage: 'Invalid auth check code.'
+  },
+  newOrder: {
+    in: 'body',
+    notEmpty: true,
+    errorMessage: 'Invalid newOrder.'
+  },
+  oldOrder: {
+    in: 'body',
+    notEmpty: true,
+    errorMessage: 'Invalid oldOrder.'
+  },
+  order: {
+    in: 'body',
+    errorMessage: 'Invalid order.'
+  },
+  courseNumber: {
+    in: 'body',
+    notEmpty: true,
+    errorMessage: 'Invalid courseNumber.'
   }
 
 }

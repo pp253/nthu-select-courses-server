@@ -68,18 +68,18 @@ function grabCoursesByBody (body) {
   for (let tr of $('table#T1 tbody tr.word').toArray()) {
     let trArray = $(tr).find('td')
 
-    let random = false
+    let random = 0
     let canceled = false
     let arguText = ''
     try {
       if (trArray.get(0).children[0].children.length > 5) {
         // random for 5
         arguText = trArray.get(0).children[0].children[1].attribs.onclick
-        random = true
+        random = 5
       } else if (trArray.get(0).children[0].children.length > 3) {
         // random for 20
         arguText = trArray.get(0).children[0].children[3].attribs.onclick
-        random = true
+        random = 20
       } else if (trArray.get(0).children[0].children.length > 2) {
         arguText = trArray.get(0).children[0].children[1].attribs.onclick
       } else {
@@ -244,4 +244,4 @@ function grabData (ACIXSTORE) {
   })
 }
 
-grabData('7e41p4bf7ju64as20l66fq4801')
+grabData('i9olb1j8o6jlti90fpun71k2f2')

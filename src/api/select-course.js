@@ -105,7 +105,7 @@ export function addCourse (sessionToken, courseNumber, order = '') {
     let course = coursesDB.courses[courseNumber]
     let formData = {
       ACIXSTORE: sessionToken,
-      aspr: order,
+      aspr: `${order}`,
       ckey: courseNumber,
       code: course.sc_code,
       div: course.sc_div,
@@ -120,20 +120,38 @@ export function addCourse (sessionToken, courseNumber, order = '') {
       chkbtn: 'add'
     }
 
-    correctFormRequest({
-      url: config.grabdata.preSelectCoursesPage,
-      formData: formData,
-      headers: {
-        'Referer': config.grabdata.preSelectCoursesRefererPage.replace('{0}', sessionToken)
-      }
-    })
-    .catch(() => {
-      return correctRequest({
-        url: config.grabdata.currentSelectedCoursesPage.replace('{0}', sessionToken),
-        formData: formData,
+    new Promise((resolve, reject) => {
+      correctFormRequest({
+        url: config.grabdata.preSelectCoursesPage,
+        formData: Object.assign({}, formData),
         headers: {
-          'Referer': config.grabdata.preSelectCoursesRefererPage.replace('{0}', sessionToken)
+          'Referer': config.grabdata.preSelectCoursesRefererPage.replace('{0}', sessionToken),
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0',
+          'Accept-Language': 'zh-TW,zh;q=0.8,en-US;q=0.5,en;q=0.3'
         }
+      })
+      .then((body) => {
+        if (body === config.grabdata.errSessionInterrupted) {
+          reject(response.ResponseErrorMsg.SessionInterrupted())
+          return
+        }
+        reject()
+      })
+      .catch(() => {
+        correctFormRequest({
+          url: config.grabdata.currentSelectedCoursesPage.replace('{0}', sessionToken),
+          formData: Object.assign({}, formData),
+          headers: {
+            'Referer': config.grabdata.preSelectCoursesRefererPage.replace('{0}', sessionToken),
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0'
+          }
+        })
+        .then((body) => {
+          resolve(body)
+        })
+        .catch((err) => {
+          reject(err)
+        })
       })
     })
     .then((body) => {
@@ -143,10 +161,19 @@ export function addCourse (sessionToken, courseNumber, order = '') {
       } else if (body.startsWith(config.grabdata.errDuplicatedCourse)) {
         reject(response.ResponseErrorMsg.DuplicatedCourse())
         return
+      } else if (body.startsWith(config.grabdata.errCoursesTimeConflict)) {
+        reject(response.ResponseErrorMsg.CoursesTimeConflict())
+        return
+      } else if (body.startsWith(config.grabdata.errSameCourse)) {
+        reject(response.ResponseErrorMsg.SameCourse())
+        return
       }
       resolve(response.ResponseSuccessJSON({
         currentSelectedCourses: grabCurrentSelectedCoursesByBody(body)
       }))
+    })
+    .catch((err) => {
+      reject(err)
     })
   })
 }
@@ -171,6 +198,46 @@ export function quitCourse (sessionToken, courseNumber) {
       resolve(response.ResponseSuccessJSON({
         currentSelectedCourses: grabCurrentSelectedCoursesByBody(body)
       }))
+    })
+    .catch((err) => {
+      reject(err)
+    })
+  })
+}
+
+export function editOrder (sessionToken, newOrder, oldOrder) {
+  return new Promise((resolve, reject) => {
+    let jobSequence = Promise.resolve()
+    let waitForAddList = []
+
+    for (let order = 0; order < newOrder.length; order++) {
+      if (oldOrder.length < order) {
+        jobSequence = jobSequence.then(() => {
+          return addCourse(sessionToken, newOrder[order].number, order + 1)
+        })
+      } else if (newOrder[order].number !== oldOrder[order].number) {
+        jobSequence = jobSequence.then(() => {
+          return quitCourse(sessionToken, oldOrder[order].number)
+        })
+        waitForAddList.push({
+          number: newOrder[order].number,
+          order: order + 1
+        })
+      }
+    }
+
+    for (let course of waitForAddList) {
+      jobSequence = jobSequence.then(() => {
+        return addCourse(sessionToken, course.number, course.order)
+      })
+    }
+
+    jobSequence = jobSequence
+    .then((res) => {
+      resolve(res)
+    })
+    .catch((err) => {
+      reject(err)
     })
   })
 }

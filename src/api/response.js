@@ -1,17 +1,17 @@
-export const ResponseJSON = (obj) => {
+export function ResponseJSON (obj) {
   return Object.assign({
     error: 0,
     time: Date.now()
   }, obj)
 }
 
-export const ResponseSuccessJSON = (obj) => {
+export function ResponseSuccessJSON (obj) {
   return Object.assign(ResponseJSON({
     success: 1
   }), obj)
 }
 
-export const ResponseErrorJSON = (obj) => {
+export function ResponseErrorJSON (obj) {
   return Object.assign(ResponseJSON({
     error: 1,
     id: 0,
@@ -81,6 +81,20 @@ export const ResponseErrorMsg = {
     return ResponseErrorJSON({
       id: 32,
       msg: `Course was taken before.`,
+      more: errMsg
+    })
+  },
+  CoursesTimeConflict (errMsg) {
+    return ResponseErrorJSON({
+      id: 33,
+      msg: `Time Conflict.`,
+      more: errMsg
+    })
+  },
+  SameCourse (errMsg) {
+    return ResponseErrorJSON({
+      id: 34,
+      msg: `Same course has been selected.`,
       more: errMsg
     })
   }

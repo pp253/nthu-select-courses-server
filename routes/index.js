@@ -98,6 +98,85 @@ export default function initialize (app) {
               res.json(err)
             })
           })
+        },
+        editOrder (req, res, next) {
+          req.check({
+            sessionToken: validation.sessionToken,
+            newOrder: validation.newOrder,
+            oldOrder: validation.oldOrder
+          })
+
+          req.getValidationResult().then((result) => {
+            if (!result.isEmpty()) {
+              res.status(400)
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(result))
+              return
+            }
+
+            let sessionToken = req.body.sessionToken
+            let newOrder = req.body.newOrder
+            let oldOrder = req.body.oldOrder
+
+            selectCourse.editOrder(sessionToken, newOrder, oldOrder)
+            .then((result) => {
+              res.json(result)
+            })
+            .catch((err) => {
+              res.json(err)
+            })
+          })
+        },
+        addCourse (req, res, next) {
+          req.check({
+            sessionToken: validation.sessionToken,
+            courseNumber: validation.newOrder,
+            order: validation.order
+          })
+
+          req.getValidationResult().then((result) => {
+            if (!result.isEmpty()) {
+              res.status(400)
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(result))
+              return
+            }
+
+            let sessionToken = req.body.sessionToken
+            let courseNumber = req.body.courseNumber
+            let order = req.body.order
+
+            selectCourse.addCourse(sessionToken, courseNumber, order)
+            .then((result) => {
+              res.json(result)
+            })
+            .catch((err) => {
+              res.json(err)
+            })
+          })
+        },
+        quitCourse (req, res, next) {
+          req.check({
+            sessionToken: validation.sessionToken,
+            courseNumber: validation.newOrder
+          })
+
+          req.getValidationResult().then((result) => {
+            if (!result.isEmpty()) {
+              res.status(400)
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(result))
+              return
+            }
+
+            let sessionToken = req.body.sessionToken
+            let courseNumber = req.body.courseNumber
+
+            selectCourse.quitCourse(sessionToken, courseNumber)
+            .then((result) => {
+              res.json(result)
+            })
+            .catch((err) => {
+              res.json(err)
+            })
+          })
         }
       }
     }
