@@ -5,9 +5,19 @@
     "authPage": "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/pre_select_entry.php",
     "inquirePage": "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/",
     "selectPage": "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/select_entry.php?ACIXSTORE={0}&hint={1}",
+    "preloadSelectedCoursesPage1": "https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH7130011.php",
+    "preloadSelectedCoursesPage2": "https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713002.php?ACIXSTORE={0}",
+    "teacherPasswordPage": "https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713003.php?ACIXSTORE={0}&ts_pwd={1}",
+    "preSelectCoursesPage": "https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH7130041.php",
+    "preSelectCoursesRefererPage": "https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713004.php?ACIXSTORE={0}",
+    "currentSelectedCoursesPage": "https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713005.php?ACIXSTORE={0}",
+    "scoresPage": "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/8/R/6.3/JH8R63002.php?ACIXSTORE={0}",
+    "waitingForRandomProcessText": "未亂數(Wait for random process)",
     "errSystemErrorText": "<script>alert('System Error!');</script>",
     "errAuthCheckCodeWrongText": "<script>alert('Authentication ID Error!');</script>",
     "errUserInfoWrongText": "<script>alert('Error account or password!');</script>",
-    "scoresPage": "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/8/R/6.3/JH8R63002.php?ACIXSTORE={0}"
+    "errSessionInterrupted": "session is interrupted! <br>",
+    "errDuplicatedCourse": "<script>alert('重複修讀!\nYou have taken this course before！');</script>",
+    "errNotValid": "<script>alert('無效的加選')"
   }
 }

@@ -74,6 +74,31 @@ export default function initialize (app) {
             })
           })
         }
+      },
+      'select_course': {
+        getCurrentSelectedCourses (req, res, next) {
+          req.check({
+            sessionToken: validation.sessionToken
+          })
+
+          req.getValidationResult().then((result) => {
+            if (!result.isEmpty()) {
+              res.status(400)
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(result))
+              return
+            }
+
+            let sessionToken = req.body.sessionToken
+
+            selectCourse.getCurrentSelectedCourses(sessionToken)
+            .then((result) => {
+              res.json(result)
+            })
+            .catch((err) => {
+              res.json(err)
+            })
+          })
+        }
       }
     }
 

@@ -55,6 +55,34 @@ export const ResponseErrorMsg = {
       msg: `NTHU server responses with an error.`,
       more: errMsg
     })
+  },
+  SessionInterrupted () {
+    return ResponseErrorJSON({
+      id: 23,
+      msg: `Session is interrupted.`
+    })
+  },
+  // api/select_courses
+  CourseNotFound (errMsg) {
+    return ResponseErrorJSON({
+      id: 30,
+      msg: `Course not found in database.`,
+      more: errMsg
+    })
+  },
+  CourseCanceled (errMsg) {
+    return ResponseErrorJSON({
+      id: 31,
+      msg: `Course is canceled.`,
+      more: errMsg
+    })
+  },
+  DuplicatedCourse (errMsg) {
+    return ResponseErrorJSON({
+      id: 32,
+      msg: `Course was taken before.`,
+      more: errMsg
+    })
   }
 }
 

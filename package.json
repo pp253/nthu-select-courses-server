@@ -25,7 +25,7 @@
     "iconv-lite": "^0.4.19",
     "legacy-encoding": "^3.0.0",
     "moment": "^2.20.1",
-    "querystring": "^0.2.0",
+    "query-string": "^5.0.1",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5"
   },

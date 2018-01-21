@@ -3,6 +3,22 @@ const iconv = require('iconv-lite')
 const cheerio = require('cheerio')
 const fs = require('fs')
 
+function grabHelper (node, level = 0, initIndex = 0) {
+  if (node instanceof Array) {
+    let idx = initIndex
+    for (let childNode of node) {
+      grabHelper(childNode, level, idx++)
+    }
+  } else {
+    if (node.type === 'text') {
+      console.log(' '.repeat(level * 2) + '\x1b[34m' + initIndex + '\x1b[0m "' + node.data.replace(/\n/g, '\\n') + '"')
+    } else {
+      console.log(' '.repeat(level * 2) + '\x1b[34m' + initIndex + ' \x1b[32m<' + node.name + '>\x1b[0m')
+      grabHelper(node.children, level + 1)
+    }
+  }
+}
+
 function grabDepartmentsByBody (body) {
   const $ = cheerio.load(body)
   let departments = {}
@@ -51,6 +67,31 @@ function grabCoursesByBody (body) {
 
   for (let tr of $('table#T1 tbody tr.word').toArray()) {
     let trArray = $(tr).find('td')
+
+    let random = false
+    let canceled = false
+    let arguText = ''
+    try {
+      if (trArray.get(0).children[0].children.length > 5) {
+        // random for 5
+        arguText = trArray.get(0).children[0].children[1].attribs.onclick
+        random = true
+      } else if (trArray.get(0).children[0].children.length > 3) {
+        // random for 20
+        arguText = trArray.get(0).children[0].children[3].attribs.onclick
+        random = true
+      } else if (trArray.get(0).children[0].children.length > 2) {
+        arguText = trArray.get(0).children[0].children[1].attribs.onclick
+      } else {
+        arguText = []
+        canceled = true
+      }
+    } catch (e) {
+      console.log(grabHelper(tr))
+      process.abort()
+    }
+    let argus = /[^;]*;checks\(this\.form, '([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)'\);/.exec(arguText)
+
     let course = {
       number: trArray.get(1).children[0].children[0].data.trim(),
       title: trArray.get(2).children[0].children[0].data.trim(),
@@ -58,12 +99,21 @@ function grabCoursesByBody (body) {
       time: trArray.get(4).children[0].children[0].data.trim(),
       room: trArray.get(5).children[0].children[0].data.trim(),
       professor: trArray.get(6).children[0].children[0].data.trim(),
-      type: trArray.get(7).children[0].children[0].data.trim(),
+      required: trArray.get(7).children[0].children[0].data.trim(),
       size_limit: trArray.get(8).children[0].children[0].data.trim(),
       previous_size: trArray.get(9).children[0].children[0].data.trim(),
-      object: '',
       prerequirement: $(trArray.get(11).children[0]).text().trim(),
-      memo: $(trArray.get(12).children[0]).text().trim()
+      memo: $(trArray.get(12).children[0]).text().trim(),
+      sc_code: !canceled && argus[2],
+      sc_div: !canceled && argus[3],
+      sc_real: !canceled && argus[4],
+      sc_ctime: !canceled && argus[6],
+      sc_glimit: !canceled && argus[8],
+      sc_type: !canceled && argus[9],
+      sc_pre: !canceled && argus[10],
+      sc_range: !canceled && argus[11],
+      random: random,
+      canceled: canceled
     }
     courses[course.number] = course
   }
@@ -96,6 +146,9 @@ function grabData (ACIXSTORE) {
 
   request({method: 'POST', url: url, formData: formData, encoding: null})
   .then(function (body) {
+    if (iconv.decode(body, 'big5') === 'session is interrupted! <br>') {
+      console.error('session is interrupted! when request', url)
+    }
     data.departments = grabDepartmentsByBody(iconv.decode(body, 'big5'))
     let promises = []
 
@@ -113,6 +166,9 @@ function grabData (ACIXSTORE) {
           encoding: null
         })
         .then(function (body) {
+          if (iconv.decode(body, 'big5') === 'session is interrupted! <br>') {
+            console.error('session is interrupted! when request new_dept', deptAbbr)
+          }
           let courses = grabCoursesByBody(iconv.decode(body, 'big5'))
           for (let courseNumber in courses) {
             if (!data.catalog[deptAbbr]) {
@@ -145,6 +201,9 @@ function grabData (ACIXSTORE) {
             encoding: null
           })
           .then(function (body) {
+            if (iconv.decode(body, 'big5') === 'session is interrupted! <br>') {
+              console.error('session is interrupted! when request new_class', cls.abbr)
+            }
             let courses = grabCoursesByBody(iconv.decode(body, 'big5'))
             for (let courseNumber in courses) {
               if (!data.catalog[cls.abbr]) {
@@ -185,4 +244,4 @@ function grabData (ACIXSTORE) {
   })
 }
 
-grabData('s7kpg9558fi1r10uecs26cu5r3')
+grabData('7e41p4bf7ju64as20l66fq4801')

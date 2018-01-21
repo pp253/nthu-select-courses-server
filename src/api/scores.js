@@ -10,6 +10,11 @@ export function getScores (sessionToken) {
       method: 'POST'
     })
     .then((body) => {
+      if (body === config.grabdata.errSessionInterrupted) {
+        reject(response.ResponseErrorMsg.SessionInterrupted())
+        return
+      }
+
       const $ = cheerio.load(body)
       let scores = {}
       let table = $('table').get(1).children[1].children // table > tbody.children
@@ -37,7 +42,9 @@ export function getScores (sessionToken) {
         scores[score.semester].push(score)
       }
 
-      resolve(scores)
+      resolve(response.ResponseSuccessJSON({
+        scores: scores
+      }))
     })
     .catch((err) => {
       reject(err)

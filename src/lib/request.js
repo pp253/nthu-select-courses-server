@@ -1,9 +1,10 @@
-import rq from 'request-promise-native'
+import req from 'request-promise-native'
 import iconv from 'iconv-lite'
+import querystring from 'query-string'
 import { Exception } from './debug'
 
 export function request (...argu) {
-  return rq(...argu)
+  return req(...argu)
 }
 
 export function correctRequest (argu) {
@@ -22,4 +23,19 @@ export function correctRequest (argu) {
       reject(err)
     })
   })
+}
+
+export function correctFormRequest (argu) {
+  if (argu.formData) {
+    let formDataString = querystring.stringify(argu.formData).replace(/%20/g, '+')
+    argu.body = formDataString
+    if (!argu.header) {
+      argu.header = {}
+    }
+    argu.header['Content-Length'] = formDataString.length
+    argu.header['Content-Type'] = 'application/x-www-form-urlencoded'
+    argu.method = 'POST'
+  }
+
+  return correctRequest(argu)
 }
