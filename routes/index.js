@@ -1,4 +1,3 @@
-import debug from '../src/lib/debug'
 import * as selectCourse from '../src/api/select-course'
 import * as scores from '../src/api/scores'
 import * as user from '../src/api/user'
