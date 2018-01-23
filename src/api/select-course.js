@@ -135,7 +135,7 @@ export function addCourse (sessionToken, courseNumber, order = '') {
           reject(response.ResponseErrorMsg.SessionInterrupted())
           return
         }
-        reject()
+        reject(response.ResponseErrorMsg.NTHUServerError(body.slice(0, 200)))
       })
       .catch(() => {
         correctFormRequest({
@@ -155,24 +155,37 @@ export function addCourse (sessionToken, courseNumber, order = '') {
       })
     })
     .then((body) => {
-      if (body === config.grabdata.errSessionInterrupted) {
-        reject(response.ResponseErrorMsg.SessionInterrupted())
-        return
-      } else if (body.startsWith(config.grabdata.errDuplicatedCourse)) {
-        reject(response.ResponseErrorMsg.DuplicatedCourse())
-        return
-      } else if (body.startsWith(config.grabdata.errCoursesTimeConflict)) {
-        reject(response.ResponseErrorMsg.CoursesTimeConflict())
-        return
-      } else if (body.startsWith(config.grabdata.errSameCourse)) {
-        reject(response.ResponseErrorMsg.SameCourse())
-        return
+      console.log(body.slice(0, 200))
+      console.log(body.startsWith(config.grabdata.infoWaitingForRandomProcess))
+      if (!body.startsWith(config.grabdata.infoWaitingForRandomProcess)) {
+        if (body === config.grabdata.errSessionInterrupted) {
+          reject(response.ResponseErrorMsg.SessionInterrupted())
+          return
+        } else if (body.startsWith(config.grabdata.errDuplicatedCourse)) {
+          reject(response.ResponseErrorMsg.DuplicatedCourse())
+          return
+        } else if (body.startsWith(config.grabdata.errCoursesTimeConflict)) {
+          reject(response.ResponseErrorMsg.CoursesTimeConflict())
+          return
+        } else if (body.startsWith(config.grabdata.errSameCourse)) {
+          reject(response.ResponseErrorMsg.SameCourse())
+          return
+        } else if (body.startsWith(config.grabdata.errViolatePrerequisite)) {
+          reject(response.ResponseErrorMsg.ViolatePrerequisite())
+          return
+        } else if (body.startsWith('<script>')) {
+          let errMsg = /^<script>alert\('(.*)'\);<\/script>/g.exec(body)
+          reject(response.ResponseErrorMsg.OtherError(errMsg ? errMsg[1] : ''))
+          return
+        }
       }
+
       resolve(response.ResponseSuccessJSON({
         currentSelectedCourses: grabCurrentSelectedCoursesByBody(body)
       }))
     })
     .catch((err) => {
+      console.log(err)
       reject(err)
     })
   })

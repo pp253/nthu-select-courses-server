@@ -97,6 +97,20 @@ export const ResponseErrorMsg = {
       msg: `Same course has been selected.`,
       more: errMsg
     })
+  },
+  ViolatePrerequisite (errMsg) {
+    return ResponseErrorJSON({
+      id: 35,
+      msg: `Same course has been selected.`,
+      more: errMsg
+    })
+  },
+  OtherError (errMsg) {
+    return ResponseErrorJSON({
+      id: 36,
+      msg: `Other error, see more.`,
+      more: errMsg
+    })
   }
 }
 
