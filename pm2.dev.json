@@ -1,0 +1,16 @@
+{
+  "apps": [{
+    "name": "nthu-course-dev",
+    "script": "./index.pm2.js",
+    "instances": 1,
+    "exec_mode": "fork",
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "env_production": {
+      "NODE_ENV": "production"
+    },
+    "watch": true,
+    "detached": true
+  }]
+}
