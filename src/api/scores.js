@@ -18,10 +18,11 @@ export function getScores (sessionToken) {
 
       const $ = cheerio.load(body)
       let scores = {}
-      let table = $('table').get(1).children[1].children // table > tbody.children
+      let table = $('table')
+      let table1 = table.get(1).children[1].children // table[1] > tbody.children
 
-      for (let trIdx in table) {
-        let tr = table[trIdx]
+      for (let trIdx in table1) {
+        let tr = table1[trIdx]
         if (tr.type === 'text') {
           continue
         }
@@ -43,8 +44,42 @@ export function getScores (sessionToken) {
         scores[score.semester].push(score)
       }
 
+      let table4 = $(table.get(4)).find('tr').toArray() // table[4] > tbody.children
+      table4.splice(0, 2)
+      grabHelper(table4)
+      let overview = {}
+      for (let tr of table4) {
+        let semester = tr.children[1].children[0].data.trim() + tr.children[3].children[0].data.trim()
+        let gpa = tr.children[5].children[0].data.trim()
+        gpa = gpa === '-' ? '' : gpa
+        let credit = tr.children[7].children[0].type === 'tag' ? '' : tr.children[7].children[0].data.trim()
+        let deservedCredit = tr.children[9].children[0].type === 'tag' ? '' : tr.children[9].children[0].data.trim()
+        let courses = tr.children[11].children[0].type === 'tag' ? '' : tr.children[11].children[0].data.trim()
+        let summerVacationCredit = tr.children[13].children[0].type === 'tag' ? '' : tr.children[13].children[0].data.trim()
+        let transferCredit = tr.children[15].children[0].type === 'tag' ? '' : tr.children[15].children[0].data.trim()
+        let classRanking = tr.children[17].children[0].data.trim()
+        classRanking = classRanking === '-' ? '' : classRanking
+        let departmentRanking = tr.children[19].children[0].data.trim()
+        departmentRanking = departmentRanking === '-' ? '' : departmentRanking
+        let comments = tr.children[21].children[0].data.trim()
+
+        overview[semester] = {
+          semester,
+          gpa,
+          credit,
+          deservedCredit,
+          courses,
+          summerVacationCredit,
+          transferCredit,
+          classRanking,
+          departmentRanking,
+          comments
+        }
+      }
+
       resolve(response.ResponseSuccessJSON({
-        scores: scores
+        scores: scores,
+        overview: overview
       }))
     })
     .catch((err) => {
