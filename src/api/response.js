@@ -111,6 +111,20 @@ export const ResponseErrorMsg = {
       msg: `Other error, see more.`,
       more: errMsg
     })
+  },
+  NotAvailable (errMsg) {
+    return ResponseErrorJSON({
+      id: 37,
+      msg: `The NTHU select courses system is not available now.`,
+      more: errMsg
+    })
+  },
+  NotValidCourseNumber (errMsg) {
+    return ResponseErrorJSON({
+      id: 38,
+      msg: `The course number is not valid.`,
+      more: errMsg
+    })
   }
 }
 

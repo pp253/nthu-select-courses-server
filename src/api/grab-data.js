@@ -99,8 +99,8 @@ function grabCoursesByBody (body) {
       time: trArray.get(4).children[0].children[0].data.trim(),
       room: trArray.get(5).children[0].children[0].data.trim(),
       professor: trArray.get(6).children[0].children[0].data.trim(),
-      required: trArray.get(7).children[0].children[0].data.trim(),
       size_limit: trArray.get(8).children[0].children[0].data.trim(),
+      required: trArray.get(7).children[0].children[0].data.trim(),
       previous_size: trArray.get(9).children[0].children[0].data.trim(),
       prerequirement: $(trArray.get(11).children[0]).text().trim(),
       memo: $(trArray.get(12).children[0]).text().trim(),
@@ -244,4 +244,4 @@ function grabData (ACIXSTORE) {
   })
 }
 
-grabData('i9olb1j8o6jlti90fpun71k2f2')
+grabData('dqkou7ejveud0ktok5o1lq3ri4')

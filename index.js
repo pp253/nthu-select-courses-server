@@ -32,14 +32,14 @@ app.set('views', './views')
 
 // Session
 app.use(session({
-  secret: 'ieem-game',
+  secret: 'nthu-easy-course',
   resave: false,
   saveUninitialized: false
 }))
 
 // Setting
 app.set('port', process.env.PORT || 80)
-app.set('title', 'NTHU SELECT COURSES')
+app.set('title', 'NTHU EASY COURSE')
 
 if (process.env.NODE_ENV !== 'production') {
   // app.use('/test', express.static('test'))

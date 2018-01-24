@@ -45,6 +45,26 @@ function grabCurrentSelectedCoursesByBody (body) {
   return currentSelectedCourses
 }
 
+export function isAvailable (sessionToken) {
+  return new Promise((resolve, reject) => {
+    correctRequest({
+      url: config.grabdata.preloadSelectedCoursesPage0.replace('{0}', sessionToken)
+    })
+    .then((body) => {
+      if (body.startsWith(config.grabdata.errNotAvailable)) {
+        reject(response.ResponseErrorMsg.NotAvailable())
+        return
+      }
+      resolve({
+        isAvailable: true
+      })
+    })
+    .catch((err) => {
+      reject(err)
+    })
+  })
+}
+
 export function getCurrentSelectedCourses (sessionToken) {
   return new Promise((resolve, reject) => {
     new Promise((resolve, reject) => {
@@ -56,11 +76,14 @@ export function getCurrentSelectedCourses (sessionToken) {
         },
         method: 'POST'
       })
+      .then((body) => {
+        reject(body)
+      })
       .catch((err) => {
         resolve(err)
       })
     })
-    .then((body) => {
+    .then(() => {
       return request({
         url: config.grabdata.preloadSelectedCoursesPage2.replace('{0}', sessionToken),
         formData: {
@@ -155,8 +178,6 @@ export function addCourse (sessionToken, courseNumber, order = '') {
       })
     })
     .then((body) => {
-      console.log(body.slice(0, 200))
-      console.log(body.startsWith(config.grabdata.infoWaitingForRandomProcess))
       if (!body.startsWith(config.grabdata.infoWaitingForRandomProcess)) {
         if (body === config.grabdata.errSessionInterrupted) {
           reject(response.ResponseErrorMsg.SessionInterrupted())
@@ -248,6 +269,44 @@ export function editOrder (sessionToken, newOrder, oldOrder) {
     jobSequence = jobSequence
     .then((res) => {
       resolve(res)
+    })
+    .catch((err) => {
+      reject(err)
+    })
+  })
+}
+
+export function getSyllabus (sessionToken, courseNumber) {
+  return new Promise((resolve, reject) => {
+    correctRequest({
+      url: config.grabdata.syllabusPage.replace('{0}', sessionToken).replace('{1}', courseNumber)
+    })
+    .then((body) => {
+      if (body === config.grabdata.errSessionInterrupted) {
+        reject(response.ResponseErrorMsg.SessionInterrupted())
+        return
+      } else if (body === config.grabdata.errNotValidCourseNumber) {
+        reject(response.ResponseErrorMsg.NotValidCourseNumber())
+        return
+      }
+
+      const $ = cheerio.load(body)
+      let trArray = $('table:nth-child(1) tbody tr')
+      let courseBriefDescription = $('table:nth-child(4) tbody tr:nth-child(2) td').toArray()[0].children[0].data.replace(/\n/g, '<br>')
+      let courseDescription = $('table:nth-child(5) tbody tr:nth-child(2) td').text().replace(/\n/g, '<br>')
+      resolve({
+        number: trArray.get(1).children[2].children[0].data.trim(),
+        chineseTitle: trArray.get(2).children[3].children[0].data.trim(),
+        englishTitle: trArray.get(3).children[3].children[0].data.trim(),
+        credit: trArray.get(1).children[5].children[0].data.trim(),
+        time: trArray.get(5).children[2].children[0].data.trim(),
+        room: trArray.get(5).children[5].children[0].data.trim(),
+        professor: trArray.get(4).children[3].children[0].data.trim(),
+        size_limit: trArray.get(1).children[8].children[0].data.trim(),
+        briefDescription: courseBriefDescription,
+        description: courseDescription,
+        file: (courseDescription.startsWith(config.grabdata.infoSyllabusIsFile))
+      })
     })
     .catch((err) => {
       reject(err)

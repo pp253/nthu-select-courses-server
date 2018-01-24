@@ -25,10 +25,10 @@ export default function initialize (app) {
             authCheckCode: validation.authCheckCode
           })
 
-          req.getValidationResult().then((result) => {
-            if (!result.isEmpty()) {
+          req.getValidationResult().then((err) => {
+            if (!err.isEmpty()) {
               res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(result))
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
               return
             }
 
@@ -55,16 +55,41 @@ export default function initialize (app) {
             sessionToken: validation.sessionToken
           })
 
-          req.getValidationResult().then((result) => {
-            if (!result.isEmpty()) {
+          req.getValidationResult().then((err) => {
+            if (!err.isEmpty()) {
               res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(result))
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
               return
             }
 
             let sessionToken = req.body.sessionToken
 
             scores.getScores(sessionToken)
+            .then((result) => {
+              res.json(result)
+            })
+            .catch((err) => {
+              res.json(err)
+            })
+          })
+        },
+        getDistribution (req, res, next) {
+          req.check({
+            sessionToken: validation.sessionToken,
+            courseNumber: validation.newOrder
+          })
+
+          req.getValidationResult().then((err) => {
+            if (!err.isEmpty()) {
+              res.status(400)
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
+              return
+            }
+
+            let sessionToken = req.body.sessionToken
+            let courseNumber = req.body.courseNumber
+
+            scores.getDistribution(sessionToken, courseNumber)
             .then((result) => {
               res.json(result)
             })
@@ -80,10 +105,10 @@ export default function initialize (app) {
             sessionToken: validation.sessionToken
           })
 
-          req.getValidationResult().then((result) => {
-            if (!result.isEmpty()) {
+          req.getValidationResult().then((err) => {
+            if (!err.isEmpty()) {
               res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(result))
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
               return
             }
 
@@ -105,10 +130,10 @@ export default function initialize (app) {
             oldOrder: validation.oldOrder
           })
 
-          req.getValidationResult().then((result) => {
-            if (!result.isEmpty()) {
+          req.getValidationResult().then((err) => {
+            if (!err.isEmpty()) {
               res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(result))
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
               return
             }
 
@@ -132,10 +157,10 @@ export default function initialize (app) {
             order: validation.order
           })
 
-          req.getValidationResult().then((result) => {
-            if (!result.isEmpty()) {
+          req.getValidationResult().then((err) => {
+            if (!err.isEmpty()) {
               res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(result))
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
               return
             }
 
@@ -158,10 +183,10 @@ export default function initialize (app) {
             courseNumber: validation.newOrder
           })
 
-          req.getValidationResult().then((result) => {
-            if (!result.isEmpty()) {
+          req.getValidationResult().then((err) => {
+            if (!err.isEmpty()) {
               res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(result))
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
               return
             }
 
@@ -169,6 +194,31 @@ export default function initialize (app) {
             let courseNumber = req.body.courseNumber
 
             selectCourse.quitCourse(sessionToken, courseNumber)
+            .then((result) => {
+              res.json(result)
+            })
+            .catch((err) => {
+              res.json(err)
+            })
+          })
+        },
+        getSyllabus (req, res, next) {
+          req.check({
+            sessionToken: validation.sessionToken,
+            courseNumber: validation.newOrder
+          })
+
+          req.getValidationResult().then((err) => {
+            if (!err.isEmpty()) {
+              res.status(400)
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
+              return
+            }
+
+            let sessionToken = req.body.sessionToken
+            let courseNumber = req.body.courseNumber
+
+            selectCourse.getSyllabus(sessionToken, courseNumber)
             .then((result) => {
               res.json(result)
             })
