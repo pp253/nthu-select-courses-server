@@ -315,7 +315,8 @@ export function getSyllabus (sessionToken, courseNumber) {
 
 export function getAvailableSelectionResult (sessionToken) {
   return new Promise((resolve, reject) => {
-    let semesters = {}
+    let availableSelectionResult = {}
+    let currentSemester = ''
 
     correctFormRequest({
       url: config.grabdata.selectionResultPage,
@@ -330,34 +331,33 @@ export function getAvailableSelectionResult (sessionToken) {
       }
 
       let originalSemeterText = {}
-      let lastSemester = ''
 
       const $ = cheerio.load(body)
       let selectSemester = $('select[name=semester] option').toArray()
       for (let option of selectSemester) {
         let semesterText = /^(\d+),(\d+)$/.exec(option.attribs['value'])
         let semester = semesterText[1] + semesterText[2]
-        semesters[semester] = []
+        availableSelectionResult[semester] = []
         originalSemeterText[semester] = option.attribs['value']
-        lastSemester = semester
+        currentSemester = semester
       }
 
       let getPeriodByNode = (selectPhaseArray, semester) => {
         for (let option of selectPhaseArray) {
           let phase = option.attribs['value']
           if (phase) {
-            semesters[semester].push(phase)
+            availableSelectionResult[semester].push(phase)
           }
         }
       }
 
       let selectPhaseArray = $('select[name=phase] option').toArray()
-      getPeriodByNode(selectPhaseArray, lastSemester)
+      getPeriodByNode(selectPhaseArray, currentSemester)
 
       let jobSequence = []
 
-      for (let semester in semesters) {
-        if (semester !== lastSemester) {
+      for (let semester in availableSelectionResult) {
+        if (semester !== currentSemester) {
           jobSequence.push(new Promise((resolve, reject) => {
             correctFormRequest({
               url: config.grabdata.selectionResultPage,
@@ -389,7 +389,10 @@ export function getAvailableSelectionResult (sessionToken) {
     })
     .then(() => {
       resolve(response.ResponseSuccessJSON({
-        semesters: semesters
+        availableSelectionResult: availableSelectionResult,
+        semester: currentSemester,
+        phase: availableSelectionResult[currentSemester][availableSelectionResult[currentSemester].length - 1],
+        editable: false
       }))
     })
     .catch((err) => {
@@ -456,10 +459,12 @@ export function getSelectionResult (sessionToken, semester, phase) {
       }
 
       resolve(response.ResponseSuccessJSON({
-        semester: semester,
-        phase: phase,
-        status: status,
-        randomFailed: randomFailed
+        selectionResult: {
+          semester: semester,
+          phase: phase,
+          status: status,
+          randomFailed: randomFailed
+        }
       }))
     })
     .catch((err) => {
