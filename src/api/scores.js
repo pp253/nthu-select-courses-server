@@ -42,8 +42,8 @@ export function getScores (sessionToken) {
         if (!scores[score.semester]) {
           scores[score.semester] = []
         }
-        scores[score.semester].push(score.courseNumber)
-        courses[score.courseNumber] = score
+        scores[score.semester].push(score.semester + score.courseNumber)
+        courses[score.semester + score.courseNumber] = score
       }
 
       let table4 = $(table.get(4)).find('tr').toArray() // table[4] > tbody.children
