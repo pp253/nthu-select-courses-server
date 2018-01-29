@@ -18,6 +18,7 @@ export function getScores (sessionToken) {
 
       const $ = cheerio.load(body)
       let scores = {}
+      let courses = {}
       let table = $('table')
       let table1 = table.get(1).children[1].children // table[1] > tbody.children
 
@@ -41,7 +42,8 @@ export function getScores (sessionToken) {
         if (!scores[score.semester]) {
           scores[score.semester] = []
         }
-        scores[score.semester].push(score)
+        scores[score.semester].push(score.courseNumber)
+        courses[score.courseNumber] = score
       }
 
       let table4 = $(table.get(4)).find('tr').toArray() // table[4] > tbody.children
@@ -78,6 +80,7 @@ export function getScores (sessionToken) {
 
       resolve(response.ResponseSuccessJSON({
         scores: scores,
+        courses: courses,
         overview: overview
       }))
     })
