@@ -126,9 +126,9 @@ export function getDistribution (sessionToken, courseNumber) {
         distribution[gradeList[idx]] = (peopleNum && peopleNum.length === 2) ? parseInt(peopleNum[1]) : 0
       }
 
-      resolve({
+      resolve(response.ResponseSuccessJSON({
         distribution: distribution
-      })
+      }))
     })
     .catch((err) => {
       reject(err)

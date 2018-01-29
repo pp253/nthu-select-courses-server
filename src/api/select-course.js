@@ -57,9 +57,9 @@ export function isAvailable (sessionToken) {
         reject(response.ResponseErrorMsg.NotAvailable())
         return
       }
-      resolve({
+      resolve(response.ResponseSuccessJSON({
         isAvailable: true
-      })
+      }))
     })
     .catch((err) => {
       reject(err)
@@ -150,9 +150,7 @@ export function addCourse (sessionToken, courseNumber, order = '') {
         url: config.grabdata.preSelectCoursesPage,
         formData: Object.assign({}, formData),
         headers: {
-          'Referer': config.grabdata.preSelectCoursesRefererPage.replace('{0}', sessionToken),
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0',
-          'Accept-Language': 'zh-TW,zh;q=0.8,en-US;q=0.5,en;q=0.3'
+          'Referer': config.grabdata.preSelectCoursesRefererPage.replace('{0}', sessionToken)
         }
       })
       .then((body) => {
@@ -167,8 +165,7 @@ export function addCourse (sessionToken, courseNumber, order = '') {
           url: config.grabdata.currentSelectedCoursesPage.replace('{0}', sessionToken),
           formData: Object.assign({}, formData),
           headers: {
-            'Referer': config.grabdata.preSelectCoursesRefererPage.replace('{0}', sessionToken),
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0'
+            'Referer': config.grabdata.preSelectCoursesRefererPage.replace('{0}', sessionToken)
           }
         })
         .then((body) => {
@@ -270,7 +267,7 @@ export function editOrder (sessionToken, newOrder, oldOrder) {
 
     jobSequence = jobSequence
     .then((res) => {
-      resolve(res)
+      resolve(response.ResponseSuccessJSON(res))
     })
     .catch((err) => {
       reject(err)
@@ -296,7 +293,7 @@ export function getSyllabus (sessionToken, courseNumber) {
       let trArray = $('table:nth-child(1) tbody tr')
       let courseBriefDescription = $('table:nth-child(4) tbody tr:nth-child(2) td').toArray()[0].children[0].data.replace(/\n/g, '<br>')
       let courseDescription = $('table:nth-child(5) tbody tr:nth-child(2) td').text().replace(/\n/g, '<br>')
-      resolve({
+      resolve(response.ResponseSuccessJSON({
         number: trArray.get(1).children[2].children[0].data.trim(),
         chineseTitle: trArray.get(2).children[3].children[0].data.trim(),
         englishTitle: trArray.get(3).children[3].children[0].data.trim(),
@@ -308,7 +305,7 @@ export function getSyllabus (sessionToken, courseNumber) {
         briefDescription: courseBriefDescription,
         description: courseDescription,
         file: (courseDescription.startsWith(config.grabdata.infoSyllabusIsFile))
-      })
+      }))
     })
     .catch((err) => {
       reject(err)
@@ -316,7 +313,7 @@ export function getSyllabus (sessionToken, courseNumber) {
   })
 }
 
-export function getSelectionResult (sessionToken) {
+export function getAvailableSelectionResult (sessionToken) {
   return new Promise((resolve, reject) => {
     let semesters = {}
 
@@ -345,17 +342,17 @@ export function getSelectionResult (sessionToken) {
         lastSemester = semester
       }
 
-      let getPeriodByNode = (selectPeriodArray, semester) => {
-        for (let option of selectPeriodArray) {
-          let period = option.attribs['value']
-          if (period) {
-            semesters[semester].push(period)
+      let getPeriodByNode = (selectPhaseArray, semester) => {
+        for (let option of selectPhaseArray) {
+          let phase = option.attribs['value']
+          if (phase) {
+            semesters[semester].push(phase)
           }
         }
       }
-      
-      let selectPeriodArray = $('select[name=phase] option').toArray()
-      getPeriodByNode(selectPeriodArray, lastSemester)
+
+      let selectPhaseArray = $('select[name=phase] option').toArray()
+      getPeriodByNode(selectPhaseArray, lastSemester)
 
       let jobSequence = []
 
@@ -371,9 +368,14 @@ export function getSelectionResult (sessionToken) {
               }
             })
             .then((body) => {
+              if (body === config.grabdata.errSessionInterrupted) {
+                reject(response.ResponseErrorMsg.SessionInterrupted())
+                return
+              }
+
               const $ = cheerio.load(body)
-              let selectPeriodArray = $('select[name=phase] option').toArray()
-              getPeriodByNode(selectPeriodArray, semester)
+              let selectPhaseArray = $('select[name=phase] option').toArray()
+              getPeriodByNode(selectPhaseArray, semester)
               resolve()
             })
             .catch((err) => {
@@ -386,9 +388,9 @@ export function getSelectionResult (sessionToken) {
       return Promise.all(jobSequence)
     })
     .then(() => {
-      resolve({
+      resolve(response.ResponseSuccessJSON({
         semesters: semesters
-      })
+      }))
     })
     .catch((err) => {
       reject(err)
@@ -396,7 +398,77 @@ export function getSelectionResult (sessionToken) {
   })
 }
 
-getSelectionResult('n6hqrnd6k9thbrs8ub4o68gv91')
+export function getSelectionResult (sessionToken, semester, phase) {
+  return new Promise((resolve, reject) => {
+    let frommetedSemesterText = /(\d{3})(\d{2})/.exec(semester)
+    let frommetedSemester = `${frommetedSemesterText[1]},${frommetedSemesterText[2]}`
+
+    correctFormRequest({
+      url: config.grabdata.selectionResultDetailPage,
+      formData: {
+        ACIXSTORE: sessionToken,
+        semester: frommetedSemester,
+        phase: phase
+      }
+    })
+    .then((body) => {
+      if (body === config.grabdata.errSessionInterrupted) {
+        reject(response.ResponseErrorMsg.SessionInterrupted())
+        return
+      }
+
+      let status = []
+
+      const $ = cheerio.load(body)
+      let tableStatus = $($('table').get(1)).find('tbody tr').toArray().slice(2)
+      for (let tr of tableStatus) {
+        let tdArray = $(tr).find('td').toArray()
+        let number = tdArray[0].children[0].data.trim()
+        status.push({
+          number: number,
+          title: tdArray[1].children[0].data.trim(),
+          credit: tdArray[2].children[0].data.trim(),
+          time: tdArray[3].children[0].data.trim(),
+          room: tdArray[4].children[0].data.trim(),
+          professor: tdArray[5].children[0].data.trim(),
+          size_limit: tdArray[6].children[0].data.trim()
+        })
+      }
+
+      let randomFailed = []
+
+      if (phase.endsWith('P') || phase.endsWith('S')) {
+        let tableRandomFailed = $($('table').get(2)).find('tbody tr').toArray().slice(2)
+        for (let tr of tableRandomFailed) {
+          let tdArray = $(tr).find('td').toArray()
+          let number = tdArray[0].children[0].data.trim()
+          randomFailed.push({
+            number: number,
+            title: tdArray[1].children[0].data.trim(),
+            credit: tdArray[2].children[0].data.trim(),
+            time: tdArray[3].children[0].data.trim(),
+            room: tdArray[4].children[0].data.trim(),
+            professor: tdArray[5].children[0].data.trim(),
+            size_limit: tdArray[6].children[0].data.trim(),
+            reason: $(tdArray[7]).text().trim()
+          })
+        }
+      }
+
+      resolve(response.ResponseSuccessJSON({
+        semester: semester,
+        phase: phase,
+        status: status,
+        randomFailed: randomFailed
+      }))
+    })
+    .catch((err) => {
+      reject(err)
+    })
+  })
+}
+
+getSelectionResult('n6hqrnd6k9thbrs8ub4o68gv91', '10610', '100')
 .then((data) => {
   console.log(data)
 })

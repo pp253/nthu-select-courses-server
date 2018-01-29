@@ -17,6 +17,7 @@
     "syllabusFilePage": "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/output/6_6.1_6.1.12/{0}.pdf",
     "distributionPage": "https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/8/8.3/8.3.3/JH83302.php?ACIXSTORE={0}&c_key={1}",
     "selectionResultPage": "https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.2/7.2.1/JH721002.php",
+    "selectionResultDetailPage": "https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.2/7.2.1/JH721003.php",
     "waitingForRandomProcessText": "未亂數(Wait for random process)",
     "infoWaitingForRandomProcess": "<script>alert('加選此科目僅列入亂數處理!\\nThis course has size limit.\\nThe system will run randomly to decide who will be enrolled in the course after the end of this course selection period.');</script>",
     "infoSyllabusIsFile": "觀看上傳之檔案",
