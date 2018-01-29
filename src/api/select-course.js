@@ -467,8 +467,3 @@ export function getSelectionResult (sessionToken, semester, phase) {
     })
   })
 }
-
-getSelectionResult('n6hqrnd6k9thbrs8ub4o68gv91', '10610', '100')
-.then((data) => {
-  console.log(data)
-})
