@@ -3,9 +3,15 @@ import * as scores from '../src/api/scores'
 import * as user from '../src/api/user'
 import response from '../src/api/response'
 import validation from '../src/api/validator'
+import debug from '../src/lib/debug'
 
 export default function initialize (app) {
-  app.post('/api/:module/:method', function (req, res, next) {
+  app.all('*', (req, res, next) => {
+    debug.log(req.ip, req.originalUrl)
+    next()
+  })
+
+  app.post('/api/:module/:method', (req, res, next) => {
     const apiRoute = {
       'user': {
         getLoginToken (req, res, next) {
