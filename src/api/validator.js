@@ -42,6 +42,15 @@ export default {
     in: 'body',
     notEmpty: true,
     errorMessage: 'Invalid courseNumber.'
+  },
+  semester: {
+    in: 'body',
+    notEmpty: true,
+    errorMessage: 'Invalid semester.'
+  },
+  phase: {
+    in: 'body',
+    notEmpty: true,
+    errorMessage: 'Invalid phase.'
   }
-
 }

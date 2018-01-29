@@ -232,6 +232,56 @@ export default function initialize (app) {
               res.json(err)
             })
           })
+        },
+        getAvailableSelectionResult (req, res, next) {
+          req.check({
+            sessionToken: validation.sessionToken
+          })
+
+          req.getValidationResult().then((err) => {
+            if (!err.isEmpty()) {
+              res.status(400)
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
+              return
+            }
+
+            let sessionToken = req.body.sessionToken
+
+            selectCourse.getAvailableSelectionResult(sessionToken)
+            .then((result) => {
+              res.json(result)
+            })
+            .catch((err) => {
+              res.json(err)
+            })
+          })
+        },
+        getSelectionResult (req, res, next) {
+          req.check({
+            sessionToken: validation.sessionToken,
+            semester: validation.semester,
+            phase: validation.phase
+          })
+
+          req.getValidationResult().then((err) => {
+            if (!err.isEmpty()) {
+              res.status(400)
+              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
+              return
+            }
+
+            let sessionToken = req.body.sessionToken
+            let semester = req.body.semester
+            let phase = req.body.phase
+
+            selectCourse.getSelectionResult(sessionToken, semester, phase)
+            .then((result) => {
+              res.json(result)
+            })
+            .catch((err) => {
+              res.json(err)
+            })
+          })
         }
       }
     }
