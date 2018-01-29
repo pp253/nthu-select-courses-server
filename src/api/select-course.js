@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-return */
+
 import {request, correctRequest, correctFormRequest} from '../lib/request'
 import cheerio from 'cheerio'
 import config from '../../config.json'
@@ -313,3 +315,88 @@ export function getSyllabus (sessionToken, courseNumber) {
     })
   })
 }
+
+export function getSelectionResult (sessionToken) {
+  return new Promise((resolve, reject) => {
+    let semesters = {}
+
+    correctFormRequest({
+      url: config.grabdata.selectionResultPage,
+      formData: {
+        ACIXSTORE: sessionToken
+      }
+    })
+    .then((body) => {
+      if (body === config.grabdata.errSessionInterrupted) {
+        reject(response.ResponseErrorMsg.SessionInterrupted())
+        return
+      }
+
+      let originalSemeterText = {}
+      let lastSemester = ''
+
+      const $ = cheerio.load(body)
+      let selectSemester = $('select[name=semester] option').toArray()
+      for (let option of selectSemester) {
+        let semesterText = /^(\d+),(\d+)$/.exec(option.attribs['value'])
+        let semester = semesterText[1] + semesterText[2]
+        semesters[semester] = []
+        originalSemeterText[semester] = option.attribs['value']
+        lastSemester = semester
+      }
+
+      let getPeriodByNode = (selectPeriodArray, semester) => {
+        for (let option of selectPeriodArray) {
+          let period = option.attribs['value']
+          if (period) {
+            semesters[semester].push(period)
+          }
+        }
+      }
+      
+      let selectPeriodArray = $('select[name=phase] option').toArray()
+      getPeriodByNode(selectPeriodArray, lastSemester)
+
+      let jobSequence = []
+
+      for (let semester in semesters) {
+        if (semester !== lastSemester) {
+          jobSequence.push(new Promise((resolve, reject) => {
+            correctFormRequest({
+              url: config.grabdata.selectionResultPage,
+              formData: {
+                ACIXSTORE: sessionToken,
+                sem_changed: 'Y',
+                semester: originalSemeterText[semester]
+              }
+            })
+            .then((body) => {
+              const $ = cheerio.load(body)
+              let selectPeriodArray = $('select[name=phase] option').toArray()
+              getPeriodByNode(selectPeriodArray, semester)
+              resolve()
+            })
+            .catch((err) => {
+              reject(err)
+            })
+          }))
+        }
+      }
+
+      return Promise.all(jobSequence)
+    })
+    .then(() => {
+      resolve({
+        semesters: semesters
+      })
+    })
+    .catch((err) => {
+      reject(err)
+    })
+  })
+}
+
+getSelectionResult('n6hqrnd6k9thbrs8ub4o68gv91')
+.then((data) => {
+  console.log(data)
+})
