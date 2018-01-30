@@ -49,8 +49,8 @@ export function getScores (sessionToken) {
         courses[score.courseNumber] = score
       }
 
-      let table4 = $(table.get(4)).find('tr').toArray() // table[4] > tbody.children
-      table4.splice(0, 2)
+      // table[4] > tbody.children
+      let table4 = $(table.get(4)).find('tr').toArray().splice(0, 2)
       let overview = {}
       for (let tr of table4) {
         let semester = tr.children[1].children[0].data.trim() + tr.children[3].children[0].data.trim()
