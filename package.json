@@ -6,9 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "babel-node index.js",
-    "start-cluster": "pm2 start pm2.json",
     "start-dev": "pm2 start pm2.dev.json && pm2 logs nthu-course-dev",
-    "setup": "npm i babel-cli pm2 -g"
+    "start-cluster": "pm2 start pm2.json",
+    "setup": "npm i babel-cli pm2 -g",
+    "setup-dev": "npm i apidoc -g",
+    "doc-build": "apidoc -i ./src/api/ -o doc/"
   },
   "author": "pp253",
   "license": "Apache-2.0",

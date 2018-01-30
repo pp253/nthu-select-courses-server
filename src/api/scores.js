@@ -4,6 +4,95 @@ import config from '../../config.json'
 import response from './response'
 import grabHelper from './grab-helper'
 
+/**
+ * @api {get} api/scores/getScores Get scores
+ * @apiName getScores
+ * @apiGroup scores
+ *
+ * @apiParam {sessionToken} username Session token.
+ *
+ * @apiSuccess (200) {Object} scores Enrolled courses seperated by semesters.
+ * @apiSuccess (200) {Object} courses Enrolled courses' full information.
+ * @apiSuccess (200) {Object} overview Overall status of a student.
+ *
+ * @apiParamExample  {Object} Request-Example:
+   {
+     sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5'
+   }
+ *
+ * @apiSuccessExample {Object} Success-Response:
+   {
+     "error": 0,
+     "time": 1517335710534,
+     "success": 1,
+     "scores": {
+       "10510": [
+         "10510CL  101023",
+         "10510E   100102"
+       ],
+       "10520": [
+         "10520CS  135601",
+         "10520EE  206000"
+       ]
+     },
+     "courses": {
+       "10520CS  135601": {
+         "semester": "10520",
+         "courseNumber": "10520CS  135601",
+         "courseTitle": "計算機程式設計二",
+         "credit": "3",
+         "grade": "A+"
+       },
+       "10520EE  206000": {
+         "semester": "10520",
+         "courseNumber": "10520EE  206000",
+         "courseTitle": "離散數學",
+         "credit": "3",
+         "grade": "B+"
+       },
+       "10510CL  101023": {
+         "semester": "10510",
+         "courseNumber": "10510CL  101023",
+         "courseTitle": "大學中文",
+         "credit": "2",
+         "grade": "A"
+       },
+       "10510E   100102": {
+         "semester": "10510",
+         "courseNumber": "10510E   100102",
+         "courseTitle": "工程導論",
+         "credit": "2",
+         "grade": "B-"
+       }
+     },
+     "overview": {
+       "10510": {
+         "semester": "10510",
+         "gpa": "4.29",
+         "credit": "22",
+         "deservedCredit": "22",
+         "courses": "12",
+         "summerVacationCredit": "0",
+         "transferCredit": "0",
+         "classRanking": "1/63",
+         "departmentRanking": "1/63",
+         "comments": ""
+       },
+       "10520": {
+         "semester": "10520",
+         "gpa": "1.72",
+         "credit": "24",
+         "deservedCredit": "24",
+         "courses": "10",
+         "summerVacationCredit": "0",
+         "transferCredit": "0",
+         "classRanking": "2/63",
+         "departmentRanking": "2/63",
+         "comments": ""
+       }
+     }
+   }
+ */
 export function getScores (sessionToken) {
   return new Promise((resolve, reject) => {
     correctRequest({
@@ -50,7 +139,8 @@ export function getScores (sessionToken) {
       }
 
       // table[4] > tbody.children
-      let table4 = $(table.get(4)).find('tr').toArray().splice(0, 2)
+      let table4 = $(table.get(4)).find('tr').toArray()
+      table4.splice(0, 2)
       let overview = {}
       for (let tr of table4) {
         let semester = tr.children[1].children[0].data.trim() + tr.children[3].children[0].data.trim()
@@ -93,6 +183,44 @@ export function getScores (sessionToken) {
   })
 }
 
+/**
+ * @api {get} api/scores/getDistribution Get distribution
+ * @apiName getDistribution
+ * @apiGroup scores
+ *
+ * @apiParam {sessionToken} username Session token.
+ *
+ * @apiSuccess (200) {Object} distribution Performance distribution of a course.
+ *
+ * @apiParamExample  {Object} Request-Example:
+   {
+     sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5',
+     courseNumber: '10610GE  150300'
+   }
+ *
+ * @apiSuccessExample {Object} Success-Response:
+   {
+     error: 0,
+     time: 1517335710534,
+     success: 1,
+     distribution:  {
+       A: 35,
+       A+: 33,
+       A-: 6,
+       B: 1,
+       B+: 1
+       B-: 0,
+       C: 0,
+       C+: 0,
+       C-: 0,
+       D: 0,
+       E: 1,
+       X: 0,
+       not_yet: 0,
+       total: 77
+     }
+   }
+ */
 export function getDistribution (sessionToken, courseNumber) {
   return new Promise((resolve, reject) => {
     correctRequest({
