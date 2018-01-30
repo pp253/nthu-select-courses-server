@@ -226,7 +226,6 @@ export function addCourse (sessionToken, courseNumber, order = '') {
       }))
     })
     .catch((err) => {
-      console.log(err)
       reject(err)
     })
   })
