@@ -30,7 +30,7 @@
     "errSameCourse": "<script>alert('您已加選過此課程!');</script>",
     "errNotValid": "<script>alert('無效的加選')",
     "errViolatePrerequisite": "<script>alert('擋修!\\nViolate the Prerequisite！');</script>",
-    "errNotAvailable": "<script>目前非選課階段",
+    "errNotAvailable": "<script>alert('目前非選課階段",
     "errNotValidCourseNumber": "錯誤的科目"
   }
 }

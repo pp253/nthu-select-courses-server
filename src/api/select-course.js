@@ -53,10 +53,14 @@ export function isAvailable (sessionToken) {
       url: config.grabdata.preloadSelectedCoursesPage0.replace('{0}', sessionToken)
     })
     .then((body) => {
-      if (body.startsWith(config.grabdata.errNotAvailable)) {
+      if (body === config.grabdata.errSessionInterrupted) {
+        reject(response.ResponseErrorMsg.SessionInterrupted())
+        return
+      } else if (body.startsWith(config.grabdata.errNotAvailable)) {
         reject(response.ResponseErrorMsg.NotAvailable())
         return
       }
+
       resolve(response.ResponseSuccessJSON({
         isAvailable: true
       }))
@@ -85,7 +89,15 @@ export function getCurrentSelectedCourses (sessionToken) {
         resolve(err)
       })
     })
-    .then(() => {
+    .then((body) => {
+      if (body === config.grabdata.errSessionInterrupted) {
+        reject(response.ResponseErrorMsg.SessionInterrupted())
+        return
+      } else if (body.startsWith(config.grabdata.errNotAvailable)) {
+        reject(response.ResponseErrorMsg.NotAvailable())
+        return
+      }
+
       return request({
         url: config.grabdata.preloadSelectedCoursesPage2.replace('{0}', sessionToken),
         formData: {
@@ -104,6 +116,9 @@ export function getCurrentSelectedCourses (sessionToken) {
     .then((body) => {
       if (body === config.grabdata.errSessionInterrupted) {
         reject(response.ResponseErrorMsg.SessionInterrupted())
+        return
+      } else if (body.startsWith(config.grabdata.errNotAvailable)) {
+        reject(response.ResponseErrorMsg.NotAvailable())
         return
       }
 
@@ -157,6 +172,9 @@ export function addCourse (sessionToken, courseNumber, order = '') {
         if (body === config.grabdata.errSessionInterrupted) {
           reject(response.ResponseErrorMsg.SessionInterrupted())
           return
+        } else if (body.startsWith(config.grabdata.errNotAvailable)) {
+          reject(response.ResponseErrorMsg.NotAvailable())
+          return
         }
         reject(response.ResponseErrorMsg.NTHUServerError(body.slice(0, 200)))
       })
@@ -193,6 +211,9 @@ export function addCourse (sessionToken, courseNumber, order = '') {
         } else if (body.startsWith(config.grabdata.errViolatePrerequisite)) {
           reject(response.ResponseErrorMsg.ViolatePrerequisite())
           return
+        } else if (body.startsWith(config.grabdata.errNotAvailable)) {
+          reject(response.ResponseErrorMsg.NotAvailable())
+          return
         } else if (body.startsWith('<script>')) {
           let errMsg = /^<script>alert\('(.*)'\);<\/script>/g.exec(body)
           reject(response.ResponseErrorMsg.OtherError(errMsg ? errMsg[1] : ''))
@@ -227,7 +248,11 @@ export function quitCourse (sessionToken, courseNumber) {
       if (body === config.grabdata.errSessionInterrupted) {
         reject(response.ResponseErrorMsg.SessionInterrupted())
         return
+      } else if (body.startsWith(config.grabdata.errNotAvailable)) {
+        reject(response.ResponseErrorMsg.NotAvailable())
+        return
       }
+
       resolve(response.ResponseSuccessJSON({
         currentSelectedCourses: grabCurrentSelectedCoursesByBody(body)
       }))
@@ -294,17 +319,19 @@ export function getSyllabus (sessionToken, courseNumber) {
       let courseBriefDescription = $('table:nth-child(4) tbody tr:nth-child(2) td').toArray()[0].children[0].data.replace(/\n/g, '<br>')
       let courseDescription = $('table:nth-child(5) tbody tr:nth-child(2) td').text().replace(/\n/g, '<br>')
       resolve(response.ResponseSuccessJSON({
-        number: trArray.get(1).children[2].children[0].data.trim(),
-        chineseTitle: trArray.get(2).children[3].children[0].data.trim(),
-        englishTitle: trArray.get(3).children[3].children[0].data.trim(),
-        credit: trArray.get(1).children[5].children[0].data.trim(),
-        time: trArray.get(5).children[2].children[0].data.trim(),
-        room: trArray.get(5).children[5].children[0].data.trim(),
-        professor: trArray.get(4).children[3].children[0].data.trim(),
-        size_limit: trArray.get(1).children[8].children[0].data.trim(),
-        briefDescription: courseBriefDescription,
-        description: courseDescription,
-        file: (courseDescription.startsWith(config.grabdata.infoSyllabusIsFile))
+        syllabus: {
+          number: trArray.get(1).children[2].children[0].data.trim(),
+          chineseTitle: trArray.get(2).children[3].children[0].data.trim(),
+          englishTitle: trArray.get(3).children[3].children[0].data.trim(),
+          credit: trArray.get(1).children[5].children[0].data.trim(),
+          time: trArray.get(5).children[2].children[0].data.trim(),
+          room: trArray.get(5).children[5].children[0].data.trim(),
+          professor: trArray.get(4).children[3].children[0].data.trim(),
+          size_limit: trArray.get(1).children[8].children[0].data.trim(),
+          briefDescription: courseBriefDescription,
+          description: courseDescription,
+          file: (courseDescription.startsWith(config.grabdata.infoSyllabusIsFile))
+        }
       }))
     })
     .catch((err) => {

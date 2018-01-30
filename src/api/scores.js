@@ -31,9 +31,12 @@ export function getScores (sessionToken) {
           continue
         }
 
+        let semester = tr.children[1].children[0].data.trim() + tr.children[3].children[0].data.trim()
+        let shortCourseNumber = tr.children[5].children[0].data.trim()
+
         let score = {
-          semester: tr.children[1].children[0].data.trim() + tr.children[3].children[0].data.trim(),
-          courseNumber: tr.children[5].children[0].data.trim(),
+          semester: semester,
+          courseNumber: semester + shortCourseNumber,
           courseTitle: tr.children[7].children[0].data.trim(),
           credit: tr.children[9].children[0].data.trim(),
           grade: tr.children[11].children[0].data.trim()
@@ -42,8 +45,8 @@ export function getScores (sessionToken) {
         if (!scores[score.semester]) {
           scores[score.semester] = []
         }
-        scores[score.semester].push(score.semester + score.courseNumber)
-        courses[score.semester + score.courseNumber] = score
+        scores[score.semester].push(score.courseNumber)
+        courses[score.courseNumber] = score
       }
 
       let table4 = $(table.get(4)).find('tr').toArray() // table[4] > tbody.children
