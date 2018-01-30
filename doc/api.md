@@ -1,6 +1,39 @@
 # API
 
+## Package
+
 ## User (`/api/user/`)
+
+### `getLoginToken`
+
+Get Login Token and Authentic Image.
+
+#### Parameters
+
+None.
+
+#### Return Value
+
+- `data`
+    - `loginToken`: *String* Login Token. Login Token should be passed to getSessionToken to get session token.
+    - `authImg`: *base64* Auth Image.
+
+### `getSessionToken`
+
+Get session token to do everything you want in the system.
+
+#### Parameters
+
+- `username`: *String*
+- `userpass`: *String*
+- `authCheckCode`: *String*
+- `loginToken`: *String* Get by getLoginToken.
+
+#### Return Value
+
+- `data`
+    - `sessionToken`: *String*
+    - `username`: *String*
 
 ## Select Course (`/api/select_course/`)
 
@@ -16,10 +49,22 @@ None.
 
 - `data`
   - `departments`: *Object* 記錄各系所，並在其classes中記錄各班. Mapping with course number and `Department`.
-    - `Department`: *Object*
+    - `[departmentAbbr]`: *Object*
       - `classes` *Array*
   - `catalog`: *Object* 紀錄各系、各班所開設課程，僅用`number`(即課程代碼 course number)連結課程
   - `courses`: *Object* 紀錄所有課程
+
+### `getCurrentSelectedCourses`
+
+Get current selected courses of an user.
+
+#### Parameters
+
+- `sessionToken`: *String* **Required**
+
+#### Return Value
+
+- 
 
 ### `getCurrentSelectedCourses`
 
@@ -65,3 +110,56 @@ Get current selected courses of an user.
   }
 
 ```
+
+## Scores (`/api/scores/`)
+
+### `getScores`
+
+Get scores of a user.
+
+#### Parameters
+
+- `sessionToken`: *String*
+
+#### Return Value
+
+- `scores`: *Object*
+    - `[semester]`: *Array*
+        - `[courseNumber]`: *String*
+- `courses`: *Object*
+    - `[courseNumber]`: *Object*
+        - semester
+        - courseNumber
+        - courseTitle
+        - credit
+        - grade
+- `overview`: *Object*
+    - `[semester]`: *Object`
+        - gpa
+        - credit
+        - deservedCredit
+        - courses
+        - summerVacationCredit
+        - transferCredit
+        - classRanking
+        - departmentRanking
+        - comments
+
+### `getDistribution`
+
+Get the distribution of an existed course.
+
+#### Parameters
+
+- sessionToken
+- courseNumber
+
+#### Return Value
+
+- distribution: *Object*
+    - A+
+    - A....
+    - not_yet
+    - total
+
+
