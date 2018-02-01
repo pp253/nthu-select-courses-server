@@ -1,6 +1,91 @@
 define({ "api": [
   {
     "type": "get",
+    "url": "api/select_courses/getSelectionResult",
+    "title": "Get selection result",
+    "name": "getSelectionResult",
+    "group": "Select_Courses",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "SessionToken",
+            "optional": false,
+            "field": "sessionToken",
+            "description": "<p>Session token.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "semester",
+            "description": "<p>Session token.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "phase",
+            "description": "<p>Session token.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example:",
+          "content": "{\n  sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5',\n  semester: '10610', // 106學年度上學期\n  phase: '101P' // 第二次選課亂數後結果\n}",
+          "type": "Object"
+        }
+      ]
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "semester",
+            "description": "<p>Semester. Available semester and phase could be obtained by <code>select_courses/getAvailableSelectionResult</code>.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "phase",
+            "description": "<p>Phase.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Selection result.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "randomFailed",
+            "description": "<p>Courses that failed for enrollment.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\n  error: 0,\n  time: 1517335710534,\n  success: 1,\n  semester: '10610',\n  phase: '101P',\n  status: [{\n    number: '',\n    title: '',\n    credit: '',\n    time: '',\n    room: '',\n    professor: '',\n    size_limit: ''\n  }],\n  randomFailed: [{\n    number: '',\n    title: '',\n    credit: '',\n    time: '',\n    room: '',\n    professor: '',\n    size_limit: '',\n    reason: ''\n  }]\n}",
+          "type": "Object"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "src/api/select-course.js",
+    "groupTitle": "Select_Courses"
+  },
+  {
+    "type": "get",
     "url": "api/scores/getDistribution",
     "title": "Get distribution",
     "name": "getDistribution",
@@ -10,9 +95,9 @@ define({ "api": [
         "Parameter": [
           {
             "group": "Parameter",
-            "type": "sessionToken",
+            "type": "SessionToken",
             "optional": false,
-            "field": "username",
+            "field": "sessionToken",
             "description": "<p>Session token.</p>"
           }
         ]
@@ -60,9 +145,9 @@ define({ "api": [
         "Parameter": [
           {
             "group": "Parameter",
-            "type": "sessionToken",
+            "type": "SessionToken",
             "optional": false,
-            "field": "username",
+            "field": "sessionToken",
             "description": "<p>Session token.</p>"
           }
         ]
@@ -104,7 +189,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "{\n  \"error\": 0,\n  \"time\": 1517335710534,\n  \"success\": 1,\n  \"scores\": {\n    \"10510\": [\n      \"10510CL  101023\",\n      \"10510E   100102\"\n    ],\n    \"10520\": [\n      \"10520CS  135601\",\n      \"10520EE  206000\"\n    ]\n  },\n  \"courses\": {\n    \"10520CS  135601\": {\n      \"semester\": \"10520\",\n      \"courseNumber\": \"10520CS  135601\",\n      \"courseTitle\": \"計算機程式設計二\",\n      \"credit\": \"3\",\n      \"grade\": \"A+\"\n    },\n    \"10520EE  206000\": {\n      \"semester\": \"10520\",\n      \"courseNumber\": \"10520EE  206000\",\n      \"courseTitle\": \"離散數學\",\n      \"credit\": \"3\",\n      \"grade\": \"B+\"\n    },\n    \"10510CL  101023\": {\n      \"semester\": \"10510\",\n      \"courseNumber\": \"10510CL  101023\",\n      \"courseTitle\": \"大學中文\",\n      \"credit\": \"2\",\n      \"grade\": \"A\"\n    },\n    \"10510E   100102\": {\n      \"semester\": \"10510\",\n      \"courseNumber\": \"10510E   100102\",\n      \"courseTitle\": \"工程導論\",\n      \"credit\": \"2\",\n      \"grade\": \"B-\"\n    }\n  },\n  \"overview\": {\n    \"10510\": {\n      \"semester\": \"10510\",\n      \"gpa\": \"4.29\",\n      \"credit\": \"22\",\n      \"deservedCredit\": \"22\",\n      \"courses\": \"12\",\n      \"summerVacationCredit\": \"0\",\n      \"transferCredit\": \"0\",\n      \"classRanking\": \"1/63\",\n      \"departmentRanking\": \"1/63\",\n      \"comments\": \"\"\n    },\n    \"10520\": {\n      \"semester\": \"10520\",\n      \"gpa\": \"1.72\",\n      \"credit\": \"24\",\n      \"deservedCredit\": \"24\",\n      \"courses\": \"10\",\n      \"summerVacationCredit\": \"0\",\n      \"transferCredit\": \"0\",\n      \"classRanking\": \"2/63\",\n      \"departmentRanking\": \"2/63\",\n      \"comments\": \"\"\n    }\n  }\n}",
+          "content": "{\n  error: 0,\n  time: 1517335710534,\n  success: 1,\n  \"scores\": {\n    \"10510\": [\n      \"10510CL  101023\",\n      \"10510E   100102\"\n    ],\n    \"10520\": [\n      \"10520CS  135601\",\n      \"10520EE  206000\"\n    ]\n  },\n  \"courses\": {\n    \"10520CS  135601\": {\n      \"semester\": \"10520\",\n      \"courseNumber\": \"10520CS  135601\",\n      \"courseTitle\": \"計算機程式設計二\",\n      \"credit\": \"3\",\n      \"grade\": \"A+\"\n    },\n    \"10520EE  206000\": {\n      \"semester\": \"10520\",\n      \"courseNumber\": \"10520EE  206000\",\n      \"courseTitle\": \"離散數學\",\n      \"credit\": \"3\",\n      \"grade\": \"B+\"\n    },\n    \"10510CL  101023\": {\n      \"semester\": \"10510\",\n      \"courseNumber\": \"10510CL  101023\",\n      \"courseTitle\": \"大學中文\",\n      \"credit\": \"2\",\n      \"grade\": \"A\"\n    },\n    \"10510E   100102\": {\n      \"semester\": \"10510\",\n      \"courseNumber\": \"10510E   100102\",\n      \"courseTitle\": \"工程導論\",\n      \"credit\": \"2\",\n      \"grade\": \"B-\"\n    }\n  },\n  \"overview\": {\n    \"10510\": {\n      \"semester\": \"10510\",\n      \"gpa\": \"4.29\",\n      \"credit\": \"22\",\n      \"deservedCredit\": \"22\",\n      \"courses\": \"12\",\n      \"summerVacationCredit\": \"0\",\n      \"transferCredit\": \"0\",\n      \"classRanking\": \"1/63\",\n      \"departmentRanking\": \"1/63\",\n      \"comments\": \"\"\n    },\n    \"10520\": {\n      \"semester\": \"10520\",\n      \"gpa\": \"1.72\",\n      \"credit\": \"24\",\n      \"deservedCredit\": \"24\",\n      \"courses\": \"10\",\n      \"summerVacationCredit\": \"0\",\n      \"transferCredit\": \"0\",\n      \"classRanking\": \"2/63\",\n      \"departmentRanking\": \"2/63\",\n      \"comments\": \"\"\n    }\n  }\n}",
           "type": "Object"
         }
       ]
@@ -124,7 +209,7 @@ define({ "api": [
         "200": [
           {
             "group": "200",
-            "type": "String",
+            "type": "LoginToken",
             "optional": false,
             "field": "loginToken",
             "description": "<p>Login token is used to mapping with authentication image.</p>"
@@ -191,7 +276,7 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "String",
+            "type": "LoginToken",
             "optional": false,
             "field": "loginToken",
             "description": "<p>Login token provided by <code>getLoginToken</code>.</p>"
@@ -211,7 +296,7 @@ define({ "api": [
         "200": [
           {
             "group": "200",
-            "type": "String",
+            "type": "SessionToken",
             "optional": false,
             "field": "sessionToken",
             "description": "<p>Session token.</p>"

@@ -8,7 +8,7 @@ import response from './response'
  * @apiName getLoginToken
  * @apiGroup user
  *
- * @apiSuccess (200) {String} loginToken Login token is used to mapping with authentication image.
+ * @apiSuccess (200) {LoginToken} loginToken Login token is used to mapping with authentication image.
  * @apiSuccess (200) {String} authImg An image encoded in `base64`.
  *
  * @apiParamExample  {Object} Request-Example:
@@ -58,9 +58,9 @@ export function getLoginToken () {
  * @apiParam {String} username User name.
  * @apiParam {String} userpass User password.
  * @apiParam {String} authCheckCode Authentication check code showed on `authImg` provided by `getLoginToken`.
- * @apiParam {String} loginToken Login token provided by `getLoginToken`.
+ * @apiParam {LoginToken} loginToken Login token provided by `getLoginToken`.
  *
- * @apiSuccess (200) {String} sessionToken Session token.
+ * @apiSuccess (200) {SessionToken} sessionToken Session token.
  * @apiSuccess (200) {String} username User name.
  *
  * @apiParamExample  {Object} Request-Example:

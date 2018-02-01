@@ -9,7 +9,7 @@ import grabHelper from './grab-helper'
  * @apiName getScores
  * @apiGroup scores
  *
- * @apiParam {sessionToken} username Session token.
+ * @apiParam {SessionToken} sessionToken Session token.
  *
  * @apiSuccess (200) {Object} scores Enrolled courses seperated by semesters.
  * @apiSuccess (200) {Object} courses Enrolled courses' full information.
@@ -22,9 +22,9 @@ import grabHelper from './grab-helper'
  *
  * @apiSuccessExample {Object} Success-Response:
    {
-     "error": 0,
-     "time": 1517335710534,
-     "success": 1,
+     error: 0,
+     time: 1517335710534,
+     success: 1,
      "scores": {
        "10510": [
          "10510CL  101023",
@@ -188,7 +188,7 @@ export function getScores (sessionToken) {
  * @apiName getDistribution
  * @apiGroup scores
  *
- * @apiParam {sessionToken} username Session token.
+ * @apiParam {SessionToken} sessionToken Session token.
  *
  * @apiSuccess (200) {Object} distribution Performance distribution of a course.
  *

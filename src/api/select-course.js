@@ -427,6 +427,55 @@ export function getAvailableSelectionResult (sessionToken) {
   })
 }
 
+/**
+ * @api {get} api/select_courses/getSelectionResult Get selection result
+ * @apiName getSelectionResult
+ * @apiGroup Select Courses
+ *
+ * @apiParam {SessionToken} sessionToken Session token.
+ * @apiParam {String} semester Session token.
+ * @apiParam {String} phase Session token.
+ *
+ * @apiSuccess (200) {String} semester Semester. Available semester and phase could be obtained by `select_courses/getAvailableSelectionResult`.
+ * @apiSuccess (200) {String} phase Phase.
+ * @apiSuccess (200) {Object} status Selection result.
+ * @apiSuccess (200) {Object} randomFailed Courses that failed for enrollment.
+ *
+ * @apiParamExample  {Object} Request-Example:
+   {
+     sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5',
+     semester: '10610', // 106學年度上學期
+     phase: '101P' // 第二次選課亂數後結果
+   }
+ *
+ * @apiSuccessExample {Object} Success-Response:
+   {
+     error: 0,
+     time: 1517335710534,
+     success: 1,
+     semester: '10610',
+     phase: '101P',
+     status: [{
+       number: '',
+       title: '',
+       credit: '',
+       time: '',
+       room: '',
+       professor: '',
+       size_limit: ''
+     }],
+     randomFailed: [{
+       number: '',
+       title: '',
+       credit: '',
+       time: '',
+       room: '',
+       professor: '',
+       size_limit: '',
+       reason: ''
+     }]
+   }
+ */
 export function getSelectionResult (sessionToken, semester, phase) {
   return new Promise((resolve, reject) => {
     let frommetedSemesterText = /(\d{3})(\d{2})/.exec(semester)
@@ -446,32 +495,74 @@ export function getSelectionResult (sessionToken, semester, phase) {
         return
       }
 
-      let status = []
+      let status = {}
+      let waitingForRandom = {}
 
       const $ = cheerio.load(body)
       let tableStatus = $($('table').get(1)).find('tbody tr').toArray().slice(2)
       for (let tr of tableStatus) {
         let tdArray = $(tr).find('td').toArray()
         let number = tdArray[0].children[0].data.trim()
-        status.push({
-          number: number,
-          title: tdArray[1].children[0].data.trim(),
-          credit: tdArray[2].children[0].data.trim(),
-          time: tdArray[3].children[0].data.trim(),
-          room: tdArray[4].children[0].data.trim(),
-          professor: tdArray[5].children[0].data.trim(),
-          size_limit: tdArray[6].children[0].data.trim()
-        })
+
+        if (phase.endsWith('P') || phase.endsWith('S')) {
+          status[number] = {
+            number: number,
+            title: tdArray[1].children[0].data.trim(),
+            credit: tdArray[2].children[0].data.trim(),
+            time: tdArray[3].children[0].data.trim(),
+            room: tdArray[4].children[0].data.trim(),
+            professor: tdArray[5].children[0].data.trim(),
+            size_limit: tdArray[6].children[0].data.trim()
+          }
+        } else {
+          let randomText = tdArray[11].children[0].data.trim()
+          if (randomText === '待亂數處理(Wait for random process)') {
+            let orderText = tdArray[10].children[0].data.trim()
+            let orderCatalog = ''
+            let order = ''
+            if (orderText) {
+              let orderRegExec = /(.+)(\d+)/.exec(orderText)
+              orderCatalog = orderRegExec[1]
+              order = parseInt(orderRegExec[2])
+            }
+
+            waitingForRandom[number] = {
+              number: number,
+              title: tdArray[1].children[0].data.trim(),
+              credit: tdArray[4].children[0].data.trim(),
+              time: tdArray[5].children[0].data.trim(),
+              room: tdArray[6].children[0].data.trim(),
+              professor: tdArray[7].children[0].data.trim(),
+              size_limit: tdArray[8].children[0].data.trim(),
+              order: order,
+              orderCatalog: orderCatalog,
+              comments: $(tdArray[2]).text().trim(),
+              limitation: $(tdArray[3]).text().trim()
+            }
+          } else {
+            status[number] = {
+              number: number,
+              title: tdArray[1].children[0].data.trim(),
+              credit: tdArray[4].children[0].data.trim(),
+              time: tdArray[5].children[0].data.trim(),
+              room: tdArray[6].children[0].data.trim(),
+              professor: tdArray[7].children[0].data.trim(),
+              size_limit: tdArray[8].children[0].data.trim(),
+              comments: $(tdArray[2]).text().trim(),
+              limitation: $(tdArray[3]).text().trim()
+            }
+          }
+        }
       }
 
-      let randomFailed = []
+      let randomFailed = {}
 
       if (phase.endsWith('P') || phase.endsWith('S')) {
         let tableRandomFailed = $($('table').get(2)).find('tbody tr').toArray().slice(2)
         for (let tr of tableRandomFailed) {
           let tdArray = $(tr).find('td').toArray()
           let number = tdArray[0].children[0].data.trim()
-          randomFailed.push({
+          randomFailed[number] = {
             number: number,
             title: tdArray[1].children[0].data.trim(),
             credit: tdArray[2].children[0].data.trim(),
@@ -480,17 +571,15 @@ export function getSelectionResult (sessionToken, semester, phase) {
             professor: tdArray[5].children[0].data.trim(),
             size_limit: tdArray[6].children[0].data.trim(),
             reason: $(tdArray[7]).text().trim()
-          })
+          }
         }
       }
-
       resolve(response.ResponseSuccessJSON({
-        selectionResult: {
-          semester: semester,
-          phase: phase,
-          status: status,
-          randomFailed: randomFailed
-        }
+        semester: semester,
+        phase: phase,
+        waitingForRandom: waitingForRandom,
+        status: status,
+        randomFailed: randomFailed
       }))
     })
     .catch((err) => {
