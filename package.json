@@ -8,6 +8,7 @@
     "start": "babel-node index.js",
     "start-dev": "pm2 start pm2.dev.json && pm2 logs nthu-course-dev",
     "start-cluster": "pm2 start pm2.json",
+    "start-db": "mongod --dbpath \"./db\" --port 16622",
     "setup": "npm i babel-cli pm2 -g",
     "setup-dev": "npm i apidoc -g",
     "doc-build": "apidoc -i ./src/api/ -o doc/"
@@ -30,6 +31,7 @@
     "iconv-lite": "^0.4.19",
     "legacy-encoding": "^3.0.0",
     "moment": "^2.20.1",
+    "mongoose": "^5.0.3",
     "query-string": "^5.0.1",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5"

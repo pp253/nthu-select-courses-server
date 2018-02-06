@@ -4,9 +4,13 @@ import helmet from 'helmet'
 import bodyParser from 'body-parser'
 import expressValidator from 'express-validator'
 import compression from 'compression'
+import cors from 'cors'
 import debug from './src/lib/debug'
 import routes from './routes'
-import cors from 'cors'
+import path from 'path'
+import https from 'https'
+import http from 'http'
+import fs from 'fs'
 
 const app = express()
 
@@ -38,7 +42,7 @@ app.use(session({
 }))
 
 // Setting
-app.set('port', process.env.PORT || 80)
+app.set('port', 443)
 app.set('title', 'NTHU EASY COURSE')
 
 if (process.env.NODE_ENV !== 'production') {
@@ -57,19 +61,21 @@ app.use('/', express.static('public'))
 routes(app)
 
 // Listening
-/*
-const options = {
-  key: fs.readFileSync('./server.key'),
-  cert: fs.readFileSync('./server.crt')
-}
+let httpsServer = https.createServer({
+  key: fs.readFileSync(path.join(__dirname, '/secret/private.key')),
+  cert: fs.readFileSync(path.join(__dirname, '/secret/certificate.crt'))
+}, app)
 
-https.createServer(options, app).listen(app.get('port'), function () {
-  debug.log('Stating listening ...')
-})
-*/
-
-app.listen(app.get('port'), function () {
+httpsServer.listen(app.get('port'), function () {
   debug.log('Start to listen on PORT %d ...', app.get('port'))
 })
+
+// Auto redirect from port 80 to 443
+http.createServer((req, res) => {
+  res.writeHead(301, {
+    'Location': 'https://' + req.headers['host'] + req.url
+  })
+  res.end()
+}).listen(80)
 
 debug.log('Server initialized done')

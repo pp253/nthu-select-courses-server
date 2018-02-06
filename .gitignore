@@ -1,4 +1,6 @@
 /public/
+/db/
+/secret/
 
 # Logs
 logs
