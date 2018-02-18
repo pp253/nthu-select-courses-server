@@ -298,7 +298,6 @@ export function addCourse (sessionToken, courseNumber, order = '') {
   })
 }
 
-
 /**
  * @api {post} api/select_course/quitCourse Quit course
  * @apiName quitCourse

@@ -18,7 +18,7 @@ export function toArray (obj) {
 
 /**
  * Formatting a string by the arguments.
- * 
+ *
  * Example:
  * format('{0}: {1}', 123, 456) // replace by arguments' index
  *   -> 123: 456
@@ -26,7 +26,7 @@ export function toArray (obj) {
  *   -> 456
  * format('{name}: {value}', {name: 123, value: 456}) // assign the value by key
  *   -> 123: 456
- * 
+ *
  * @param {String} str String to formatted.
  * @param {Object | String[]} argus Arguments for formatting.
  */
@@ -36,7 +36,7 @@ export function format (str, ...argus) {
   }
 
   let result = str
-  const reg = /\{([^\}\:]*)(?:\:([^\}]*))?\}/
+  const reg = /\{([^}:]*)(?::([^}]*))?\}/
   let isObj = argus[0] && (typeof argus[0] === 'object')
 
   while (true) {
