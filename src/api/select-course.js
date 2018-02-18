@@ -71,6 +71,38 @@ export function isAvailable (sessionToken) {
   })
 }
 
+/**
+ * @api {post} api/select_course/getCurrentSelectedCourses Get current selected courses
+ * @apiName getCurrentSelectedCourses
+ * @apiGroup Select Courses
+ * @apiDescription This method is only available in selection period.
+ *
+ * @apiParam {String} sessionToken Session token.
+ *
+ * @apiSuccess (200) {CurrentSelectedCourses} currentSelectedCourses Current Selected Courses.
+ *
+ * @apiParamExample  {Object} Request-Example
+    {
+      sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5'
+    }
+ *
+ * @apiSuccessExample {Object} Success-Response
+    {
+      error: 0,
+      time: 1517335710534,
+      success: 1,
+      currentSelectedCourses: [
+        {
+          number: '10610GE  150300',
+          status: 0, // 0: 未選上, 1: 已選上, 2: 亂數中
+          orderCatalog: '', // '', '通', '中', or '體'.
+          order: '' // 0: not waiting for random process, 1~20: order
+        }
+      ]
+    }
+ *
+ * @apiSampleRequest api/select_course/getCurrentSelectedCourses
+ */
 export function getCurrentSelectedCourses (sessionToken) {
   return new Promise((resolve, reject) => {
     new Promise((resolve, reject) => {
@@ -132,6 +164,41 @@ export function getCurrentSelectedCourses (sessionToken) {
   })
 }
 
+/**
+ * @api {post} api/select_course/addCourse Add course
+ * @apiName addCourse
+ * @apiGroup Select Courses
+ * @apiDescription This method is only available in selection period.
+ *
+ * @apiParam {String} sessionToken Session token.
+ * @apiParam {String} courseNumber Course number.
+ * @apiParam {Number} order=0 Order.
+ *
+ * @apiSuccess (200) {CurrentSelectedCourses} currentSelectedCourses Current Selected Courses.
+ *
+ * @apiParamExample  {Object} Request-Example
+    {
+      sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5',
+      courseNumber: '10610GE  150300',
+      order: 0
+    }
+ * @apiSuccessExample {Object} Success-Response
+    {
+      error: 0,
+      time: 1517335710534,
+      success: 1,
+      currentSelectedCourses: [
+        {
+          number: '10610GE  150300',
+          status: 0, // 0: 未選上, 1: 已選上, 2: 亂數中
+          orderCatalog: '', // '', '通', '中', or '體'.
+          order: '' // 0: not waiting for random process, 1~20: order
+        }
+      ]
+    }
+ *
+ * @apiSampleRequest api/select_course/addCourse
+ */
 export function addCourse (sessionToken, courseNumber, order = '') {
   return new Promise((resolve, reject) => {
     if (!(courseNumber in coursesDB.courses)) {
@@ -231,6 +298,40 @@ export function addCourse (sessionToken, courseNumber, order = '') {
   })
 }
 
+
+/**
+ * @api {post} api/select_course/quitCourse Quit course
+ * @apiName quitCourse
+ * @apiGroup Select Courses
+ * @apiDescription This method is only available in selection period.
+ *
+ * @apiParam {String} sessionToken Session token.
+ * @apiParam {String} courseNumber Course number.
+ *
+ * @apiSuccess (200) {CurrentSelectedCourses} currentSelectedCourses Current Selected Courses.
+ *
+ * @apiParamExample  {Object} Request-Example
+ {
+   sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5',
+   courseNumber: '10610GE  150300'
+ }
+ * @apiSuccessExample {Object} Success-Response
+ {
+   error: 0,
+   time: 1517335710534,
+   success: 1,
+   currentSelectedCourses: [
+     {
+       number: '10610GE  150300',
+       status: 0, // 0: 未選上, 1: 已選上, 2: 亂數中
+       orderCatalog: '', // '', '通', '中', or '體'.
+       order: '' // 0: not waiting for random process, 1~20: order
+     }
+   ]
+ }
+ *
+ * @apiSampleRequest api/select_course/quitCourse
+ */
 export function quitCourse (sessionToken, courseNumber) {
   return new Promise((resolve, reject) => {
     let formData = {
@@ -262,6 +363,41 @@ export function quitCourse (sessionToken, courseNumber) {
   })
 }
 
+/**
+ * @api {post} api/select_course/editOrder Edit order
+ * @apiName editOrder
+ * @apiGroup Select Courses
+ * @apiDescription This method is only available in selection period.
+ *
+ * @apiParam {String} sessionToken Session token.
+ * @apiParam {Course[]} newOrder Course number.
+ * @apiParam {Course[]} oldOrder Course number.
+ *
+ * @apiSuccess (200) {CurrentSelectedCourses} currentSelectedCourses Current Selected Courses.
+ *
+ * @apiParamExample  {Object} Request-Example
+ {
+   sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5',
+   newOrder: [],
+   oldOrder: []
+ }
+ * @apiSuccessExample {Object} Success-Response
+ {
+   error: 0,
+   time: 1517335710534,
+   success: 1,
+   currentSelectedCourses: [
+     {
+       number: '10610GE  150300',
+       status: 0, // 0: 未選上, 1: 已選上, 2: 亂數中
+       orderCatalog: '', // '', '通', '中', or '體'.
+       order: '' // 0: not waiting for random process, 1~20: order
+     }
+   ]
+ }
+ *
+ * @apiSampleRequest api/select_course/editOrder
+ */
 export function editOrder (sessionToken, newOrder, oldOrder) {
   return new Promise((resolve, reject) => {
     let jobSequence = Promise.resolve()
@@ -299,6 +435,43 @@ export function editOrder (sessionToken, newOrder, oldOrder) {
   })
 }
 
+/**
+ * @api {post} api/select_course/getSyllabus Get syllabus
+ * @apiName getSyllabus
+ * @apiGroup Select Courses
+ *
+ * @apiParam {String} sessionToken Session token.
+ * @apiParam {CourseNumber} courseNumber Course number.
+ *
+ * @apiSuccess (200) {Syllabus} syllabus Syllabus.
+ *
+ * @apiParamExample  {Object} Request-Example
+ {
+   sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5',
+   courseNumber: '10610GE  150300',
+ }
+ * @apiSuccessExample {Object} Success-Response
+ {
+   error: 0,
+   time: 1517335710534,
+   success: 1,
+   syllabus: {
+    number: '10610GE  150300',
+    chineseTitle: '',
+    englishTitle: '',
+    credit: '',
+    time: '',
+    room: '',
+    professor: '',
+    size_limit: '',
+    briefDescription: '',
+    description: '',
+    file: false
+   }
+ }
+ *
+ * @apiSampleRequest api/select_course/getSyllabus
+ */
 export function getSyllabus (sessionToken, courseNumber) {
   return new Promise((resolve, reject) => {
     correctRequest({
@@ -339,6 +512,37 @@ export function getSyllabus (sessionToken, courseNumber) {
   })
 }
 
+/**
+ * @api {post} api/select_course/getAvailableSelectionResult Get available selection result
+ * @apiName getAvailableSelectionResult
+ * @apiGroup Select Courses
+ *
+ * @apiParam {String} sessionToken Session token.
+ *
+ * @apiSuccess (200) {availableSelectionResult} availableSelectionResult Available selection result.
+ * @apiSuccess (200) {Semester} semester Semester.
+ * @apiSuccess (200) {Phase} phase Phase.
+ * @apiSuccess (200) {Boolean} editable Editable.
+ *
+ * @apiParamExample  {Object} Request-Example
+ {
+   sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5'
+ }
+ * @apiSuccessExample {Object} Success-Response
+ {
+   error: 0,
+   time: 1517335710534,
+   success: 1,
+   availableSelectionResult: {
+
+   },
+   semester: '',
+   phase: '',
+   editable: false
+ }
+ *
+ * @apiSampleRequest api/select_course/getAvailableSelectionResult
+ */
 export function getAvailableSelectionResult (sessionToken) {
   return new Promise((resolve, reject) => {
     let availableSelectionResult = {}
@@ -428,27 +632,27 @@ export function getAvailableSelectionResult (sessionToken) {
 }
 
 /**
- * @api {get} api/select_courses/getSelectionResult Get selection result
+ * @api {post} api/select_course/getSelectionResult Get selection result
  * @apiName getSelectionResult
  * @apiGroup Select Courses
  *
  * @apiParam {SessionToken} sessionToken Session token.
- * @apiParam {String} semester Session token.
- * @apiParam {String} phase Session token.
+ * @apiParam {String} semester Semester. Available semester and phase could be obtained by `select_course/getAvailableSelectionResult`.
+ * @apiParam {String} phase Phase.
  *
- * @apiSuccess (200) {String} semester Semester. Available semester and phase could be obtained by `select_courses/getAvailableSelectionResult`.
+ * @apiSuccess (200) {String} semester Semester.
  * @apiSuccess (200) {String} phase Phase.
  * @apiSuccess (200) {Object} status Selection result.
  * @apiSuccess (200) {Object} randomFailed Courses that failed for enrollment.
  *
- * @apiParamExample  {Object} Request-Example:
+ * @apiParamExample  {Object} Request-Example
    {
      sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5',
      semester: '10610', // 106學年度上學期
      phase: '101P' // 第二次選課亂數後結果
    }
  *
- * @apiSuccessExample {Object} Success-Response:
+ * @apiSuccessExample {Object} Success-Response
    {
      error: 0,
      time: 1517335710534,

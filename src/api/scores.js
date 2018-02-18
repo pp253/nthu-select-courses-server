@@ -5,7 +5,7 @@ import response from './response'
 import grabHelper from './grab-helper'
 
 /**
- * @api {get} api/scores/getScores Get scores
+ * @api {post} api/scores/getScores Get scores
  * @apiName getScores
  * @apiGroup scores
  *
@@ -15,12 +15,12 @@ import grabHelper from './grab-helper'
  * @apiSuccess (200) {Object} courses Enrolled courses' full information.
  * @apiSuccess (200) {Object} overview Overall status of a student.
  *
- * @apiParamExample  {Object} Request-Example:
+ * @apiParamExample  {Object} Request-Example
    {
      sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5'
    }
  *
- * @apiSuccessExample {Object} Success-Response:
+ * @apiSuccessExample {Object} Success-Response
    {
      error: 0,
      time: 1517335710534,
@@ -184,7 +184,7 @@ export function getScores (sessionToken) {
 }
 
 /**
- * @api {get} api/scores/getDistribution Get distribution
+ * @api {post} api/scores/getDistribution Get distribution
  * @apiName getDistribution
  * @apiGroup scores
  *
@@ -192,13 +192,13 @@ export function getScores (sessionToken) {
  *
  * @apiSuccess (200) {Object} distribution Performance distribution of a course.
  *
- * @apiParamExample  {Object} Request-Example:
+ * @apiParamExample  {Object} Request-Example
    {
      sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5',
      courseNumber: '10610GE  150300'
    }
  *
- * @apiSuccessExample {Object} Success-Response:
+ * @apiSuccessExample {Object} Success-Response
    {
      error: 0,
      time: 1517335710534,

@@ -62,7 +62,7 @@ export const ResponseErrorMsg = {
       msg: `Session is interrupted.`
     })
   },
-  // api/select_courses
+  // api/select_course
   CourseNotFound (errMsg) {
     return ResponseErrorJSON({
       id: 30,

@@ -4,18 +4,20 @@ import config from '../../config.json'
 import response from './response'
 
 /**
- * @api {get} api/user/getLoginToken Get login token
+ * @api {post} api/user/getLoginToken Get login token
  * @apiName getLoginToken
  * @apiGroup user
  *
  * @apiSuccess (200) {LoginToken} loginToken Login token is used to mapping with authentication image.
  * @apiSuccess (200) {String} authImg An image encoded in `base64`.
- *
- * @apiParamExample  {Object} Request-Example:
+ * 
+ * @apiSampleRequest api/user/getLoginToken
+ * 
+ * @apiParamExample  {Object} Request-Example
    {
    }
  *
- * @apiSuccessExample {Object} Success-Response:
+ * @apiSuccessExample {Object} Success-Response
    {
      error: 0,
      time: 1517335710534,
@@ -51,7 +53,7 @@ export function getLoginToken () {
 }
 
 /**
- * @api {get} api/user/getSessionToken Get session token
+ * @api {post} api/user/getSessionToken Get session token
  * @apiName getSessionToken
  * @apiGroup user
  *
@@ -63,7 +65,9 @@ export function getLoginToken () {
  * @apiSuccess (200) {SessionToken} sessionToken Session token.
  * @apiSuccess (200) {String} username User name.
  *
- * @apiParamExample  {Object} Request-Example:
+ * @apiSampleRequest api/user/getSessionToken
+ * 
+ * @apiParamExample  {Object} Request-Example
    {
      username: '100090009',
      userpass: 'my_password',
@@ -71,7 +75,7 @@ export function getLoginToken () {
      loginToken: '20180131-985013778448'
    }
  *
- * @apiSuccessExample {Object} Success-Response:
+ * @apiSuccessExample {Object} Success-Response
    {
      error: 0,
      time: 1517335710534,
@@ -80,13 +84,13 @@ export function getLoginToken () {
      username: '100090009'
    }
  */
-export function getSessionToken (loginInfo) {
+export function getSessionToken (username, userpass, authCheckCode, loginToken) {
   return new Promise((resolve, reject) => {
     let formData = {
-      account: loginInfo.username,
-      passwd: loginInfo.userpass,
-      passwd2: loginInfo.authCheckCode,
-      fnstr: loginInfo.loginToken
+      account: username,
+      passwd: userpass,
+      passwd2: authCheckCode,
+      fnstr: loginToken
     }
 
     correctRequest({
