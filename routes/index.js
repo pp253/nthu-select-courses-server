@@ -4,6 +4,31 @@ import * as user from '../src/api/user'
 import response from '../src/api/response'
 import validation from '../src/api/validator'
 import debug from '../src/lib/debug'
+import { Timer } from '../src/lib/utils'
+
+function apiMethodWrapper (apiFunc, apiArgus) {
+  return (req, res, next) => {
+    let checkObj = {}
+    let argusArr = []
+    for (let key of apiArgus) {
+      checkObj[key] = validation[key]
+      argusArr.push(req.body[key])
+    }
+
+    return new Promise((resolve, reject) => {
+      req.check(checkObj)
+
+      req.getValidationResult().then((err) => {
+        if (!err.isEmpty()) {
+          reject(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
+          return
+        }
+
+        resolve(apiFunc(...argusArr))
+      })
+    })
+  }
+}
 
 export default function initialize (app) {
   app.all('*', (req, res, next) => {
@@ -15,292 +40,82 @@ export default function initialize (app) {
     const apiRoute = {
       'user': {
         getLoginToken (req, res, next) {
-          user.getLoginToken()
-          .then((result) => {
-            res.json(result)
-          })
-          .catch((err) => {
-            res.json(err)
-          })
+          return user.getLoginToken()
         },
-        getSessionToken (req, res, next) {
-          req.check({
-            username: validation.username,
-            userpass: validation.userpass,
-            loginToken: validation.loginToken,
-            authCheckCode: validation.authCheckCode
-          })
-
-          req.getValidationResult().then((err) => {
-            if (!err.isEmpty()) {
-              res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
-              return
-            }
-
-            let loginInfo = {
-              username: req.body.username,
-              userpass: req.body.userpass,
-              loginToken: req.body.loginToken,
-              authCheckCode: req.body.authCheckCode
-            }
-
-            user.getSessionToken(loginInfo)
-            .then((result) => {
-              res.json(result)
-            })
-            .catch((err) => {
-              res.json(err)
-            })
-          })
-        }
+        getSessionToken: apiMethodWrapper(user.getSessionToken, [
+          'username',
+          'userpass',
+          'authCheckCode',
+          'loginToken'
+        ])
       },
       'scores': {
-        getScores (req, res, next) {
-          req.check({
-            sessionToken: validation.sessionToken
-          })
-
-          req.getValidationResult().then((err) => {
-            if (!err.isEmpty()) {
-              res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
-              return
-            }
-
-            let sessionToken = req.body.sessionToken
-
-            scores.getScores(sessionToken)
-            .then((result) => {
-              res.json(result)
-            })
-            .catch((err) => {
-              res.json(err)
-            })
-          })
-        },
-        getDistribution (req, res, next) {
-          req.check({
-            sessionToken: validation.sessionToken,
-            courseNumber: validation.newOrder
-          })
-
-          req.getValidationResult().then((err) => {
-            if (!err.isEmpty()) {
-              res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
-              return
-            }
-
-            let sessionToken = req.body.sessionToken
-            let courseNumber = req.body.courseNumber
-
-            scores.getDistribution(sessionToken, courseNumber)
-            .then((result) => {
-              res.json(result)
-            })
-            .catch((err) => {
-              res.json(err)
-            })
-          })
-        }
+        getScores: apiMethodWrapper(scores.getScores, [
+          'sessionToken'
+        ]),
+        getDistribution: apiMethodWrapper(scores.getDistribution, [
+          'sessionToken',
+          'courseNumber'
+        ])
       },
       'select_course': {
-        getCurrentSelectedCourses (req, res, next) {
-          req.check({
-            sessionToken: validation.sessionToken
-          })
-
-          req.getValidationResult().then((err) => {
-            if (!err.isEmpty()) {
-              res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
-              return
-            }
-
-            let sessionToken = req.body.sessionToken
-
-            selectCourse.getCurrentSelectedCourses(sessionToken)
-            .then((result) => {
-              res.json(result)
-            })
-            .catch((err) => {
-              res.json(err)
-            })
-          })
-        },
-        editOrder (req, res, next) {
-          req.check({
-            sessionToken: validation.sessionToken,
-            newOrder: validation.newOrder,
-            oldOrder: validation.oldOrder
-          })
-
-          req.getValidationResult().then((err) => {
-            if (!err.isEmpty()) {
-              res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
-              return
-            }
-
-            let sessionToken = req.body.sessionToken
-            let newOrder = req.body.newOrder
-            let oldOrder = req.body.oldOrder
-
-            selectCourse.editOrder(sessionToken, newOrder, oldOrder)
-            .then((result) => {
-              res.json(result)
-            })
-            .catch((err) => {
-              res.json(err)
-            })
-          })
-        },
-        addCourse (req, res, next) {
-          req.check({
-            sessionToken: validation.sessionToken,
-            courseNumber: validation.newOrder,
-            order: validation.order
-          })
-
-          req.getValidationResult().then((err) => {
-            if (!err.isEmpty()) {
-              res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
-              return
-            }
-
-            let sessionToken = req.body.sessionToken
-            let courseNumber = req.body.courseNumber
-            let order = req.body.order
-
-            selectCourse.addCourse(sessionToken, courseNumber, order)
-            .then((result) => {
-              res.json(result)
-            })
-            .catch((err) => {
-              res.json(err)
-            })
-          })
-        },
-        quitCourse (req, res, next) {
-          req.check({
-            sessionToken: validation.sessionToken,
-            courseNumber: validation.newOrder
-          })
-
-          req.getValidationResult().then((err) => {
-            if (!err.isEmpty()) {
-              res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
-              return
-            }
-
-            let sessionToken = req.body.sessionToken
-            let courseNumber = req.body.courseNumber
-
-            selectCourse.quitCourse(sessionToken, courseNumber)
-            .then((result) => {
-              res.json(result)
-            })
-            .catch((err) => {
-              res.json(err)
-            })
-          })
-        },
-        getSyllabus (req, res, next) {
-          req.check({
-            sessionToken: validation.sessionToken,
-            courseNumber: validation.newOrder
-          })
-
-          req.getValidationResult().then((err) => {
-            if (!err.isEmpty()) {
-              res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
-              return
-            }
-
-            let sessionToken = req.body.sessionToken
-            let courseNumber = req.body.courseNumber
-
-            selectCourse.getSyllabus(sessionToken, courseNumber)
-            .then((result) => {
-              res.json(result)
-            })
-            .catch((err) => {
-              res.json(err)
-            })
-          })
-        },
-        getAvailableSelectionResult (req, res, next) {
-          req.check({
-            sessionToken: validation.sessionToken
-          })
-
-          req.getValidationResult().then((err) => {
-            if (!err.isEmpty()) {
-              res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
-              return
-            }
-
-            let sessionToken = req.body.sessionToken
-
-            selectCourse.getAvailableSelectionResult(sessionToken)
-            .then((result) => {
-              res.json(result)
-            })
-            .catch((err) => {
-              res.json(err)
-            })
-          })
-        },
-        getSelectionResult (req, res, next) {
-          req.check({
-            sessionToken: validation.sessionToken,
-            semester: validation.semester,
-            phase: validation.phase
-          })
-
-          req.getValidationResult().then((err) => {
-            if (!err.isEmpty()) {
-              res.status(400)
-              .json(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
-              return
-            }
-
-            let sessionToken = req.body.sessionToken
-            let semester = req.body.semester
-            let phase = req.body.phase
-
-            selectCourse.getSelectionResult(sessionToken, semester, phase)
-            .then((result) => {
-              res.json(result)
-            })
-            .catch((err) => {
-              res.json(err)
-            })
-          })
-        }
+        getCurrentSelectedCourses: apiMethodWrapper(selectCourse.getCurrentSelectedCourses, [
+          'sessionToken'
+        ]),
+        editOrder: apiMethodWrapper(selectCourse.editOrder, [
+          'sessionToken',
+          'newOrder',
+          'oldOrder'
+        ]),
+        addCourse: apiMethodWrapper(selectCourse.addCourse, [
+          'sessionToken',
+          'courseNumber',
+          'order'
+        ]),
+        quitCourse: apiMethodWrapper(selectCourse.quitCourse, [
+          'sessionToken',
+          'courseNumber'
+        ]),
+        getSyllabus: apiMethodWrapper(selectCourse.getSyllabus, [
+          'sessionToken',
+          'courseNumber'
+        ]),
+        getAvailableSelectionResult: apiMethodWrapper(selectCourse.getAvailableSelectionResult, [
+          'sessionToken'
+        ]),
+        getSelectionResult: apiMethodWrapper(selectCourse.getSelectionResult, [
+          'sessionToken',
+          'semester',
+          'phase'
+        ])
       }
     }
 
     let moduleName = req.params.module
     let methodName = req.params.method
     if (moduleName in apiRoute && methodName in apiRoute[moduleName]) {
+      const timer = new Timer(`${moduleName}/${methodName}`)
+      timer.start()
       apiRoute[moduleName][methodName](req, res, next)
+      .then((result) => {
+        timer.stop()
+        res.json(result)
+      })
+      .catch((err) => {
+        timer.stop()
+        res.json(err)
+      })
     } else {
-      res.json(response.ResponseErrorMsg.ApiModuleNotExist(moduleName))
+      res.status(400)
+      .json(response.ResponseErrorMsg.ApiModuleNotExist(moduleName))
     }
   })
 
   app.get('/echo', function (req, res, next) {
-    // res.render('echo')
+    res.send('echo')
   })
 
   app.get('*', function (req, res, next) {
-    res.status(404)
-    // res.render('error/404')
+    res.status(404).send('404 NOT FOUND')
   })
 }
