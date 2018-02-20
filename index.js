@@ -61,7 +61,8 @@ if (PRODUCTION) {
   // Listening
   let httpsServer = https.createServer({
     key: fs.readFileSync(path.join(__dirname, '/secret/private.key')),
-    cert: fs.readFileSync(path.join(__dirname, '/secret/certificate.crt'))
+    cert: fs.readFileSync(path.join(__dirname, '/secret/certificate.crt')),
+    ca: fs.readFileSync(path.join(__dirname, '/secret/ca_bundle.crt'))
   }, app)
 
   httpsServer.listen(app.get('port'), () => {
