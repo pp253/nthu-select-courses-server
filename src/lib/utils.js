@@ -2,7 +2,7 @@ import process from 'process'
 import moment from 'moment'
 import { Exception } from './debug'
 
-export const PRODUCTION = process.env.NODE_ENV === 'production'
+export const PRODUCTION = process.env.NODE_ENV !== 'development'
 
 export function toArray (obj) {
   if (typeof obj !== 'object') {
