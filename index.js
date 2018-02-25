@@ -15,7 +15,7 @@ import { PRODUCTION, Timer } from './src/lib/utils'
 
 console.log(`ENV: ${PRODUCTION ? 'production' : 'development'}`)
 
-let timer = new Timer('', true)
+let timer = new Timer('init server', true)
 timer.start()
 
 const app = express()
