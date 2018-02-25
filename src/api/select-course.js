@@ -121,15 +121,7 @@ export function getCurrentSelectedCourses (sessionToken) {
         resolve(err)
       })
     })
-    .then((body) => {
-      if (body === config.grabdata.errSessionInterrupted) {
-        reject(response.ResponseErrorMsg.SessionInterrupted())
-        return
-      } else if (body.startsWith(config.grabdata.errNotAvailable)) {
-        reject(response.ResponseErrorMsg.NotAvailable())
-        return
-      }
-
+    .then(() => {
       return request({
         url: config.grabdata.preloadSelectedCoursesPage2.replace('{0}', sessionToken),
         formData: {

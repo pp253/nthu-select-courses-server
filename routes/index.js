@@ -94,15 +94,15 @@ export default function initialize (app) {
     let moduleName = req.params.module
     let methodName = req.params.method
     if (moduleName in apiRoute && methodName in apiRoute[moduleName]) {
-      const timer = new Timer(`${moduleName}/${methodName}`)
-      timer.start()
+      // const timer = new Timer(`${moduleName}/${methodName}`)
+      // timer.start()
       apiRoute[moduleName][methodName](req, res, next)
       .then((result) => {
-        timer.stop()
+        // timer.stop()
         res.json(result)
       })
       .catch((err) => {
-        timer.stop()
+        // timer.stop()
         res.json(err)
       })
     } else {
