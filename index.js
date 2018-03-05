@@ -9,6 +9,7 @@ import bodyParser from 'body-parser'
 import expressValidator from 'express-validator'
 import compression from 'compression'
 import cors from 'cors'
+// import memwatch from 'memwatch-next'
 import debug from './src/lib/debug'
 import routes from './routes'
 import { PRODUCTION, Timer } from './src/lib/utils'
@@ -82,6 +83,12 @@ if (PRODUCTION) {
     debug.log('Start to listen on PORT %d ...', app.get('port'))
     timer.stop()
   })
+
+  /*
+  memwatch.on('leak', (e) => {
+    console.log('LEAK', e)
+  })
+  */
 }
 
 debug.log('Server initialized done')

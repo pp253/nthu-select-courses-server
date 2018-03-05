@@ -2,6 +2,10 @@ import process from 'process'
 import moment from 'moment'
 import { Exception } from './debug'
 
+/**
+ * Using `set NODE_ENV=development` or `set NODE_ENV=production` for
+ * determining the environment.
+ */
 export const PRODUCTION = process.env.NODE_ENV !== 'development'
 
 export function toArray (obj) {
