@@ -264,7 +264,8 @@ The `time` value is used to check the version of the `courses_db.json`.
       "time": "W9Wa"
       // and more
     }
-  }
+  },
+  "time": "1517335710534"
 }
 ```
 
