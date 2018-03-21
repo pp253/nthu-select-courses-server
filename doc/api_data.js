@@ -61,11 +61,6 @@ define({ "api": [
         }
       ]
     },
-    "sampleRequest": [
-      {
-        "url": "https://nthu-course.ddns.net/api/select_course/addCourse"
-      }
-    ],
     "version": "0.0.0",
     "filename": "src/api/select-course.js",
     "groupTitle": "Select_Courses"
@@ -116,7 +111,7 @@ define({ "api": [
         "200": [
           {
             "group": "200",
-            "type": "CurrentSelectedCourses",
+            "type": "CourseStatus[]",
             "optional": false,
             "field": "currentSelectedCourses",
             "description": "<p>Current Selected Courses.</p>"
@@ -131,11 +126,6 @@ define({ "api": [
         }
       ]
     },
-    "sampleRequest": [
-      {
-        "url": "https://nthu-course.ddns.net/api/select_course/editOrder"
-      }
-    ],
     "version": "0.0.0",
     "filename": "src/api/select-course.js",
     "groupTitle": "Select_Courses"
@@ -202,16 +192,11 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response",
-          "content": "{\n  error: 0,\n  time: 1517335710534,\n  success: 1,\n  availableSelectionResult: {\n\n  },\n  semester: '',\n  phase: '',\n  editable: false\n}",
+          "content": "{\n  error: 0,\n  time: 1517335710534,\n  success: 1,\n  availableSelectionResult: {\n    '10610': [\n      '100',\n      '100P'\n    ]\n  },\n  semester: '',\n  phase: '',\n  editable: false\n}",
           "type": "Object"
         }
       ]
     },
-    "sampleRequest": [
-      {
-        "url": "https://nthu-course.ddns.net/api/select_course/getAvailableSelectionResult"
-      }
-    ],
     "version": "0.0.0",
     "filename": "src/api/select-course.js",
     "groupTitle": "Select_Courses"
@@ -263,11 +248,6 @@ define({ "api": [
         }
       ]
     },
-    "sampleRequest": [
-      {
-        "url": "https://nthu-course.ddns.net/api/select_course/getCurrentSelectedCourses"
-      }
-    ],
     "version": "0.0.0",
     "filename": "src/api/select-course.js",
     "groupTitle": "Select_Courses"
@@ -355,12 +335,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/api/select-course.js",
-    "groupTitle": "Select_Courses",
-    "sampleRequest": [
-      {
-        "url": "https://nthu-course.ddns.net/api/select_course/getSelectionResult"
-      }
-    ]
+    "groupTitle": "Select_Courses"
   },
   {
     "type": "post",
@@ -415,11 +390,6 @@ define({ "api": [
         }
       ]
     },
-    "sampleRequest": [
-      {
-        "url": "https://nthu-course.ddns.net/api/select_course/getSyllabus"
-      }
-    ],
     "version": "0.0.0",
     "filename": "src/api/select-course.js",
     "groupTitle": "Select_Courses"
@@ -478,11 +448,6 @@ define({ "api": [
         }
       ]
     },
-    "sampleRequest": [
-      {
-        "url": "https://nthu-course.ddns.net/api/select_course/quitCourse"
-      }
-    ],
     "version": "0.0.0",
     "filename": "src/api/select-course.js",
     "groupTitle": "Select_Courses"
@@ -535,12 +500,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/api/scores.js",
-    "groupTitle": "scores",
-    "sampleRequest": [
-      {
-        "url": "https://nthu-course.ddns.net/api/scores/getDistribution"
-      }
-    ]
+    "groupTitle": "scores"
   },
   {
     "type": "post",
@@ -604,12 +564,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "src/api/scores.js",
-    "groupTitle": "scores",
-    "sampleRequest": [
-      {
-        "url": "https://nthu-course.ddns.net/api/scores/getScores"
-      }
-    ]
+    "groupTitle": "scores"
   },
   {
     "type": "post",
@@ -640,20 +595,6 @@ define({ "api": [
         {
           "title": "Success-Response",
           "content": "{\n  error: 0,\n  time: 1517335710534,\n  success: 1,\n  loginToken: '20180131-985013778448',\n  authImg: 'iVBORw0KGgoAAAANSUhEUgAAAFAAAAAeCAMAAACMnWmDAAABFFBMVEX///8yMv/8uLyw78TGxeO70verw8XPzuPU+rHdodjmyNCi5cK/pfT/tMO8t6z1q6m0tNbG58T1qOba6qIjLHJ1e6Y+RoNaYJU1PX5rcKRKSpKAJ43v5PCveLe9z72fXamrn6+/k8bfyeKPQpuVW5afdpq0qqOqkJ+/xajPrtQDEJbf4fHAw+QiLaNCS7Bhab2gpdfAi7dCOaFhTaagdrKBh8qBYqxen1muz6yR0ZtoqWa5wNHq8+qFrYxro2rW59Wftq+Ssp6Gt4Jyq23C28Caw5cliobj8O/I4eCSxMJbp6Snnput09F2tbNAmJXBoqBpXULGwrjs6uehmYi0rqDZ1s+OhXF7cVmdeX+Mb2vAi6jjntHhVwF8AAACg0lEQVRIie2UaW/aQBCGV5BECDDmcJu2C6UJ6cFy9qDrNqSkAYztYnc5Epr0//+P7m2boCBV+ZhXI3l2wI/endk1AE960mOoVGKxRzPX83+ZwDRpvljuJT7Mc+dB6FB5JuetyELUDw9Z7MKVtpHpNAspDnN877fJtSZkDRRxBw9Ua6/vO0yn07Yt88AJ5y7PmMNrQshK4eLEZ89lUodvYj1stQUu/Q1/l6W54/N9uybr4XK1IDcgm2WR4FmWSGoQnkTOWp0Ofx6cY4yHouZSoMf2HQqfS7IBFJdN9PDYksBT2ID1GA8hseML/AOPRHHmhBQXBr7juBKYFYr16MVLyyqKDlKkLncRQi1m8ODy8gL/lFU2kzl9ek7I14QIhwkVpcNMBkCoq71+hwM5El/Jaih4LOEWN2QpehjDFSmwWBTEM3iq6obRRR8FD5zjsaz6fCqAzZuDb8g1uCfpMEP1Fr7TZeMTaqt8rKYyD2Yi8RyPPfTJVqpUaMgeUuR7WNMGjc/oiyFXV3iy5UIC1/pkR8RKyrJSKc4DH2JjpsC+ym1sb70Xii1vAytcFCjX1WjMhjFAX9VipKcCXGlQTHlB/pRBubzDoUQ2YFX/NEADlQ4xllng+DPgBnLYyzXZ3N4leSDukF4+PWbQRz2dj6O7IiR4hOm2nLAIgOoh0wk80Rb7qKv/M8X2RCBd+v0KPTnr1Wq9uPvLcYVCRKTHJp9nAZp1CPWg2xHQHtP7PAW7VFY91ER2l63jPONVKQ42mqLe6qPOQJzEEcWNp8OdQKlCIQl8lWcCzWbUQsQkPjhgMnoIppAyyeVYcIcJ9bq93qC9/dp+HiPmVA8fQzkhvT46YvFf+gelEmXM12SvVQAAAABJRU5ErkJggg=='\n}",
-          "type": "Object"
-        }
-      ]
-    },
-    "sampleRequest": [
-      {
-        "url": "https://nthu-course.ddns.net/api/user/getLoginToken"
-      }
-    ],
-    "parameter": {
-      "examples": [
-        {
-          "title": "Request-Example",
-          "content": "{\n}",
           "type": "Object"
         }
       ]
@@ -736,11 +677,45 @@ define({ "api": [
         }
       ]
     },
-    "sampleRequest": [
-      {
-        "url": "https://nthu-course.ddns.net/api/user/getSessionToken"
-      }
-    ],
+    "version": "0.0.0",
+    "filename": "src/api/user.js",
+    "groupTitle": "user"
+  },
+  {
+    "type": "post",
+    "url": "api/user/logout",
+    "title": "Logout",
+    "name": "logout",
+    "group": "user",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "sessionToken",
+            "description": "<p>Session token.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example",
+          "content": "{\n   sessionToken: 'ifgqu3iupvrrts8fp4tpov1cm5'\n}",
+          "type": "Object"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response",
+          "content": "{\n  error: 0,\n  time: 1517335710534,\n  success: 1\n}",
+          "type": "Object"
+        }
+      ]
+    },
     "version": "0.0.0",
     "filename": "src/api/user.js",
     "groupTitle": "user"

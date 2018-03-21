@@ -107,8 +107,6 @@ export function isAvailable(sessionToken) {
         }
       ]
     }
- *
- * @apiSampleRequest api/select_course/getCurrentSelectedCourses
  */
 export function getCurrentSelectedCourses(sessionToken) {
   return new Promise((resolve, reject) => {
@@ -203,8 +201,6 @@ export function getCurrentSelectedCourses(sessionToken) {
         }
       ]
     }
- *
- * @apiSampleRequest api/select_course/addCourse
  */
 export function addCourse(sessionToken, courseNumber, order = '') {
   return new Promise((resolve, reject) => {
@@ -348,8 +344,6 @@ export function addCourse(sessionToken, courseNumber, order = '') {
      }
    ]
  }
- *
- * @apiSampleRequest api/select_course/quitCourse
  */
 export function quitCourse(sessionToken, courseNumber) {
   return new Promise((resolve, reject) => {
@@ -419,8 +413,6 @@ export function quitCourse(sessionToken, courseNumber) {
      }
    ]
  }
- *
- * @apiSampleRequest api/select_course/editOrder
  */
 export function editOrder(sessionToken, newOrder, oldOrder) {
   return new Promise((resolve, reject) => {
@@ -493,8 +485,6 @@ export function editOrder(sessionToken, newOrder, oldOrder) {
     file: false
    }
  }
- *
- * @apiSampleRequest api/select_course/getSyllabus
  */
 export function getSyllabus(sessionToken, courseNumber) {
   return new Promise((resolve, reject) => {
@@ -579,8 +569,6 @@ export function getSyllabus(sessionToken, courseNumber) {
    phase: '',
    editable: false
  }
- *
- * @apiSampleRequest api/select_course/getAvailableSelectionResult
  */
 export function getAvailableSelectionResult(sessionToken) {
   return new Promise((resolve, reject) => {

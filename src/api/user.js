@@ -11,12 +11,6 @@ import response from './response'
  * @apiSuccess (200) {LoginToken} loginToken Login token is used to mapping with authentication image.
  * @apiSuccess (200) {String} authImg An image encoded in `base64`.
  *
- * @apiSampleRequest api/user/getLoginToken
- *
- * @apiParamExample  {Object} Request-Example
-   {
-   }
- *
  * @apiSuccessExample {Object} Success-Response
    {
      error: 0,
@@ -65,8 +59,6 @@ export function getLoginToken() {
  *
  * @apiSuccess (200) {SessionToken} sessionToken Session token.
  * @apiSuccess (200) {String} username User name.
- *
- * @apiSampleRequest api/user/getSessionToken
  *
  * @apiParamExample  {Object} Request-Example
    {
@@ -148,8 +140,6 @@ export function getSessionToken(username, userpass, authCheckCode, loginToken) {
  * @apiGroup user
  *
  * @apiParam {String} sessionToken Session token.
- *
- * @apiSampleRequest api/user/logout
  *
  * @apiParamExample  {Object} Request-Example
    {

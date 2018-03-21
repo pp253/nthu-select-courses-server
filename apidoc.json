@@ -3,7 +3,6 @@
   "description": "清大簡易選課系統",
   "title": "NTHU COURSE API SERVER",
   "url" : "https://nthu-course.ddns.net/",
-  "sampleUrl" : "https://nthu-course.ddns.net/",
   "header": {
     "filename": "doc/header.md"
   }
