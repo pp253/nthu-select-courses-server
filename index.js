@@ -28,25 +28,29 @@ app.use(helmet())
 app.use(cors())
 
 // Compression
-app.use(compression({credentials: true, origin: true}))
+app.use(compression({ credentials: true, origin: true }))
 
 // Body parser and Validator
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.use(expressValidator({
-  customValidators: {}
-}))
+app.use(
+  expressValidator({
+    customValidators: {}
+  })
+)
 
 // Views
 app.set('view engine', 'pug')
 app.set('views', './views')
 
 // Session
-app.use(session({
-  secret: 'nthu-select-course',
-  resave: false,
-  saveUninitialized: false
-}))
+app.use(
+  session({
+    secret: 'nthu-select-course',
+    resave: false,
+    saveUninitialized: false
+  })
+)
 
 // Setting
 app.set('port', PRODUCTION ? 443 : 80)
@@ -60,11 +64,14 @@ routes(app)
 
 if (PRODUCTION) {
   // Listening
-  let httpsServer = https.createServer({
-    key: fs.readFileSync(path.join(__dirname, '/secret/private.key')),
-    cert: fs.readFileSync(path.join(__dirname, '/secret/certificate.crt')),
-    ca: fs.readFileSync(path.join(__dirname, '/secret/ca_bundle.crt'))
-  }, app)
+  let httpsServer = https.createServer(
+    {
+      key: fs.readFileSync(path.join(__dirname, '/secret/private.key')),
+      cert: fs.readFileSync(path.join(__dirname, '/secret/certificate.crt')),
+      ca: fs.readFileSync(path.join(__dirname, '/secret/ca_bundle.crt'))
+    },
+    app
+  )
 
   httpsServer.listen(app.get('port'), () => {
     debug.log('Start to listen on PORT %d ...', app.get('port'))
@@ -72,12 +79,14 @@ if (PRODUCTION) {
   })
 
   // Auto redirect from port 80 to 443
-  http.createServer((req, res) => {
-    res.writeHead(301, {
-      'Location': 'https://' + req.headers['host'] + req.url
+  http
+    .createServer((req, res) => {
+      res.writeHead(301, {
+        Location: 'https://' + req.headers['host'] + req.url
+      })
+      res.end()
     })
-    res.end()
-  }).listen(80)
+    .listen(80)
 } else {
   app.listen(app.get('port'), () => {
     debug.log('Start to listen on PORT %d ...', app.get('port'))
