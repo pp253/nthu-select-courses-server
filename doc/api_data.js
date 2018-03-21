@@ -161,7 +161,7 @@ define({ "api": [
         "200": [
           {
             "group": "200",
-            "type": "availableSelectionResult",
+            "type": "AvailableSelectionResult",
             "optional": false,
             "field": "availableSelectionResult",
             "description": "<p>Available selection result.</p>"

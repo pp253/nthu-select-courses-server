@@ -545,7 +545,7 @@ export function getSyllabus(sessionToken, courseNumber) {
  *
  * @apiParam {String} sessionToken Session token.
  *
- * @apiSuccess (200) {availableSelectionResult} availableSelectionResult Available selection result.
+ * @apiSuccess (200) {AvailableSelectionResult} availableSelectionResult Available selection result.
  * @apiSuccess (200) {Semester} semester Semester.
  * @apiSuccess (200) {Phase} phase Phase.
  * @apiSuccess (200) {Boolean} editable Editable.
