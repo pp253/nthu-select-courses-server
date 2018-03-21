@@ -134,7 +134,7 @@ M3M4TaTbR5
 | abbr        | DepartmentAbbr | Abbreviation of department |
 | chineseName | String         | Chinses name of department |
 | englishName | String         | English name of department |
-| classes     | Classes[]      | English name of department |
+| classes     | Class[]        | English name of department |
 
 ### Example
 
@@ -155,7 +155,7 @@ M3M4TaTbR5
 }
 ```
 
-## `Classes` _Object_
+## `Class` _Object_
 
 | name        | type      | description                                             |
 | ----------- | --------- | ------------------------------------------------------- |
