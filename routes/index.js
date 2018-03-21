@@ -6,7 +6,7 @@ import validation from '../src/api/validator'
 import debug from '../src/lib/debug'
 import { Timer } from '../src/lib/utils'
 
-function apiMethodWrapper (apiFunc, apiArgus) {
+function apiMethodWrapper(apiFunc, apiArgus) {
   return (req, res, next) => {
     let checkObj = {}
     let argusArr = []
@@ -18,9 +18,11 @@ function apiMethodWrapper (apiFunc, apiArgus) {
     return new Promise((resolve, reject) => {
       req.check(checkObj)
 
-      req.getValidationResult().then((err) => {
+      req.getValidationResult().then(err => {
         if (!err.isEmpty()) {
-          reject(response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped()))
+          reject(
+            response.ResponseErrorMsg.ApiArgumentValidationError(err.mapped())
+          )
           return
         }
 
@@ -30,7 +32,7 @@ function apiMethodWrapper (apiFunc, apiArgus) {
   }
 }
 
-export default function initialize (app) {
+export default function initialize(app) {
   app.all('*', (req, res, next) => {
     debug.log(req.ip, req.originalUrl)
     next()
@@ -38,8 +40,8 @@ export default function initialize (app) {
 
   app.post('/api/:module/:method', (req, res, next) => {
     const apiRoute = {
-      'user': {
-        getLoginToken (req, res, next) {
+      user: {
+        getLoginToken(req, res, next) {
           return user.getLoginToken()
         },
         getSessionToken: apiMethodWrapper(user.getSessionToken, [
@@ -47,21 +49,21 @@ export default function initialize (app) {
           'userpass',
           'authCheckCode',
           'loginToken'
-        ])
-      },
-      'scores': {
-        getScores: apiMethodWrapper(scores.getScores, [
-          'sessionToken'
         ]),
+        logout: apiMethodWrapper(user.logout, ['sessionToken'])
+      },
+      scores: {
+        getScores: apiMethodWrapper(scores.getScores, ['sessionToken']),
         getDistribution: apiMethodWrapper(scores.getDistribution, [
           'sessionToken',
           'courseNumber'
         ])
       },
-      'select_course': {
-        getCurrentSelectedCourses: apiMethodWrapper(selectCourse.getCurrentSelectedCourses, [
-          'sessionToken'
-        ]),
+      select_course: {
+        getCurrentSelectedCourses: apiMethodWrapper(
+          selectCourse.getCurrentSelectedCourses,
+          ['sessionToken']
+        ),
         editOrder: apiMethodWrapper(selectCourse.editOrder, [
           'sessionToken',
           'newOrder',
@@ -80,9 +82,10 @@ export default function initialize (app) {
           'sessionToken',
           'courseNumber'
         ]),
-        getAvailableSelectionResult: apiMethodWrapper(selectCourse.getAvailableSelectionResult, [
-          'sessionToken'
-        ]),
+        getAvailableSelectionResult: apiMethodWrapper(
+          selectCourse.getAvailableSelectionResult,
+          ['sessionToken']
+        ),
         getSelectionResult: apiMethodWrapper(selectCourse.getSelectionResult, [
           'sessionToken',
           'semester',
@@ -97,25 +100,26 @@ export default function initialize (app) {
       // const timer = new Timer(`${moduleName}/${methodName}`)
       // timer.start()
       apiRoute[moduleName][methodName](req, res, next)
-      .then((result) => {
-        // timer.stop()
-        res.json(result)
-      })
-      .catch((err) => {
-        // timer.stop()
-        res.json(err)
-      })
+        .then(result => {
+          // timer.stop()
+          res.json(result)
+        })
+        .catch(err => {
+          // timer.stop()
+          res.json(err)
+        })
     } else {
-      res.status(400)
-      .json(response.ResponseErrorMsg.ApiModuleNotExist(moduleName))
+      res
+        .status(400)
+        .json(response.ResponseErrorMsg.ApiModuleNotExist(moduleName))
     }
   })
 
-  app.get('/echo', function (req, res, next) {
+  app.get('/echo', function(req, res, next) {
     res.send('echo')
   })
 
-  app.get('*', function (req, res, next) {
+  app.get('*', function(req, res, next) {
     res.status(404).send('404 NOT FOUND')
   })
 }
