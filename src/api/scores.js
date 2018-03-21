@@ -1,6 +1,6 @@
 import {request, correctRequest} from '../lib/request'
 import cheerio from 'cheerio'
-import config from '../../config.json'
+import config from '../../config'
 import response from './response'
 import grabHelper from './grab-helper'
 
