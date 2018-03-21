@@ -6,9 +6,9 @@ import { Exception } from './debug'
  * Using `set NODE_ENV=development` or `set NODE_ENV=production` for
  * determining the environment.
  */
-export const PRODUCTION = process.env.NODE_ENV !== 'development'
+export const PRODUCTION = process.env.NODE_ENV === 'production'
 
-export function toArray (obj) {
+export function toArray(obj) {
   if (typeof obj !== 'object') {
     throw new Exception('toArray: obj should be an object.')
   }
@@ -34,14 +34,14 @@ export function toArray (obj) {
  * @param {String} str String to formatted.
  * @param {Object | String[]} argus Arguments for formatting.
  */
-export function format (str, ...argus) {
+export function format(str, ...argus) {
   if (typeof str !== 'string') {
     throw Exception('format: str should be a string.')
   }
 
   let result = str
   const reg = /\{([^}:]*)(?::([^}]*))?\}/
-  let isObj = argus[0] && (typeof argus[0] === 'object')
+  let isObj = argus[0] && typeof argus[0] === 'object'
 
   while (true) {
     const exec = reg.exec(result)
@@ -50,7 +50,8 @@ export function format (str, ...argus) {
     }
     const key = exec[1]
     const index = exec.index
-    const length = key.length + 2 + (exec[2] === undefined ? 0 : exec[2].length + 1)
+    const length =
+      key.length + 2 + (exec[2] === undefined ? 0 : exec[2].length + 1)
     const text = (isObj ? argus[0][key] : argus[key]) || exec[2] || ''
     result = result.slice(0, index) + text + result.slice(index + length)
   }
@@ -58,7 +59,7 @@ export function format (str, ...argus) {
 }
 
 export class Timer {
-  constructor (name, log) {
+  constructor(name, log) {
     this.history = []
     this.laps = []
     this.counting = false
@@ -68,7 +69,7 @@ export class Timer {
     return this
   }
 
-  resume () {
+  resume() {
     if (!this.counting) {
       const t = Date.now()
       const c = this.count()
@@ -78,13 +79,17 @@ export class Timer {
       })
       this.counting = true
       if (this.log) {
-        console.log(`${this.name} | RESUME: ${moment(t).format('MM-DD HH:mm:ss:SSS')} ${c}ms`)
+        console.log(
+          `${this.name} | RESUME: ${moment(t).format(
+            'MM-DD HH:mm:ss:SSS'
+          )} ${c}ms`
+        )
       }
     }
     return this
   }
 
-  pause () {
+  pause() {
     if (this.counting) {
       const t = Date.now()
       const c = this.count()
@@ -95,23 +100,27 @@ export class Timer {
       this.counting = false
       this._duration = c - this._duration
       if (this.log) {
-        console.log(`${this.name} | PAUSE:  ${moment(t).format('MM-DD HH:mm:ss:SSS')} ${c}ms`)
+        console.log(
+          `${this.name} | PAUSE:  ${moment(t).format(
+            'MM-DD HH:mm:ss:SSS'
+          )} ${c}ms`
+        )
       }
     }
     return this
   }
 
-  start () {
+  start() {
     this.resume()
     return this
   }
 
-  stop () {
+  stop() {
     this.pause()
     return this
   }
 
-  lap () {
+  lap() {
     const t = Date.now()
     const c = this.count()
     this.laps.push({
@@ -119,12 +128,16 @@ export class Timer {
       count: c
     })
     if (this.log) {
-      console.log(`${this.name} | LAP:    ${moment(t).format('MM-DD HH:mm:ss:SSS')} ${c}ms`)
+      console.log(
+        `${this.name} | LAP:    ${moment(t).format(
+          'MM-DD HH:mm:ss:SSS'
+        )} ${c}ms`
+      )
     }
     return this
   }
 
-  reset () {
+  reset() {
     this.history = []
     this.laps = []
     this._duration = 0
@@ -133,7 +146,7 @@ export class Timer {
     return this
   }
 
-  count () {
+  count() {
     if (this.counting) {
       const lastLog = this.history[this.history.length - 1]
       return Date.now() - lastLog.time + this._duration
@@ -142,7 +155,7 @@ export class Timer {
     }
   }
 
-  toString () {
+  toString() {
     let str = ''
     return str
   }
