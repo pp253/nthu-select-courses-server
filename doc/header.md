@@ -279,7 +279,7 @@ The `time` value is used to check the version of the `courses_db.json`.
 | ------- | ------ | ----------- |
 | `error` | Number |             |
 | `id`    | Number |             |
-| `msg`   | String |             |
+| `msg`   | String | _Optional_  |
 | `more`  | Any    | _Optional_  |
 
 ### Example
