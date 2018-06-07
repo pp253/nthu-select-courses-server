@@ -3,7 +3,7 @@ const iconv = require('iconv-lite')
 const cheerio = require('cheerio')
 const fs = require('fs')
 
-function grabHelper (node, level = 0, initIndex = 0) {
+function grabHelper(node, level = 0, initIndex = 0) {
   if (node instanceof Array) {
     let idx = initIndex
     for (let childNode of node) {
@@ -11,21 +11,37 @@ function grabHelper (node, level = 0, initIndex = 0) {
     }
   } else {
     if (node.type === 'text') {
-      console.log(' '.repeat(level * 2) + '\x1b[34m' + initIndex + '\x1b[0m "' + node.data.replace(/\n/g, '\\n') + '"')
+      console.log(
+        ' '.repeat(level * 2) +
+          '\x1b[34m' +
+          initIndex +
+          '\x1b[0m "' +
+          node.data.replace(/\n/g, '\\n') +
+          '"'
+      )
     } else {
-      console.log(' '.repeat(level * 2) + '\x1b[34m' + initIndex + ' \x1b[32m<' + node.name + '>\x1b[0m')
+      console.log(
+        ' '.repeat(level * 2) +
+          '\x1b[34m' +
+          initIndex +
+          ' \x1b[32m<' +
+          node.name +
+          '>\x1b[0m'
+      )
       grabHelper(node.children, level + 1)
     }
   }
 }
 
-function grabDepartmentsByBody (body) {
+function grabDepartmentsByBody(body) {
   const $ = cheerio.load(body)
   let departments = {}
 
   // get departments
   for (let dept of $('select[name=new_dept] option').toArray()) {
-    let parsedDeptName = /([A-Z0-9]+) ([^\s]+)(?: (.*))?/.exec(dept.children[0].data)
+    let parsedDeptName = /([A-Z0-9]+) ([^\s]+)(?: (.*))?/.exec(
+      dept.children[0].data
+    )
     let deptAbbr = parsedDeptName[1]
     let deptChineseName = parsedDeptName[2]
     let deptEnglishName = parsedDeptName[3] ? parsedDeptName[3] : deptAbbr
@@ -39,7 +55,9 @@ function grabDepartmentsByBody (body) {
 
   // get classes
   for (let cls of $('select[name=new_class] option').toArray()) {
-    let parsedClassName = /([A-Z]+)(\s*[0-9A-Z]+)\s+([^\s]+)/.exec(cls.children[0].data)
+    let parsedClassName = /([A-Z]+)(\s*[0-9A-Z]+)\s+([^\s]+)/.exec(
+      cls.children[0].data
+    )
     let deptAbbr = parsedClassName[1]
     let classLevel = parsedClassName[2]
     let className = parsedClassName[3]
@@ -61,7 +79,7 @@ function grabDepartmentsByBody (body) {
   return departments
 }
 
-function grabCoursesByBody (body) {
+function grabCoursesByBody(body) {
   const $ = cheerio.load(body)
   let courses = {}
 
@@ -90,7 +108,9 @@ function grabCoursesByBody (body) {
       console.log(grabHelper(tr))
       process.abort()
     }
-    let argus = /[^;]*;checks\(this\.form, '([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)'\);/.exec(arguText)
+    let argus = /[^;]*;checks\(this\.form, '([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)'\);/.exec(
+      arguText
+    )
 
     let course = {
       number: trArray.get(1).children[0].children[0].data.trim(),
@@ -102,8 +122,12 @@ function grabCoursesByBody (body) {
       size_limit: trArray.get(8).children[0].children[0].data.trim(),
       required: trArray.get(7).children[0].children[0].data.trim(),
       previous_size: trArray.get(9).children[0].children[0].data.trim(),
-      prerequirement: $(trArray.get(11).children[0]).text().trim(),
-      memo: $(trArray.get(12).children[0]).text().trim(),
+      prerequirement: $(trArray.get(11).children[0])
+        .text()
+        .trim(),
+      memo: $(trArray.get(12).children[0])
+        .text()
+        .trim(),
       sc_code: !canceled && argus[2],
       sc_div: !canceled && argus[3],
       sc_real: !canceled && argus[4],
@@ -121,7 +145,7 @@ function grabCoursesByBody (body) {
   return courses
 }
 
-function grabData (ACIXSTORE) {
+function grabData(ACIXSTORE) {
   const url = `https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713004.php?ACIXSTORE=${ACIXSTORE}`
 
   const formData = {
@@ -144,104 +168,119 @@ function grabData (ACIXSTORE) {
     courses: {}
   }
 
-  request({method: 'POST', url: url, formData: formData, encoding: null})
-  .then(function (body) {
-    if (iconv.decode(body, 'big5') === 'session is interrupted! <br>') {
-      console.error('session is interrupted! when request', url)
-    }
-    data.departments = grabDepartmentsByBody(iconv.decode(body, 'big5'))
-    let promises = []
-
-    for (let deptAbbr in data.departments) {
-      promises.push(new Promise(function (resolve, reject) {
-        // get dept's courses
-        request({
-          method: 'POST',
-          url: url,
-          formData: {
-            ACIXSTORE: ACIXSTORE,
-            toChk: '1',
-            new_dept: deptAbbr
-          },
-          encoding: null
-        })
-        .then(function (body) {
-          if (iconv.decode(body, 'big5') === 'session is interrupted! <br>') {
-            console.error('session is interrupted! when request new_dept', deptAbbr)
-          }
-          let courses = grabCoursesByBody(iconv.decode(body, 'big5'))
-          for (let courseNumber in courses) {
-            if (!data.catalog[deptAbbr]) {
-              data.catalog[deptAbbr] = []
-            }
-            data.catalog[deptAbbr].push(courseNumber)
-
-            if (!data.courses[courseNumber]) {
-              data.courses[courseNumber] = courses[courseNumber]
-            }
-          }
-          resolve()
-        })
-        .catch(function (err) {
-          reject(err)
-        })
-      }))
-
-      // get class courses
-      for (let cls of data.departments[deptAbbr].classes) {
-        promises.push(new Promise(function (resolve, reject) {
-          request({
-            method: 'POST',
-            url: url,
-            formData: {
-              ACIXSTORE: ACIXSTORE,
-              toChk: '2',
-              new_class: cls.abbr
-            },
-            encoding: null
-          })
-          .then(function (body) {
-            if (iconv.decode(body, 'big5') === 'session is interrupted! <br>') {
-              console.error('session is interrupted! when request new_class', cls.abbr)
-            }
-            let courses = grabCoursesByBody(iconv.decode(body, 'big5'))
-            for (let courseNumber in courses) {
-              if (!data.catalog[cls.abbr]) {
-                data.catalog[cls.abbr] = []
-              }
-              data.catalog[cls.abbr].push(courseNumber)
-
-              if (!data.courses[courseNumber]) {
-                data.courses[courseNumber] = courses[courseNumber]
-              }
-            }
-            resolve()
-          })
-          .catch(function (err) {
-            reject(err)
-          })
-        }))
+  request({ method: 'POST', url: url, formData: formData, encoding: null })
+    .then(function(body) {
+      if (iconv.decode(body, 'big5') === 'session is interrupted! <br>') {
+        console.error('session is interrupted! when request', url)
       }
-    }
+      data.departments = grabDepartmentsByBody(iconv.decode(body, 'big5'))
+      let promises = []
 
-    Promise.all(promises)
-    .then(() => {
-      console.log('Grabbing Data is done!')
+      for (let deptAbbr in data.departments) {
+        promises.push(
+          new Promise(function(resolve, reject) {
+            // get dept's courses
+            request({
+              method: 'POST',
+              url: url,
+              formData: {
+                ACIXSTORE: ACIXSTORE,
+                toChk: '1',
+                new_dept: deptAbbr
+              },
+              encoding: null
+            })
+              .then(function(body) {
+                if (
+                  iconv.decode(body, 'big5') === 'session is interrupted! <br>'
+                ) {
+                  console.error(
+                    'session is interrupted! when request new_dept',
+                    deptAbbr
+                  )
+                }
+                let courses = grabCoursesByBody(iconv.decode(body, 'big5'))
+                for (let courseNumber in courses) {
+                  if (!data.catalog[deptAbbr]) {
+                    data.catalog[deptAbbr] = []
+                  }
+                  data.catalog[deptAbbr].push(courseNumber)
 
-      fs.writeFile('courses_db.json', JSON.stringify(data), 'utf8', (err) => {
-        if (err) {
-          console.log(err)
+                  if (!data.courses[courseNumber]) {
+                    data.courses[courseNumber] = courses[courseNumber]
+                  }
+                }
+                resolve()
+              })
+              .catch(function(err) {
+                reject(err)
+              })
+          })
+        )
+
+        // get class courses
+        for (let cls of data.departments[deptAbbr].classes) {
+          promises.push(
+            new Promise(function(resolve, reject) {
+              request({
+                method: 'POST',
+                url: url,
+                formData: {
+                  ACIXSTORE: ACIXSTORE,
+                  toChk: '2',
+                  new_class: cls.abbr
+                },
+                encoding: null
+              })
+                .then(function(body) {
+                  if (
+                    iconv.decode(body, 'big5') ===
+                    'session is interrupted! <br>'
+                  ) {
+                    console.error(
+                      'session is interrupted! when request new_class',
+                      cls.abbr
+                    )
+                  }
+                  let courses = grabCoursesByBody(iconv.decode(body, 'big5'))
+                  for (let courseNumber in courses) {
+                    if (!data.catalog[cls.abbr]) {
+                      data.catalog[cls.abbr] = []
+                    }
+                    data.catalog[cls.abbr].push(courseNumber)
+
+                    if (!data.courses[courseNumber]) {
+                      data.courses[courseNumber] = courses[courseNumber]
+                    }
+                  }
+                  resolve()
+                })
+                .catch(function(err) {
+                  reject(err)
+                })
+            })
+          )
         }
-        console.log('Write in to file!')
-      })
+      }
+
+      Promise.all(promises)
+        .then(() => {
+          console.log('Grabbing Data is done!')
+
+          fs.writeFile('courses_db.json', JSON.stringify(data), 'utf8', err => {
+            if (err) {
+              console.log(err)
+            }
+            console.log('Write in to file!')
+          })
+        })
+        .catch(function(err) {
+          console.error(err)
+        })
     })
-    .catch(function (err) {
+    .catch(function(err) {
       console.error(err)
     })
-  })
-  .catch(function (err) {
-    console.error(err)
-  })
 }
 
-grabData('dqkou7ejveud0ktok5o1lq3ri4')
+grabData('ivhd3j9pk3a8g8krscca063191')
