@@ -6,16 +6,7 @@ import config from '../../config'
 import response from './response'
 import coursesDB from './courses_db.json'
 import grabHelper from './grab-helper'
-
-export function getCoursesList() {
-  return new Promise((resolve, reject) => {
-    resolve(
-      response.ResponseSuccessJSON({
-        data: coursesDB
-      })
-    )
-  })
-}
+import { grabData } from './grab-data'
 
 function grabCurrentSelectedCoursesByBody(body) {
   const $ = cheerio.load(body)
@@ -37,8 +28,8 @@ function grabCurrentSelectedCoursesByBody(body) {
     }
 
     let orderText = tr.children[21].children[0].data.trim()
-    if (orderText.length >= 2) {
-      let orderRegExec = /(.+)(\d+)/.exec(orderText)
+    if (orderText.length > 1) {
+      let orderRegExec = /([^\d]?)(\d+)/.exec(orderText)
       course.orderCatalog = orderRegExec[1]
       course.order = parseInt(orderRegExec[2])
     } else if (orderText.length === 1) {
@@ -75,6 +66,19 @@ export function isAvailable(sessionToken) {
       .catch(err => {
         reject(err)
       })
+  })
+}
+
+let lastGrabData = 0
+let latestCoursesDB = null
+
+export function getCoursesDB(sessionToken) {
+  return new Promise((resolve, reject) => {
+    resolve(
+      response.ResponseSuccessJSON({
+        coursesDB: coursesDB
+      })
+    )
   })
 }
 
@@ -413,35 +417,81 @@ export function quitCourse(sessionToken, courseNumber) {
      }
    ]
  }
+
+ 原本是讓退選全部一起完成，但是似乎太快的操作會導致session interrupted.
  */
 export function editOrder(sessionToken, newOrder, oldOrder) {
   return new Promise((resolve, reject) => {
-    let jobSequence = Promise.resolve()
-    let waitForAddList = []
+    let removeJob = []
+    let addJob = []
 
-    for (let order = 0; order < newOrder.length; order++) {
-      if (oldOrder.length < order) {
-        jobSequence = jobSequence.then(() => {
-          return addCourse(sessionToken, newOrder[order].number, order + 1)
-        })
-      } else if (newOrder[order].number !== oldOrder[order].number) {
-        jobSequence = jobSequence.then(() => {
-          return quitCourse(sessionToken, oldOrder[order].number)
-        })
-        waitForAddList.push({
-          number: newOrder[order].number,
-          order: order + 1
-        })
+    if (newOrder.length > oldOrder.length) {
+      reject(response.ResponseErrorMsg.NewOrderMoreThanOldOrder())
+      return
+    } else if (newOrder.includes(undefined)) {
+      reject(response.ResponseErrorMsg.NewOrderNotEmpty())
+      return
+    } else if (newOrder.length !== oldOrder.filter(e => e !== null).length) {
+      reject(response.ResponseErrorMsg.OldOrderIncludesAllInNewOrder())
+      return
+    }
+
+    for (let order = 0; order < oldOrder.length; order++) {
+      const oldCourse = oldOrder[order]
+      const newCourse = newOrder[order]
+
+      if (!newCourse && !oldCourse) {
+        continue
+      } else if (newCourse && oldCourse) {
+        if (newCourse.number === oldCourse.number) {
+          continue
+        }
+      }
+
+      if (newCourse) {
+        newCourse.order = order + 1
+        addJob.push(newCourse)
+      }
+      if (oldCourse) {
+        removeJob.push(oldCourse)
       }
     }
 
-    for (let course of waitForAddList) {
-      jobSequence = jobSequence.then(() => {
-        return addCourse(sessionToken, course.number, course.order)
+    Promise.resolve()
+      .then(() => {
+        return new Promise((resolve, reject) => {
+          let jobSequence = Promise.resolve()
+          for (let course of removeJob) {
+            jobSequence = jobSequence.then(() => {
+              return quitCourse(sessionToken, course.number)
+            })
+          }
+          jobSequence
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              reject(err)
+            })
+        })
       })
-    }
-
-    jobSequence = jobSequence
+      .then(() => {
+        return new Promise((resolve, reject) => {
+          let jobSequence = Promise.resolve()
+          for (let course of addJob) {
+            jobSequence = jobSequence.then(() => {
+              return addCourse(sessionToken, course.number, course.order)
+            })
+          }
+          jobSequence
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              reject(err)
+            })
+        })
+      })
       .then(res => {
         resolve(response.ResponseSuccessJSON(res))
       })

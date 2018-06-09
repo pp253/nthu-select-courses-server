@@ -145,7 +145,7 @@ function grabCoursesByBody(body) {
   return courses
 }
 
-function grabData(ACIXSTORE) {
+export function grabData(ACIXSTORE) {
   const url = `https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713004.php?ACIXSTORE=${ACIXSTORE}`
 
   const formData = {
@@ -267,12 +267,22 @@ function grabData(ACIXSTORE) {
         .then(() => {
           console.log('Grabbing Data is done!')
 
-          fs.writeFile('courses_db.json', JSON.stringify(data), 'utf8', err => {
-            if (err) {
-              console.log(err)
+          let jsonStr = JSON.stringify(data)
+          if (jsonStr.length < 1000) {
+            throw new Error('GrabData: Grabbing Data Failed!')
+          }
+
+          fs.writeFile(
+            `${__dirname}/courses_db.${Date.now()}.json`,
+            JSON.stringify(data),
+            'utf8',
+            err => {
+              if (err) {
+                console.log(err)
+              }
+              console.log('Write in to file!')
             }
-            console.log('Write in to file!')
-          })
+          )
         })
         .catch(function(err) {
           console.error(err)
@@ -283,4 +293,4 @@ function grabData(ACIXSTORE) {
     })
 }
 
-grabData('ivhd3j9pk3a8g8krscca063191')
+// grabData('ivhd3j9pk3a8g8krscca063191')
