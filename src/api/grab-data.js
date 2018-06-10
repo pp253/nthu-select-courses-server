@@ -146,6 +146,8 @@ function grabCoursesByBody(body) {
 }
 
 export function grabData(ACIXSTORE) {
+  console.log('Starting grabbing data.')
+
   const url = `https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713004.php?ACIXSTORE=${ACIXSTORE}`
 
   const formData = {
@@ -169,7 +171,7 @@ export function grabData(ACIXSTORE) {
   }
 
   request({ method: 'POST', url: url, formData: formData, encoding: null })
-    .then(function(body) {
+    .then(body => {
       if (iconv.decode(body, 'big5') === 'session is interrupted! <br>') {
         console.error('session is interrupted! when request', url)
       }
@@ -178,7 +180,7 @@ export function grabData(ACIXSTORE) {
 
       for (let deptAbbr in data.departments) {
         promises.push(
-          new Promise(function(resolve, reject) {
+          new Promise((resolve, reject) => {
             // get dept's courses
             request({
               method: 'POST',
@@ -190,7 +192,7 @@ export function grabData(ACIXSTORE) {
               },
               encoding: null
             })
-              .then(function(body) {
+              .then(body => {
                 if (
                   iconv.decode(body, 'big5') === 'session is interrupted! <br>'
                 ) {
@@ -212,7 +214,7 @@ export function grabData(ACIXSTORE) {
                 }
                 resolve()
               })
-              .catch(function(err) {
+              .catch(err => {
                 reject(err)
               })
           })
@@ -221,7 +223,7 @@ export function grabData(ACIXSTORE) {
         // get class courses
         for (let cls of data.departments[deptAbbr].classes) {
           promises.push(
-            new Promise(function(resolve, reject) {
+            new Promise((resolve, reject) => {
               request({
                 method: 'POST',
                 url: url,
@@ -232,7 +234,7 @@ export function grabData(ACIXSTORE) {
                 },
                 encoding: null
               })
-                .then(function(body) {
+                .then(body => {
                   if (
                     iconv.decode(body, 'big5') ===
                     'session is interrupted! <br>'
@@ -255,7 +257,7 @@ export function grabData(ACIXSTORE) {
                   }
                   resolve()
                 })
-                .catch(function(err) {
+                .catch(err => {
                   reject(err)
                 })
             })
@@ -267,30 +269,54 @@ export function grabData(ACIXSTORE) {
         .then(() => {
           console.log('Grabbing Data is done!')
 
-          let jsonStr = JSON.stringify(data)
-          if (jsonStr.length < 1000) {
-            throw new Error('GrabData: Grabbing Data Failed!')
-          }
-
-          fs.writeFile(
-            `${__dirname}/courses_db.${Date.now()}.json`,
-            JSON.stringify(data),
-            'utf8',
-            err => {
-              if (err) {
-                console.log(err)
-              }
-              console.log('Write in to file!')
+          return new Promise((resolve, reject) => {
+            let jsonStr = JSON.stringify(data)
+            if (jsonStr.length < 1000) {
+              throw new Error('GrabData: Grabbing Data Failed!')
             }
-          )
+
+            fs.writeFile(
+              `${__dirname}/courses_db.${Date.now()}.json`,
+              jsonStr,
+              'utf8',
+              err => {
+                if (err) {
+                  console.log(err)
+                  reject(err)
+                }
+                resolve(jsonStr)
+                console.log(
+                  'Write in to file',
+                  `${__dirname}/courses_db.${Date.now()}.json`
+                )
+              }
+            )
+          })
         })
-        .catch(function(err) {
+        .then(jsonStr => {
+          return new Promise((resolve, reject) => {
+            fs.writeFile(
+              `${__dirname}/courses_db.json`,
+              jsonStr,
+              'utf8',
+              err => {
+                if (err) {
+                  console.log(err)
+                  reject(err)
+                }
+                resolve(jsonStr)
+                console.log('Write in to file', `${__dirname}/courses_db.json`)
+              }
+            )
+          })
+        })
+        .catch(err => {
           console.error(err)
         })
     })
-    .catch(function(err) {
+    .catch(err => {
       console.error(err)
     })
 }
 
-// grabData('ivhd3j9pk3a8g8krscca063191')
+grabData('rbac3pdau2dfdttintie2tev60')

@@ -40,6 +40,8 @@
   },
   "devDependencies": {},
   "babel": {
-    "presets": ["env"]
+    "presets": [
+      "env"
+    ]
   }
 }
