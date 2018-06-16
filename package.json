@@ -12,7 +12,8 @@
     "start-db": "mongod --dbpath \"./db\" --port 16622",
     "setup": "npm i && npm i babel-cli pm2 -g",
     "setup-dev": "npm i apidoc -g",
-    "doc-build": "apidoc -i ./src/api/ -o doc/"
+    "doc-build": "apidoc -i ./src/api/ -o doc/",
+    "push": "bash ./.bin/push.sh"
   },
   "author": "pp253",
   "license": "Apache-2.0",

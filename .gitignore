@@ -1,6 +1,7 @@
 /public/
 /db/
 /secret/
+.bin/
 
 # Logs
 logs
