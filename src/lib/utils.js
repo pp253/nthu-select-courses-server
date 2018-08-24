@@ -7,8 +7,9 @@ import { Exception } from './debug'
  * determining the environment.
  */
 export const PRODUCTION = !(process.env.NODE_ENV === 'development')
+console.log('TEST:', process.env.NODE_ENV)
 
-export function toArray(obj) {
+export function toArray (obj) {
   if (typeof obj !== 'object') {
     throw new Exception('toArray: obj should be an object.')
   }
@@ -34,7 +35,7 @@ export function toArray(obj) {
  * @param {String} str String to formatted.
  * @param {Object | String[]} argus Arguments for formatting.
  */
-export function format(str, ...argus) {
+export function format (str, ...argus) {
   if (typeof str !== 'string') {
     throw Exception('format: str should be a string.')
   }
@@ -59,7 +60,7 @@ export function format(str, ...argus) {
 }
 
 export class Timer {
-  constructor(name, log) {
+  constructor (name, log) {
     this.history = []
     this.laps = []
     this.counting = false
@@ -69,7 +70,7 @@ export class Timer {
     return this
   }
 
-  resume() {
+  resume () {
     if (!this.counting) {
       const t = Date.now()
       const c = this.count()
@@ -89,7 +90,7 @@ export class Timer {
     return this
   }
 
-  pause() {
+  pause () {
     if (this.counting) {
       const t = Date.now()
       const c = this.count()
@@ -110,17 +111,17 @@ export class Timer {
     return this
   }
 
-  start() {
+  start () {
     this.resume()
     return this
   }
 
-  stop() {
+  stop () {
     this.pause()
     return this
   }
 
-  lap() {
+  lap () {
     const t = Date.now()
     const c = this.count()
     this.laps.push({
@@ -137,7 +138,7 @@ export class Timer {
     return this
   }
 
-  reset() {
+  reset () {
     this.history = []
     this.laps = []
     this._duration = 0
@@ -146,7 +147,7 @@ export class Timer {
     return this
   }
 
-  count() {
+  count () {
     if (this.counting) {
       const lastLog = this.history[this.history.length - 1]
       return Date.now() - lastLog.time + this._duration
@@ -155,7 +156,7 @@ export class Timer {
     }
   }
 
-  toString() {
+  toString () {
     let str = ''
     return str
   }
