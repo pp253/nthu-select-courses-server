@@ -1,9 +1,10 @@
 const request = require('request-promise-native')
 const iconv = require('iconv-lite')
 const cheerio = require('cheerio')
+const asyncPool = require('tiny-async-pool')
 const fs = require('fs')
 
-function grabHelper(node, level = 0, initIndex = 0) {
+function grabHelper (node, level = 0, initIndex = 0) {
   if (node instanceof Array) {
     let idx = initIndex
     for (let childNode of node) {
@@ -33,7 +34,7 @@ function grabHelper(node, level = 0, initIndex = 0) {
   }
 }
 
-function grabDepartmentsByBody(body) {
+function grabDepartmentsByBody (body) {
   const $ = cheerio.load(body)
   let departments = {}
 
@@ -79,7 +80,7 @@ function grabDepartmentsByBody(body) {
   return departments
 }
 
-function grabCoursesByBody(body) {
+function grabCoursesByBody (body) {
   const $ = cheerio.load(body)
   let courses = {}
 
@@ -145,7 +146,7 @@ function grabCoursesByBody(body) {
   return courses
 }
 
-export function grabData(ACIXSTORE) {
+export function grabData (ACIXSTORE) {
   console.log('Starting grabbing data.')
 
   const url = `https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713004.php?ACIXSTORE=${ACIXSTORE}`
@@ -176,96 +177,101 @@ export function grabData(ACIXSTORE) {
         console.error('session is interrupted! when request', url)
       }
       data.departments = grabDepartmentsByBody(iconv.decode(body, 'big5'))
-      let promises = []
 
-      for (let deptAbbr in data.departments) {
-        promises.push(
-          new Promise((resolve, reject) => {
-            // get dept's courses
-            request({
-              method: 'POST',
-              url: url,
-              formData: {
-                ACIXSTORE: ACIXSTORE,
-                toChk: '1',
-                new_dept: deptAbbr
-              },
-              encoding: null
-            })
-              .then(body => {
-                if (
-                  iconv.decode(body, 'big5') === 'session is interrupted! <br>'
-                ) {
-                  console.error(
-                    'session is interrupted! when request new_dept',
-                    deptAbbr
-                  )
-                }
-                let courses = grabCoursesByBody(iconv.decode(body, 'big5'))
-                for (let courseNumber in courses) {
-                  if (!data.catalog[deptAbbr]) {
-                    data.catalog[deptAbbr] = []
-                  }
-                  data.catalog[deptAbbr].push(courseNumber)
-
-                  if (!data.courses[courseNumber]) {
-                    data.courses[courseNumber] = courses[courseNumber]
-                  }
-                }
-                resolve()
-              })
-              .catch(err => {
-                reject(err)
-              })
+      let getDeptData = function (deptAbbr) {
+        return new Promise((resolve, reject) => {
+          // get dept's courses
+          request({
+            method: 'POST',
+            url: url,
+            formData: {
+              ACIXSTORE: ACIXSTORE,
+              toChk: '1',
+              new_dept: deptAbbr
+            },
+            encoding: null
           })
-        )
+            .then(body => {
+              if (
+                iconv.decode(body, 'big5') === 'session is interrupted! <br>'
+              ) {
+                console.error(
+                  'session is interrupted! when request new_dept',
+                  deptAbbr
+                )
+              }
+              let courses = grabCoursesByBody(iconv.decode(body, 'big5'))
+              for (let courseNumber in courses) {
+                if (!data.catalog[deptAbbr]) {
+                  data.catalog[deptAbbr] = []
+                }
+                data.catalog[deptAbbr].push(courseNumber)
 
-        // get class courses
-        for (let cls of data.departments[deptAbbr].classes) {
-          promises.push(
-            new Promise((resolve, reject) => {
-              request({
-                method: 'POST',
-                url: url,
-                formData: {
-                  ACIXSTORE: ACIXSTORE,
-                  toChk: '2',
-                  new_class: cls.abbr
-                },
-                encoding: null
-              })
-                .then(body => {
-                  if (
-                    iconv.decode(body, 'big5') ===
-                    'session is interrupted! <br>'
-                  ) {
-                    console.error(
-                      'session is interrupted! when request new_class',
-                      cls.abbr
-                    )
-                  }
-                  let courses = grabCoursesByBody(iconv.decode(body, 'big5'))
-                  for (let courseNumber in courses) {
-                    if (!data.catalog[cls.abbr]) {
-                      data.catalog[cls.abbr] = []
-                    }
-                    data.catalog[cls.abbr].push(courseNumber)
-
-                    if (!data.courses[courseNumber]) {
-                      data.courses[courseNumber] = courses[courseNumber]
-                    }
-                  }
-                  resolve()
-                })
-                .catch(err => {
-                  reject(err)
-                })
+                if (!data.courses[courseNumber]) {
+                  data.courses[courseNumber] = courses[courseNumber]
+                }
+              }
+              resolve()
             })
-          )
-        }
+            .catch(err => {
+              reject(err)
+            })
+        })
       }
 
-      Promise.all(promises)
+      let getClassData = function (classAbbr) {
+        return new Promise((resolve, reject) => {
+          request({
+            method: 'POST',
+            url: url,
+            formData: {
+              ACIXSTORE: ACIXSTORE,
+              toChk: '2',
+              new_class: classAbbr
+            },
+            encoding: null
+          })
+            .then(body => {
+              if (
+                iconv.decode(body, 'big5') ===
+                'session is interrupted! <br>'
+              ) {
+                console.error(
+                  'session is interrupted! when request new_class',
+                  classAbbr
+                )
+              }
+              let courses = grabCoursesByBody(iconv.decode(body, 'big5'))
+              for (let courseNumber in courses) {
+                if (!data.catalog[classAbbr]) {
+                  data.catalog[classAbbr] = []
+                }
+                data.catalog[classAbbr].push(courseNumber)
+
+                if (!data.courses[courseNumber]) {
+                  data.courses[courseNumber] = courses[courseNumber]
+                }
+              }
+              resolve()
+            })
+            .catch(err => {
+              reject(err)
+            })
+        })
+      }
+
+      let poolLimit = 5
+      asyncPool(poolLimit, Object.keys(data.departments), getDeptData)
+        .then(() => {
+          let classList = []
+          for (let deptAbbr in data.departments) {
+            // get class courses
+            for (let cls of data.departments[deptAbbr].classes) {
+              classList.push(cls.abbr)
+            }
+          }
+          return asyncPool(poolLimit, Object.keys(classList), getClassData)
+        })
         .then(() => {
           console.log('Grabbing Data is done!')
 
@@ -319,4 +325,4 @@ export function grabData(ACIXSTORE) {
     })
 }
 
-grabData('rbac3pdau2dfdttintie2tev60')
+// grabData('1e8jldg0qovm7kljboe43kl071')

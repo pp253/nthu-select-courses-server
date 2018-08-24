@@ -37,7 +37,8 @@
     "mongoose": "^5.0.3",
     "query-string": "^5.0.1",
     "request": "^2.83.0",
-    "request-promise-native": "^1.0.5"
+    "request-promise-native": "^1.0.5",
+    "tiny-async-pool": "^1.0.1"
   },
   "devDependencies": {},
   "babel": {
