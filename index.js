@@ -73,8 +73,8 @@ if (PRODUCTION && fs.existsSync(path.join(__dirname, '/secret/private.key'))) {
     app
   )
 
-  httpsServer.listen(app.get('port'), () => {
-    debug.log('Start to listen on PORT %d ...', app.get('port'))
+  httpsServer.listen(443, () => {
+    debug.log('Start to listen on PORT %d ...', 443)
     timer.stop()
   })
 
@@ -88,8 +88,8 @@ if (PRODUCTION && fs.existsSync(path.join(__dirname, '/secret/private.key'))) {
     })
     .listen(80)
 } else {
-  app.listen(app.get('port'), () => {
-    debug.log('Start to listen on PORT %d ...', app.get('port'))
+  app.listen(80, () => {
+    debug.log('Start to listen on PORT %d ...', 80)
     timer.stop()
   })
 
