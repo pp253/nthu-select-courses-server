@@ -62,7 +62,7 @@ app.use('/', express.static('public'))
 // Route
 routes(app)
 
-if (PRODUCTION) {
+if (PRODUCTION && fs.existsSync(path.join(__dirname, '/secret/private.key'))) {
   // Listening
   let httpsServer = https.createServer(
     {

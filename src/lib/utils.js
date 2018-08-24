@@ -7,7 +7,6 @@ import { Exception } from './debug'
  * determining the environment.
  */
 export const PRODUCTION = !(process.env.NODE_ENV === 'development')
-console.log('TEST:', process.env.NODE_ENV)
 
 export function toArray (obj) {
   if (typeof obj !== 'object') {
