@@ -1,4 +1,5 @@
-host='35.201.137.92'
-username='pp_pp253'
+#!/bin/bash
+host='140.114.212.43'
+username='linaro'
 
 ssh $username@$host < ./.bin/script.sh
