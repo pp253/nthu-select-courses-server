@@ -8,7 +8,7 @@ import coursesDB from './courses_db.json'
 import grabHelper from './grab-helper'
 import { grabData } from './grab-data'
 
-function grabCurrentSelectedCoursesByBody(body) {
+function grabCurrentSelectedCoursesByBody (body) {
   const $ = cheerio.load(body)
   let table = $('table#T1 tbody tr').toArray()
   let currentSelectedCourses = []
@@ -40,7 +40,7 @@ function grabCurrentSelectedCoursesByBody(body) {
   return currentSelectedCourses
 }
 
-export function isAvailable(sessionToken) {
+export function isAvailable (sessionToken) {
   return new Promise((resolve, reject) => {
     correctRequest({
       url: config.grabdata.preloadSelectedCoursesPage0.replace(
@@ -72,7 +72,7 @@ export function isAvailable(sessionToken) {
 let lastGrabData = 0
 let latestCoursesDB = null
 
-export function getCoursesDB(sessionToken) {
+export function getCoursesDB (sessionToken) {
   return new Promise((resolve, reject) => {
     resolve(
       response.ResponseSuccessJSON({
@@ -112,7 +112,7 @@ export function getCoursesDB(sessionToken) {
       ]
     }
  */
-export function getCurrentSelectedCourses(sessionToken) {
+export function getCurrentSelectedCourses (sessionToken) {
   return new Promise((resolve, reject) => {
     new Promise((resolve, reject) => {
       request({
@@ -180,7 +180,7 @@ export function getCurrentSelectedCourses(sessionToken) {
  * @apiDescription This method is only available in selection period.
  *
  * @apiParam {String} sessionToken Session token.
- * @apiParam {String} courseNumber Course number.
+ * @apiParam {CourseNumber} courseNumber Course number.
  * @apiParam {Number} order=0 Order.
  *
  * @apiSuccess (200) {CurrentSelectedCourses} currentSelectedCourses Current Selected Courses.
@@ -206,7 +206,7 @@ export function getCurrentSelectedCourses(sessionToken) {
       ]
     }
  */
-export function addCourse(sessionToken, courseNumber, order = '') {
+export function addCourse (sessionToken, courseNumber, order = '') {
   return new Promise((resolve, reject) => {
     if (!(courseNumber in coursesDB.courses)) {
       reject(response.ResponseErrorMsg.CourseNotFound())
@@ -349,7 +349,7 @@ export function addCourse(sessionToken, courseNumber, order = '') {
    ]
  }
  */
-export function quitCourse(sessionToken, courseNumber) {
+export function quitCourse (sessionToken, courseNumber) {
   return new Promise((resolve, reject) => {
     let formData = {
       ACIXSTORE: sessionToken,
@@ -420,7 +420,7 @@ export function quitCourse(sessionToken, courseNumber) {
 
  原本是讓退選全部一起完成，但是似乎太快的操作會導致session interrupted.
  */
-export function editOrder(sessionToken, newOrder, oldOrder) {
+export function editOrder (sessionToken, newOrder, oldOrder) {
   return new Promise((resolve, reject) => {
     let removeJob = []
     let addJob = []
@@ -536,7 +536,7 @@ export function editOrder(sessionToken, newOrder, oldOrder) {
    }
  }
  */
-export function getSyllabus(sessionToken, courseNumber) {
+export function getSyllabus (sessionToken, courseNumber) {
   return new Promise((resolve, reject) => {
     correctRequest({
       url: config.grabdata.syllabusPage
@@ -620,7 +620,7 @@ export function getSyllabus(sessionToken, courseNumber) {
    editable: false
  }
  */
-export function getAvailableSelectionResult(sessionToken) {
+export function getAvailableSelectionResult (sessionToken) {
   return new Promise((resolve, reject) => {
     let availableSelectionResult = {}
     let currentSemester = ''
@@ -766,7 +766,7 @@ export function getAvailableSelectionResult(sessionToken) {
      }]
    }
  */
-export function getSelectionResult(sessionToken, semester, phase) {
+export function getSelectionResult (sessionToken, semester, phase) {
   return new Promise((resolve, reject) => {
     let frommetedSemesterText = /(\d{3})(\d{2})/.exec(semester)
     let frommetedSemester = `${frommetedSemesterText[1]},${

@@ -43,6 +43,7 @@ export const ResponseErrorMsg = {
       more: errMsg
     })
   },
+  
   // api/user/
   UserInfoNotCorrect(errMsg) {
     return ResponseErrorJSON({
@@ -71,6 +72,7 @@ export const ResponseErrorMsg = {
       msg: `Session is interrupted.`
     })
   },
+
   // api/select_course
   CourseNotFound(errMsg) {
     return ResponseErrorJSON({

@@ -189,6 +189,7 @@ export function getScores (sessionToken) {
  * @apiGroup scores
  *
  * @apiParam {SessionToken} sessionToken Session token.
+ * @apiParam {CourseNumber} courseNumber Course number.
  *
  * @apiSuccess (200) {Object} distribution Performance distribution of a course.
  *

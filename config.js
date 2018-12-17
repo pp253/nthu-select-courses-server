@@ -54,6 +54,10 @@ export default {
     errViolatePrerequisite:
       "<script>alert('擋修!\\nViolate the Prerequisite！');</script>",
     errNotAvailable: "<script>alert('目前非選課階段",
-    errNotValidCourseNumber: '錯誤的科目'
+    errNotValidCourseNumber: '錯誤的科目',
+    courseEvaluationSurvey: {
+      index: 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/B/B.2/B.2.3/JHB23001.php?ACIXSTORE={0}',
+      chineseSurvey: 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/B/B.2/B.2.3/JHB23002.php?C_KEY={1}&ACIXSTORE={0}'
+    }
   }
 }
