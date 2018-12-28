@@ -6,7 +6,7 @@ import config from '../../config'
 import response from './response'
 import coursesDB from './courses_db.json'
 import grabHelper from './grab-helper'
-import { grabData } from './grab-data'
+// import { grabData } from './grab-data'
 
 function grabCurrentSelectedCoursesByBody(body) {
   const $ = cheerio.load(body)
@@ -297,13 +297,25 @@ export function addCourse(sessionToken, courseNumber, order = '') {
           } else if (body.startsWith(config.grabdata.errNotAvailable)) {
             reject(response.ResponseErrorMsg.NotAvailable())
             return
-          } else if (body.startsWith('<script>')) {
+          }
+          
+          const violateCourseRuleReg = /<script>alert\('(.*)'\);<\/script>[.\n]*<\/body>[.\n]*<\/html>[.\n]*$/g
+          if (violateCourseRuleReg.test(body)) {
+            let errMsg = /<script>alert\('(.*)'\);<\/script>[.\n]*<\/body>[.\n]*<\/html>[.\n]*$/g.exec(body)
+            reject(
+              response.ResponseErrorMsg.ViolateCourseRule(errMsg ? errMsg[1] : '')
+            )
+            return
+          }
+          
+          if (body.startsWith('<script>')) {
             let errMsg = /^<script>alert\('(.*)'\);<\/script>/g.exec(body)
             reject(
               response.ResponseErrorMsg.OtherError(errMsg ? errMsg[1] : '')
             )
             return
           }
+          
         }
 
         resolve(
@@ -707,7 +719,7 @@ export function getAvailableSelectionResult(sessionToken) {
               availableSelectionResult[currentSemester][
                 availableSelectionResult[currentSemester].length - 1
               ],
-            editable: false
+            editable: true
           })
         )
       })

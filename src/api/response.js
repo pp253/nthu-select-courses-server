@@ -149,17 +149,17 @@ export const ResponseErrorMsg = {
       more: errMsg
     })
   },
-  NewOrderNotEmpty(errMsg) {
-    return ResponseErrorJSON({
-      id: 40,
-      msg: `New order cannot has empty element.`,
-      more: errMsg
-    })
-  },
   OldOrderIncludesAllInNewOrder(errMsg) {
     return ResponseErrorJSON({
       id: 41,
       msg: `Old order must includes all elements in new order.`,
+      more: errMsg
+    })
+  },
+  ViolateCourseRule(errMsg) {
+    return ResponseErrorJSON({
+      id: 42,
+      msg: `Violate course rule.`,
       more: errMsg
     })
   }
