@@ -13,7 +13,8 @@
     "setup": "npm i && npm i babel-cli pm2 -g",
     "setup-dev": "npm i apidoc -g",
     "doc-build": "apidoc -i ./src/api/ -o doc/",
-    "push": "bash ./.bin/push.sh"
+    "push": "bash ./.bin/push.sh",
+    "grab-data": "babel-node ./src/api/grab-data.js"
   },
   "author": "pp253",
   "license": "Apache-2.0",
