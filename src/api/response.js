@@ -17,6 +17,16 @@ export function ResponseSuccessJSON(obj) {
   )
 }
 
+export function ResponseWarningJSON(obj) {
+  return Object.assign(
+    ResponseJSON({
+      success: 1,
+      warning: 1
+    }),
+    obj
+  )
+}
+
 export function ResponseErrorJSON(obj) {
   return Object.assign(
     ResponseJSON({
@@ -168,6 +178,7 @@ export const ResponseErrorMsg = {
 export default {
   ResponseJSON,
   ResponseSuccessJSON,
+  ResponseWarningJSON,
   ResponseErrorJSON,
   ResponseErrorMsg
 }

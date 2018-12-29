@@ -278,6 +278,8 @@ export function addCourse(sessionToken, courseNumber, order = '') {
         })
     })
       .then(body => {
+        let warning = null
+
         if (!body.startsWith(config.grabdata.infoWaitingForRandomProcess)) {
           if (body === config.grabdata.errSessionInterrupted) {
             reject(response.ResponseErrorMsg.SessionInterrupted())
@@ -297,6 +299,16 @@ export function addCourse(sessionToken, courseNumber, order = '') {
           } else if (body.startsWith(config.grabdata.errNotAvailable)) {
             reject(response.ResponseErrorMsg.NotAvailable())
             return
+          } else if (body.startsWith(config.grabdata.warnCantBeGE)) {
+            resolve(
+              response.ResponseWarningJSON({
+                currentSelectedCourses: grabCurrentSelectedCoursesByBody(body),
+                id: 10,
+                msg: '您選此課程只能當必選修，不能當通識！',
+                more: ''
+              })
+            )
+            return
           }
 
           const violateCourseRuleReg = /<script>alert\('(.*)'\);<\/script>[.\n]*<\/body>[.\n]*<\/html>[.\n]*$/g
@@ -315,7 +327,6 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             )
             return
           }
-
         }
 
         resolve(

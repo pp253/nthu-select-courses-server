@@ -54,6 +54,7 @@ export default {
     errViolatePrerequisite:
       "<script>alert('擋修!\\nViolate the Prerequisite！');</script>",
     errNotAvailable: "<script>alert('目前非選課階段",
-    errNotValidCourseNumber: '錯誤的科目'
+    errNotValidCourseNumber: '錯誤的科目',
+    warnCantBeGE: "<script>alert('您選此課程只能當必選修，不能當通識!');</script>"
   }
 }
