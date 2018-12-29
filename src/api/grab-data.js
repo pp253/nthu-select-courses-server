@@ -280,7 +280,7 @@ export function grabData (ACIXSTORE) {
           console.log('Grabbing Data is done!')
 
           return new Promise((resolve, reject) => {
-            let jsonStr = JSON.stringify(data)
+            let jsonStr = JSON.stringify(data, null, '  ')
             if (jsonStr.length < 1000) {
               throw new Error('GrabData: Grabbing Data Failed!')
             }
@@ -294,16 +294,17 @@ export function grabData (ACIXSTORE) {
                   console.log(err)
                   reject(err)
                 }
-                resolve(jsonStr)
                 console.log(
                   'Write in to file',
                   `${__dirname}/courses_db.${Date.now()}.json`
                 )
+                resolve(data)
               }
             )
           })
         })
-        .then(jsonStr => {
+        .then(data => {
+          let jsonStr = JSON.stringify(data)
           return new Promise((resolve, reject) => {
             fs.writeFile(
               `${__dirname}/courses_db.json`,
@@ -329,4 +330,4 @@ export function grabData (ACIXSTORE) {
     })
 }
 
-// grabData('8mc4ckemmg5tui14dpbo6abbj7')
+grabData('jmjc8rn9d4j9tumvj2qilgksh4')

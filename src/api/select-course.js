@@ -298,7 +298,7 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             reject(response.ResponseErrorMsg.NotAvailable())
             return
           }
-          
+
           const violateCourseRuleReg = /<script>alert\('(.*)'\);<\/script>[.\n]*<\/body>[.\n]*<\/html>[.\n]*$/g
           if (violateCourseRuleReg.test(body)) {
             let errMsg = /<script>alert\('(.*)'\);<\/script>[.\n]*<\/body>[.\n]*<\/html>[.\n]*$/g.exec(body)
@@ -307,7 +307,7 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             )
             return
           }
-          
+
           if (body.startsWith('<script>')) {
             let errMsg = /^<script>alert\('(.*)'\);<\/script>/g.exec(body)
             reject(
@@ -315,7 +315,7 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             )
             return
           }
-          
+
         }
 
         resolve(
@@ -434,9 +434,6 @@ export function quitCourse(sessionToken, courseNumber) {
  */
 export function editOrder(sessionToken, newOrder, oldOrder) {
   return new Promise((resolve, reject) => {
-    let removeJob = []
-    let addJob = []
-
     if (newOrder.length > oldOrder.length) {
       reject(response.ResponseErrorMsg.NewOrderMoreThanOldOrder())
       return
@@ -448,19 +445,31 @@ export function editOrder(sessionToken, newOrder, oldOrder) {
       return
     }
 
+    let removeJob = []
+    let addJob = []
+
     for (let order = 0; order < oldOrder.length; order++) {
       const oldCourse = oldOrder[order]
       const newCourse = newOrder[order]
 
+      /**
+       * If both newCourse and oldCourse is empty, skip it.
+       * This scenario should not happen.
+       */
       if (!newCourse && !oldCourse) {
         continue
-      } else if (newCourse && oldCourse) {
-        if (newCourse.number === oldCourse.number) {
-          continue
-        }
+      } else if ((newCourse && oldCourse) && (newCourse.number === oldCourse.number)) {
+        /**
+         * If both course exist and have same courseNumber, skip it.
+         */
+        continue
       }
 
       if (newCourse) {
+        /**
+         * newCourse.order = order + 1
+         * is to obey that the order is from 1.
+         */
         newCourse.order = order + 1
         addJob.push(newCourse)
       }
