@@ -649,7 +649,10 @@ export function getSyllabus(sessionToken, courseNumber) {
    },
    semester: '',
    phase: '',
-   editable: false
+   editable: false,
+   selectionPhase: false,
+   addOrDropPhase: false,
+   withdrawalPhase: false
  }
  */
 export function getAvailableSelectionResult(sessionToken) {
