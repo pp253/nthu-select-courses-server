@@ -325,6 +325,7 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             reject(
               response.ResponseErrorMsg.OtherError(errMsg ? errMsg[1] : '')
             )
+            console.log(errMsg)
             return
           }
         }
