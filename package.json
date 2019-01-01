@@ -14,7 +14,8 @@
     "setup-dev": "npm i apidoc -g",
     "doc-build": "apidoc -i ./src/api/ -o doc/",
     "push": "bash ./.bin/push.sh",
-    "grab-data": "babel-node ./src/api/grab-data.js"
+    "grab-data": "babel-node ./src/api/grab-data.js",
+    "convert": "babel-node ./src/api/convert.js"
   },
   "author": "pp253",
   "license": "Apache-2.0",

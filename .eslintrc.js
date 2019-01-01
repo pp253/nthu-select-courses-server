@@ -4,8 +4,6 @@ module.exports = {
     node: true
   },
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     singleQuote: true,
     semi: 0,
     trailingComma: 'none'
