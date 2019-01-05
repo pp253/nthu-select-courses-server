@@ -300,7 +300,7 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             reject(response.ResponseErrorMsg.NotAvailable())
             return
           } else if (body.startsWith(config.grabdata.errGeneralCoursesNotMoreThanThree)) {
-            reject(response.ResponseErrorMsg.errGeneralCoursesNotMoreThanThree())
+            reject(response.ResponseErrorMsg.GeneralCoursesNotMoreThanThree())
             return
           } else if (body.startsWith(config.grabdata.errNotValid)) {
             reject(response.ResponseErrorMsg.NotValid())
