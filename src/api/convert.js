@@ -121,7 +121,7 @@ request({ method: 'GET', url: url })
       }
     }
 
-    coursesDB.courses = Object.assign({}, courses, coursesDB.courses)
+    coursesDB.courses = Object.assign({}, coursesDB.courses, courses)
     coursesDB.geDegreeTypes = geDegreeTypes
     coursesDB.languageTypes = languageTypes
     coursesDB.doubleTypes = doubleTypes
