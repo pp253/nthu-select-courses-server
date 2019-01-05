@@ -513,7 +513,7 @@ export function editOrder(sessionToken, newOrder, oldOrder) {
               resolve(res)
             })
             .catch(err => {
-        console.error(err)
+              console.error(err)
               reject(err)
             })
         })
@@ -531,7 +531,7 @@ export function editOrder(sessionToken, newOrder, oldOrder) {
               resolve(res)
             })
             .catch(err => {
-        console.error(err)
+              console.error(err)
               reject(err)
             })
         })

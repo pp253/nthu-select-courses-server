@@ -106,6 +106,7 @@ export default function initialize(app) {
         })
         .catch(err => {
           // timer.stop()
+          console.error(err)
           res.json(err)
         })
     } else {
