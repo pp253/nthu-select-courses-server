@@ -179,6 +179,20 @@ export const ResponseErrorMsg = {
       msg: `General education courses can't more than three.`,
       more: errMsg
     })
+  },
+  NotValid(errMsg) {
+    return ResponseErrorJSON({
+      id: 44,
+      msg: `Not valid.`,
+      more: errMsg
+    })
+  },
+  WrongPE(errMsg) {
+    return ResponseErrorJSON({
+      id: 45,
+      msg: `You can't select 2 PE class unless you have failed on it before.`,
+      more: errMsg
+    })
   }
 }
 

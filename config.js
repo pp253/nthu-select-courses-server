@@ -54,6 +54,7 @@ export default {
     errViolatePrerequisite:
       "<script>alert('擋修!\\nViolate the Prerequisite！');</script>",
     errNotAvailable: "<script>alert('目前非選課階段",
+    errWrongPE: "<script>alert('體育課程曾不及格才能修兩門!",
     errNotValidCourseNumber: '錯誤的科目',
     errGeneralCoursesNotMoreThanThree: '<script>alert(\'通識課一學期最多三科!',
     warnCantBeGE: "<script>alert('您選此課程只能當必選修，不能當通識!');</script>"
