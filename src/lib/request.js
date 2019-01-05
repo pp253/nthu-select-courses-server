@@ -20,6 +20,7 @@ export function correctRequest (argu) {
       resolve(iconv.decode(body, 'big5'))
     })
     .catch(function (err) {
+      console.error(err)
       reject(err)
     })
   })
@@ -50,6 +51,7 @@ export function correctFormRequest (argu) {
       resolve(iconv.decode(body, 'big5'))
     })
     .catch(function (err) {
+      console.error(err)
       reject(err)
     })
   })

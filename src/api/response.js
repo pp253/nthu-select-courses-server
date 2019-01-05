@@ -172,6 +172,13 @@ export const ResponseErrorMsg = {
       msg: `Violate course rule.`,
       more: errMsg
     })
+  },
+  GeneralCoursesNotMoreThanThree(errMsg) {
+    return ResponseErrorJSON({
+      id: 43,
+      msg: `General education courses can't more than three.`,
+      more: errMsg
+    })
   }
 }
 
