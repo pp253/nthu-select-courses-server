@@ -97,6 +97,15 @@ request({ method: 'GET', url: url })
 
     // verify
     for (let c in coursesDB.courses) {
+      delete coursesDB.courses[c].sc_code
+      delete coursesDB.courses[c].sc_div
+      delete coursesDB.courses[c].sc_real
+      delete coursesDB.courses[c].sc_ctime
+      delete coursesDB.courses[c].sc_glimit
+      delete coursesDB.courses[c].sc_type
+      delete coursesDB.courses[c].sc_pre
+      delete coursesDB.courses[c].sc_range
+
       if (!(c in courses)) {
         console.error(c, 'not in courses.')
 

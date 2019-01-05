@@ -189,7 +189,9 @@ export function grabData (ACIXSTORE) {
             formData: {
               ACIXSTORE: ACIXSTORE,
               toChk: '1',
-              new_dept: deptAbbr
+              new_dept: deptAbbr,
+              new_class: 'IEEM105B',
+              chks: '%C1%60%BF%FD'
             },
             encoding: null
           })
@@ -216,6 +218,7 @@ export function grabData (ACIXSTORE) {
               resolve()
             })
             .catch(err => {
+              console.error(err)
               reject(err)
             })
         })
@@ -259,6 +262,7 @@ export function grabData (ACIXSTORE) {
               resolve()
             })
             .catch(err => {
+              console.error(err)
               reject(err)
             })
         })
@@ -330,4 +334,4 @@ export function grabData (ACIXSTORE) {
     })
 }
 
-grabData('jmjc8rn9d4j9tumvj2qilgksh4')
+grabData('')
