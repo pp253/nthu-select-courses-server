@@ -148,7 +148,7 @@ export function getScores (sessionToken) {
         gpa = gpa === '-' ? '' : gpa
         let credit = tr.children[7].children[0].type === 'tag' ? '' : tr.children[7].children[0].data.trim()
         let deservedCredit = tr.children[9].children[0].type === 'tag' ? '' : tr.children[9].children[0].data.trim()
-        let courses = tr.children[11].children[0].type === 'tag' ? '' : tr.children[11].children[0].data.trim()
+        let courses = tr.children[11].children[0].type === 'tag' ? '' : $(tr.children[11].children[0]).text().trim()
         let summerVacationCredit = tr.children[13].children[0].type === 'tag' ? '' : tr.children[13].children[0].data.trim()
         let transferCredit = tr.children[15].children[0].type === 'tag' ? '' : tr.children[15].children[0].data.trim()
         let classRanking = tr.children[17].children[0].data.trim()
