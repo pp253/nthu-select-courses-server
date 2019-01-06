@@ -128,10 +128,11 @@ export function getScores (sessionToken) {
           courseNumber: semester + shortCourseNumber,
           courseTitle: tr.children[7].children[0].data.trim(),
           credit: tr.children[9].children[0].data.trim(),
-          grade: tr.children[11].children[0].data && tr.children[11].children[0].data.trim()
+          grade: tr.children[11].children[0] && $(tr.children[11].children[0]).text()
         }
         if (!tr.children[11].children[0].data) {
           console.log(tr.children[11].children[0])
+          console.log($(tr.children[11].children[0]).text())
         }
 
         if (!scores[score.semester]) {
