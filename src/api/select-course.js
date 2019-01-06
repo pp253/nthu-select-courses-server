@@ -29,9 +29,13 @@ function grabCurrentSelectedCoursesByBody(body) {
 
     let orderText = tr.children[21].children[0].data.trim()
     if (orderText.length > 1) {
-      let orderRegExec = /([^\d]?)(\d+)/.exec(orderText)
-      course.orderCatalog = orderRegExec[1]
-      course.order = parseInt(orderRegExec[2])
+      let orderRegExec = /([^\d]+)(\d+)/.exec(orderText)
+      if (!orderRegExec) {
+        console.error(orderRegExec)
+      } else {
+        course.orderCatalog = orderRegExec[1]
+        course.order = parseInt(orderRegExec[2])
+      }
     } else if (orderText.length === 1) {
       course.orderCatalog = orderText
     }
@@ -307,6 +311,9 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             return
           } else if (body.startsWith(config.grabdata.errWrongPE)) {
             reject(response.ResponseErrorMsg.WrongPE())
+            return
+          } else if (body.startsWith(config.grabdata.errCantAddCourse)) {
+            reject(response.ResponseErrorMsg.CantAddCourse())
             return
           } else if (body.startsWith(config.grabdata.warnCantBeGE)) {
             resolve(
