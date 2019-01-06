@@ -28,16 +28,19 @@ function grabCurrentSelectedCoursesByBody(body) {
     }
 
     let orderText = tr.children[21].children[0].data.trim()
-    if (orderText.length > 1) {
-      let orderRegExec = /([^\d]+)(\d+)/.exec(orderText)
-      if (!orderRegExec) {
-        console.error(orderRegExec, orderText)
-      } else {
-        course.orderCatalog = orderRegExec[1]
-        course.order = parseInt(orderRegExec[2])
+    const orderReg = /^([^\d]+)(\d+)/
+    if (orderText.length > 0) {
+      if (orderReg.test(orderText)) {
+        let orderRegExec = orderReg.exec(orderText)
+        if (!orderRegExec || orderRegExec.legnth < 3) {
+          console.error(orderRegExec, orderText)
+        } else {
+          course.orderCatalog = orderRegExec[1]
+          course.order = parseInt(orderRegExec[2])
+        }
+      } if (orderText) {
+        course.orderCatalog = orderText
       }
-    } else if (orderText.length === 1) {
-      course.orderCatalog = orderText
     }
     currentSelectedCourses.push(course)
   }
