@@ -120,14 +120,14 @@ export function getScores (sessionToken) {
           continue
         }
 
-        let semester = tr.children[1].children[0].data.trim() + tr.children[3].children[0].data.trim()
-        let shortCourseNumber = tr.children[5].children[0].data.trim()
+        let semester = $(tr.children[1].children[0]).text().trim() + $(tr.children[3].children[0]).text().trim()
+        let shortCourseNumber = $(tr.children[5].children[0]).text().trim()
 
         let score = {
           semester: semester,
           courseNumber: semester + shortCourseNumber,
-          courseTitle: tr.children[7].children[0].data.trim(),
-          credit: tr.children[9].children[0].data.trim(),
+          courseTitle: $(tr.children[7].children[0]).text().trim(),
+          credit: $(tr.children[9].children[0]).text().trim(),
           grade: tr.children[11].children[0] && $(tr.children[11].children[0]).text().trim()
         }
 
@@ -143,19 +143,19 @@ export function getScores (sessionToken) {
       table4.splice(0, 2)
       let overview = {}
       for (let tr of table4) {
-        let semester = tr.children[1].children[0].data.trim() + tr.children[3].children[0].data.trim()
-        let gpa = tr.children[5].children[0].data.trim()
+        let semester = $(tr.children[1].children[0]).text().trim() + $(tr.children[3].children[0]).text().trim()
+        let gpa = $(tr.children[5].children[0]).text().trim()
         gpa = gpa === '-' ? '' : gpa
-        let credit = tr.children[7].children[0].type === 'tag' ? '' : tr.children[7].children[0].data.trim()
-        let deservedCredit = tr.children[9].children[0].type === 'tag' ? '' : tr.children[9].children[0].data.trim()
+        let credit = tr.children[7].children[0].type === 'tag' ? '' : $(tr.children[7].children[0]).text().trim()
+        let deservedCredit = tr.children[9].children[0].type === 'tag' ? '' : $(tr.children[9].children[0]).text().trim()
         let courses = tr.children[11].children[0].type === 'tag' ? '' : $(tr.children[11].children[0]).text().trim()
-        let summerVacationCredit = tr.children[13].children[0].type === 'tag' ? '' : tr.children[13].children[0].data.trim()
-        let transferCredit = tr.children[15].children[0].type === 'tag' ? '' : tr.children[15].children[0].data.trim()
-        let classRanking = tr.children[17].children[0].data.trim()
+        let summerVacationCredit = tr.children[13].children[0].type === 'tag' ? '' : $(tr.children[13].children[0]).text().trim()
+        let transferCredit = tr.children[15].children[0].type === 'tag' ? '' : $(tr.children[15].children[0]).text().trim()
+        let classRanking = $(tr.children[17].children[0]).text().trim()
         classRanking = classRanking === '-' ? '' : classRanking
-        let departmentRanking = tr.children[19].children[0].data.trim()
+        let departmentRanking = $(tr.children[19].children[0]).text().trim()
         departmentRanking = departmentRanking === '-' ? '' : departmentRanking
-        let comments = tr.children[21].children[0].data.trim()
+        let comments = $(tr.children[21].children[0]).text().trim()
 
         overview[semester] = {
           semester,
@@ -253,7 +253,7 @@ export function getDistribution (sessionToken, courseNumber) {
       ]
 
       for (let idx = 0; idx < gradeList.length; idx++) {
-        let peopleNum = /\((\d+)人\)/.exec(tdArray[idx + 1].children[2].data.trim())
+        let peopleNum = /\((\d+)人\)/.exec($(tdArray[idx + 1].children[2]).text().trim())
         distribution[gradeList[idx]] = (peopleNum && peopleNum.length === 2) ? parseInt(peopleNum[1]) : 0
       }
 
