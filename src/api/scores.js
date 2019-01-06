@@ -144,7 +144,7 @@ export function getScores (sessionToken) {
       let overview = {}
       for (let tr of table4) {
         let semester = $(tr.children[1].children[0]).text().trim() + $(tr.children[3].children[0]).text().trim()
-        let gpa = $(tr.children[5].children[0]).text().trim()
+        let gpa = tr.children[5].children[0] && $(tr.children[5].children[0]).text().trim()
         gpa = gpa === '-' ? '' : gpa
         let credit = tr.children[7].children[0].type === 'tag' ? '' : $(tr.children[7].children[0]).text().trim()
         let deservedCredit = tr.children[9].children[0].type === 'tag' ? '' : $(tr.children[9].children[0]).text().trim()
