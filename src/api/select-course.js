@@ -31,7 +31,7 @@ function grabCurrentSelectedCoursesByBody(body) {
     if (orderText.length > 1) {
       let orderRegExec = /([^\d]+)(\d+)/.exec(orderText)
       if (!orderRegExec) {
-        console.error(orderRegExec)
+        console.error(orderRegExec, orderText)
       } else {
         course.orderCatalog = orderRegExec[1]
         course.order = parseInt(orderRegExec[2])
