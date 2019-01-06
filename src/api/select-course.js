@@ -38,7 +38,7 @@ function grabCurrentSelectedCoursesByBody(body) {
           course.orderCatalog = orderRegExec[1]
           course.order = parseInt(orderRegExec[2])
         }
-      } if (orderText) {
+      } else {
         course.orderCatalog = orderText
       }
     }
@@ -627,7 +627,7 @@ export function getSyllabus(sessionToken, courseNumber) {
               chineseTitle: trArray.get(2).children[3].children[0].data.trim(),
               englishTitle: trArray.get(3).children[3].children[0].data.trim(),
               credit: trArray.get(1).children[5].children[0].data.trim(),
-              time: trArray.get(5).children[2].children[0].data.trim(),
+              time: $(trArray.get(5).children[2].children[0]).text().trim(),
               room: trArray.get(5).children[5].children[0].data.trim(),
               professor: trArray.get(4).children[3].children[0].data.trim(),
               size_limit: trArray.get(1).children[8].children[0].data.trim(),
