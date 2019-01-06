@@ -623,14 +623,14 @@ export function getSyllabus(sessionToken, courseNumber) {
         resolve(
           response.ResponseSuccessJSON({
             syllabus: {
-              number: trArray.get(1).children[2].children[0].data.trim(),
-              chineseTitle: trArray.get(2).children[3].children[0].data.trim(),
-              englishTitle: trArray.get(3).children[3].children[0].data.trim(),
-              credit: trArray.get(1).children[5].children[0].data.trim(),
+              number: $(trArray.get(1).children[2].children[0]).text().trim(),
+              chineseTitle: $(trArray.get(2).children[3].children[0]).text().trim(),
+              englishTitle: $(trArray.get(3).children[3].children[0]).text().trim(),
+              credit: $(trArray.get(1).children[5].children[0]).text().trim(),
               time: $(trArray.get(5).children[2].children[0]).text().trim(),
-              room: trArray.get(5).children[5].children[0].data.trim(),
-              professor: trArray.get(4).children[3].children[0].data.trim(),
-              size_limit: trArray.get(1).children[8].children[0].data.trim(),
+              room: $(trArray.get(5).children[5].children[0]).text().trim(),
+              professor: $(trArray.get(4).children[3].children[0]).text().trim(),
+              size_limit: $(trArray.get(1).children[8].children[0]).text().trim(),
               briefDescription: courseBriefDescription,
               description: courseDescription,
               file: courseDescription.startsWith(
