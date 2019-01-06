@@ -193,6 +193,13 @@ export const ResponseErrorMsg = {
       msg: `You can't select 2 PE class unless you have failed on it before.`,
       more: errMsg
     })
+  },
+  CantAddCourse(errMsg) {
+    return ResponseErrorJSON({
+      id: 46,
+      msg: `You can't add the course, but you can enroll the course by adding rule.`,
+      more: errMsg
+    })
   }
 }
 
