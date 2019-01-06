@@ -96,6 +96,13 @@ request({ method: 'GET', url: url })
     }
 
     // verify
+    for (let c in courses) {
+      if (!(c in coursesDB.courses)) {
+        console.error('error:', c)
+      }
+    }
+
+    // verify
     for (let c in coursesDB.courses) {
       delete coursesDB.courses[c].sc_code
       delete coursesDB.courses[c].sc_div
