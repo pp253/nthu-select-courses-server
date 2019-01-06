@@ -200,6 +200,13 @@ export const ResponseErrorMsg = {
       msg: `You can't add the course, but you can enroll the course by adding rule.`,
       more: errMsg
     })
+  },
+  WaitingForThirdPhase(errMsg) {
+    return ResponseErrorJSON({
+      id: 47,
+      msg: `Waiting for third phase.`,
+      more: errMsg
+    })
   }
 }
 

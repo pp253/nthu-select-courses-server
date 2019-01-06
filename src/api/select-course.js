@@ -318,6 +318,9 @@ export function addCourse(sessionToken, courseNumber, order = '') {
           } else if (body.startsWith(config.grabdata.errCantAddCourse)) {
             reject(response.ResponseErrorMsg.CantAddCourse())
             return
+          } else if (body.startsWith(config.grabdata.errWaitingForThirdPhase)) {
+            reject(response.ResponseErrorMsg.WaitingForThirdPhase())
+            return
           } else if (body.startsWith(config.grabdata.warnCantBeGE)) {
             resolve(
               response.ResponseWarningJSON({
