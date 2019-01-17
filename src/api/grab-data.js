@@ -4,7 +4,7 @@ const cheerio = require('cheerio')
 const asyncPool = require('tiny-async-pool')
 const fs = require('fs')
 
-function grabHelper (node, level = 0, initIndex = 0) {
+function grabHelper(node, level = 0, initIndex = 0) {
   if (node instanceof Array) {
     let idx = initIndex
     for (let childNode of node) {
@@ -34,7 +34,7 @@ function grabHelper (node, level = 0, initIndex = 0) {
   }
 }
 
-function grabDepartmentsByBody (body) {
+function grabDepartmentsByBody(body) {
   const $ = cheerio.load(body)
   let departments = {}
 
@@ -80,7 +80,7 @@ function grabDepartmentsByBody (body) {
   return departments
 }
 
-function grabCoursesByBody (body) {
+function grabCoursesByBody(body) {
   const $ = cheerio.load(body)
   let courses = {}
 
@@ -118,14 +118,20 @@ function grabCoursesByBody (body) {
         number: trArray.get(1).children[0].children[0].data.trim(),
         title: trArray.get(2).children[0].children[0].data.trim(),
         credit: trArray.get(3).children[0].children[0].data.trim(),
-        time: $(trArray.get(4)).text().trim(),
+        time: $(trArray.get(4))
+          .text()
+          .trim(),
         room: trArray.get(5).children[0].children[0].data.trim(),
         professor: trArray.get(6).children[0].children[0].data.trim(),
         size_limit: trArray.get(8).children[0].children[0].data.trim(),
         required: trArray.get(7).children[0].children[0].data.trim(),
         previous_size: trArray.get(9).children[0].children[0].data.trim(),
-        prerequirement: $(trArray.get(11).children[0]).text().trim(),
-        memo: $(trArray.get(12).children[0]).text().trim(),
+        prerequirement: $(trArray.get(11).children[0])
+          .text()
+          .trim(),
+        memo: $(trArray.get(12).children[0])
+          .text()
+          .trim(),
         sc_code: !canceled && argus[2],
         sc_div: !canceled && argus[3],
         sc_real: !canceled && argus[4],
@@ -148,7 +154,7 @@ function grabCoursesByBody (body) {
   return courses
 }
 
-export function grabData (ACIXSTORE) {
+export function grabData(ACIXSTORE) {
   console.log('Starting grabbing data.')
 
   const url = `https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713004.php?ACIXSTORE=${ACIXSTORE}`
@@ -180,7 +186,7 @@ export function grabData (ACIXSTORE) {
       }
       data.departments = grabDepartmentsByBody(iconv.decode(body, 'big5'))
 
-      let getDeptData = function (deptAbbr) {
+      let getDeptData = function(deptAbbr) {
         return new Promise((resolve, reject) => {
           // get dept's courses
           request({
@@ -224,7 +230,7 @@ export function grabData (ACIXSTORE) {
         })
       }
 
-      let getClassData = function (classAbbr) {
+      let getClassData = function(classAbbr) {
         return new Promise((resolve, reject) => {
           request({
             method: 'POST',
@@ -238,8 +244,7 @@ export function grabData (ACIXSTORE) {
           })
             .then(body => {
               if (
-                iconv.decode(body, 'big5') ===
-                'session is interrupted! <br>'
+                iconv.decode(body, 'big5') === 'session is interrupted! <br>'
               ) {
                 console.error(
                   'session is interrupted! when request new_class',

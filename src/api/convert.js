@@ -23,7 +23,8 @@ request({ method: 'GET', url: url })
         title: course['課程中文名稱'],
         title_eng: course['課程英文名稱'],
         credit: parseInt(course['學分數']),
-        random: (number in coursesDB.courses && coursesDB.courses[number].random) || 0
+        random:
+          (number in coursesDB.courses && coursesDB.courses[number].random) || 0
       }
 
       if (course['授課教師']) {
@@ -137,29 +138,20 @@ request({ method: 'GET', url: url })
 
     let jsonStr = JSON.stringify(coursesDB, null, '  ')
     let filepath = `${__dirname}/courses_db.refined.json`
-    fs.writeFile(filepath,
-      jsonStr,
-      'utf8',
-      err => {
-        if (err) {
-          throw err
-        }
-        console.log('Write in to file', filepath)
+    fs.writeFile(filepath, jsonStr, 'utf8', err => {
+      if (err) {
+        throw err
       }
-    )
+      console.log('Write in to file', filepath)
+    })
 
     jsonStr = JSON.stringify(coursesDB)
     filepath = `${__dirname}/courses_db.min.json`
-    fs.writeFile(filepath,
-      jsonStr,
-      'utf8',
-      err => {
-        if (err) {
-          throw err
-        }
-        console.log('Write in to file', filepath)
+    fs.writeFile(filepath, jsonStr, 'utf8', err => {
+      if (err) {
+        throw err
       }
-    )
+      console.log('Write in to file', filepath)
+    })
   })
-  .catch(err => console.error(err)
-  )
+  .catch(err => console.error(err))
