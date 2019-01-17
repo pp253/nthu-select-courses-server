@@ -207,6 +207,14 @@ export const ResponseErrorMsg = {
       msg: `Waiting for third phase.`,
       more: errMsg
     })
+
+  // scores
+  CantGetClassmate(errMsg) {
+    return ResponseWarningJSON({
+      id: 100,
+      msg: `Can't get the classmate due to the wrong course number.`,
+      more: errMsg
+    })
   }
 }
 

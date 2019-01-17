@@ -1,4 +1,4 @@
-import {request, correctRequest} from '../lib/request'
+import { request, correctRequest, correctFormRequest } from '../lib/request'
 import cheerio from 'cheerio'
 import config from '../../config'
 import response from './response'
@@ -259,9 +259,98 @@ export function getDistribution (sessionToken, courseNumber) {
 
       resolve(response.ResponseSuccessJSON({
         distribution: distribution
-      }))
+
+export function getClassmates(sessionToken, courseNumber) {
+  return new Promise((resolve, reject) => {
+    let formDataPreload = {
+      ACIXSTORE: sessionToken,
+      Submit: '%A6%5E%A4W%A4%40%AD%B6Back'
+    }
+    correctFormRequest({
+      url: config.grabdata.getClassmatesListPreloadPage,
+      formData: Object.assign({}, formDataPreload),
+      headers: {
+        Referer: config.grabdata.getClassmatesPage
+      }
     })
-    .catch((err) => {
+      .then(() => {
+        let formData = {
+          ACIXSTORE: sessionToken
+        }
+        return correctFormRequest({
+          url: config.grabdata.getClassmatesListPage.replace(
+            '{0}',
+            sessionToken
+          ),
+          formData: Object.assign({}, formData),
+          headers: {
+            Referer: config.grabdata.getClassmatesPage
+          }
+        })
+      })
+      .then(body => {
+        let formData = {
+          ACIXSTORE: sessionToken,
+          ckey: courseNumber,
+          Submit: '%BDT%A9w'
+        }
+
+        return correctFormRequest({
+          url: config.grabdata.getClassmatesPage,
+          formData: Object.assign({}, formData),
+          headers: {
+            Referer: config.grabdata.getClassmatesListPage.replace(
+              '{0}',
+              sessionToken
+            )
+          }
+        })
+      })
+      .then(body => {
+        if (body === config.grabdata.errSessionInterrupted) {
+          reject(response.ResponseErrorMsg.SessionInterrupted())
+          return
+        }
+        if (body.startsWith(config.grabdata.errCantGetClassmates)) {
+          resolve(
+            response.ResponseSuccessJSON({
+              classmates: [],
+              courseNumber: ''
+            })
+          )
+          return
+        }
+
+        const $ = cheerio.load(body)
+
+        let trArray = $('form[name="form1"] table tbody tr.class3').toArray()
+
+        let classmates = []
+        for (let tr of trArray) {
+          classmates.push({
+            name: $(tr.children[7])
+              .text()
+              .trim(),
+            studentId: $(tr.children[5])
+              .text()
+              .trim(),
+            department: $(tr.children[9])
+              .text()
+              .trim(),
+            email: $(tr.children[11])
+              .text()
+              .trim()
+          })
+        }
+
+        resolve(
+          response.ResponseSuccessJSON({
+            classmates: classmates,
+            courseNumber: courseNumber
+          })
+        )
+    })
+      .catch(err => {
       reject(err)
     })
   })
