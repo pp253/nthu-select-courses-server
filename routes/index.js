@@ -92,6 +92,7 @@ export default function initialize(app) {
         ),
         getSelectionResult: apiMethodWrapper(selectCourse.getSelectionResult, [
           'sessionToken',
+          'studentId',
           'semester',
           'phase'
         ])

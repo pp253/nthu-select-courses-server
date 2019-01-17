@@ -207,6 +207,14 @@ export const ResponseErrorMsg = {
       msg: `Waiting for third phase.`,
       more: errMsg
     })
+  },
+  NotInSelectionPhase(errMsg) {
+    return ResponseWarningJSON({
+      id: 48,
+      msg: `We are not in selection phase right now.`,
+      more: errMsg
+    })
+  },
 
   // scores
   CantGetClassmate(errMsg) {

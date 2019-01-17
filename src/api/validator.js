@@ -52,5 +52,10 @@ export default {
     in: 'body',
     notEmpty: true,
     errorMessage: 'Invalid phase.'
+  },
+  studentId: {
+    in: 'body',
+    notEmpty: true,
+    errorMessage: 'Invalid phase.'
   }
 }
