@@ -54,6 +54,10 @@ export default function initialize(app) {
       },
       scores: {
         getScores: apiMethodWrapper(scores.getScores, ['sessionToken']),
+        getClassmates: apiMethodWrapper(scores.getClassmates, [
+          'sessionToken',
+          'courseNumber'
+        ]),
         getDistribution: apiMethodWrapper(scores.getDistribution, [
           'sessionToken',
           'courseNumber'
@@ -88,6 +92,7 @@ export default function initialize(app) {
         ),
         getSelectionResult: apiMethodWrapper(selectCourse.getSelectionResult, [
           'sessionToken',
+          'studentId',
           'semester',
           'phase'
         ])

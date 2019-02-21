@@ -21,8 +21,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "axios": "^0.17.1",
-    "babel-core": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
     "babel-register": "^6.26.0",
     "body-parser": "^1.18.2",
     "cheerio": "^1.0.0-rc.2",
@@ -37,7 +37,7 @@
     "moment": "^2.20.1",
     "mongoose": "^5.0.3",
     "query-string": "^5.0.1",
-    "request": "^2.83.0",
+    "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
     "tiny-async-pool": "^1.0.1"
   },

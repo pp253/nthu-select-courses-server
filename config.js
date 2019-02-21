@@ -35,6 +35,13 @@ export default {
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.2/7.2.1/JH721003.php',
     logoutPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/logout.php?ACIXSTORE={0}',
+    getClassmatesListPreloadPage:
+      'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.2/7.2.16/JH72g001.php',
+    getClassmatesListPage:
+      'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.2/7.2.16/JH72g002.php?ACIXSTORE={0}',
+    getClassmatesPage:
+      'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.2/7.2.16/JH72g003.php',
+    errCantGetClassmates: "<script>alert('科號有誤');",
     waitingForRandomProcessText: '未亂數(Wait for random process)',
     infoWaitingForRandomProcess:
       "<script>alert('加選此科目僅列入亂數處理!\\nThis course has size limit.\\nThe system will run randomly to decide who will be enrolled in the course after the end of this course selection period.');</script>",
@@ -56,9 +63,11 @@ export default {
     errNotAvailable: "<script>alert('目前非選課階段",
     errWrongPE: "<script>alert('體育課程曾不及格才能修兩門!",
     errCantAddCourse: "<script>alert('本課程人限為零，請見課程備註了解加選方式",
-    errWaitingForThirdPhase: "<script>alert('本階段原修者優，第三次選課即開放，不再設限",
+    errWaitingForThirdPhase:
+      "<script>alert('本階段原修者優，第三次選課即開放，不再設限",
     errNotValidCourseNumber: '錯誤的科目',
-    errGeneralCoursesNotMoreThanThree: '<script>alert(\'通識課一學期最多三科!',
-    warnCantBeGE: "<script>alert('您選此課程只能當必選修，不能當通識!');</script>"
+    errGeneralCoursesNotMoreThanThree: "<script>alert('通識課一學期最多三科!",
+    warnCantBeGE:
+      "<script>alert('您選此課程只能當必選修，不能當通識!');</script>"
   }
 }

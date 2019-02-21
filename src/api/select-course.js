@@ -131,7 +131,7 @@ export function getCurrentSelectedCourses(sessionToken) {
         method: 'POST'
       })
         .then(body => {
-          reject(body)
+          reject(response.ResponseErrorMsg.NotInSelectionPhase())
         })
         .catch(err => {
           resolve(err)
@@ -306,7 +306,9 @@ export function addCourse(sessionToken, courseNumber, order = '') {
           } else if (body.startsWith(config.grabdata.errNotAvailable)) {
             reject(response.ResponseErrorMsg.NotAvailable())
             return
-          } else if (body.startsWith(config.grabdata.errGeneralCoursesNotMoreThanThree)) {
+          } else if (
+            body.startsWith(config.grabdata.errGeneralCoursesNotMoreThanThree)
+          ) {
             reject(response.ResponseErrorMsg.GeneralCoursesNotMoreThanThree())
             return
           } else if (body.startsWith(config.grabdata.errNotValid)) {
@@ -335,9 +337,13 @@ export function addCourse(sessionToken, courseNumber, order = '') {
 
           const violateCourseRuleReg = /<script>alert\('(.*)'\);<\/script>[.\n]*<\/body>[.\n]*<\/html>[.\n]*$/g
           if (violateCourseRuleReg.test(body)) {
-            let errMsg = /<script>alert\('(.*)'\);<\/script>[.\n]*<\/body>[.\n]*<\/html>[.\n]*$/g.exec(body)
+            let errMsg = /<script>alert\('(.*)'\);<\/script>[.\n]*<\/body>[.\n]*<\/html>[.\n]*$/g.exec(
+              body
+            )
             reject(
-              response.ResponseErrorMsg.ViolateCourseRule(errMsg ? errMsg[1] : '')
+              response.ResponseErrorMsg.ViolateCourseRule(
+                errMsg ? errMsg[1] : ''
+              )
             )
             return
           }
@@ -492,7 +498,11 @@ export function editOrder(sessionToken, newOrder, oldOrder) {
        */
       if (!newCourse && !oldCourse) {
         continue
-      } else if ((newCourse && oldCourse) && (newCourse.number === oldCourse.number)) {
+      } else if (
+        newCourse &&
+        oldCourse &&
+        newCourse.number === oldCourse.number
+      ) {
         /**
          * If both course exist and have same courseNumber, skip it.
          */
@@ -623,14 +633,30 @@ export function getSyllabus(sessionToken, courseNumber) {
         resolve(
           response.ResponseSuccessJSON({
             syllabus: {
-              number: $(trArray.get(1).children[2].children[0]).text().trim(),
-              chineseTitle: $(trArray.get(2).children[3].children[0]).text().trim(),
-              englishTitle: $(trArray.get(3).children[3].children[0]).text().trim(),
-              credit: $(trArray.get(1).children[5].children[0]).text().trim(),
-              time: $(trArray.get(5).children[2].children[0]).text().trim(),
-              room: $(trArray.get(5).children[5].children[0]).text().trim(),
-              professor: $(trArray.get(4).children[3].children[0]).text().trim(),
-              size_limit: $(trArray.get(1).children[8].children[0]).text().trim(),
+              number: $(trArray.get(1).children[2].children[0])
+                .text()
+                .trim(),
+              chineseTitle: $(trArray.get(2).children[3].children[0])
+                .text()
+                .trim(),
+              englishTitle: $(trArray.get(3).children[3].children[0])
+                .text()
+                .trim(),
+              credit: $(trArray.get(1).children[5].children[0])
+                .text()
+                .trim(),
+              time: $(trArray.get(5).children[2].children[0])
+                .text()
+                .trim(),
+              room: $(trArray.get(5).children[5].children[0])
+                .text()
+                .trim(),
+              professor: $(trArray.get(4).children[3].children[0])
+                .text()
+                .trim(),
+              size_limit: $(trArray.get(1).children[8].children[0])
+                .text()
+                .trim(),
               briefDescription: courseBriefDescription,
               description: courseDescription,
               file: courseDescription.startsWith(
@@ -827,21 +853,25 @@ export function getAvailableSelectionResult(sessionToken) {
      }]
    }
  */
-export function getSelectionResult(sessionToken, semester, phase) {
+export function getSelectionResult(sessionToken, studentId, semester, phase) {
   return new Promise((resolve, reject) => {
-    let frommetedSemesterText = /(\d{3})(\d{2})/.exec(semester)
-    let frommetedSemester = `${frommetedSemesterText[1]},${
-      frommetedSemesterText[2]
-    }`
+    getAvailableSelectionResult(sessionToken)
+      .then(() => {
+        let frommetedSemesterText = /(\d{3})(\d{2})/.exec(semester)
+        let frommetedSemester = `${frommetedSemesterText[1]},${
+          frommetedSemesterText[2]
+        }`
 
-    correctFormRequest({
-      url: config.grabdata.selectionResultDetailPage,
-      formData: {
-        ACIXSTORE: sessionToken,
-        semester: frommetedSemester,
-        phase: phase
-      }
-    })
+        return correctFormRequest({
+          url: config.grabdata.selectionResultDetailPage,
+          formData: {
+            ACIXSTORE: sessionToken,
+            stu_no: studentId,
+            semester: frommetedSemester,
+            phase: phase
+          }
+        })
+      })
       .then(body => {
         if (body === config.grabdata.errSessionInterrupted) {
           reject(response.ResponseErrorMsg.SessionInterrupted())
