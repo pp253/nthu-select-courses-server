@@ -9,6 +9,7 @@ import bodyParser from 'body-parser'
 import expressValidator from 'express-validator'
 import compression from 'compression'
 import cors from 'cors'
+
 // import memwatch from 'memwatch-next'
 import debug from './src/lib/debug'
 import routes from './routes'
@@ -39,10 +40,6 @@ app.use(
   })
 )
 
-// Views
-app.set('view engine', 'pug')
-app.set('views', './views')
-
 // Session
 app.use(
   session({
@@ -53,7 +50,7 @@ app.use(
 )
 
 // Setting
-app.set('port', PRODUCTION ? 443 : 80)
+app.set('port', 3000 || process.env.PORT || (PRODUCTION ? 443 : 80))
 app.set('title', 'NTHU SELECT COURSE')
 
 // Static
@@ -61,7 +58,7 @@ app.use('/', express.static('public'))
 
 // Route
 routes(app)
-
+/*
 if (PRODUCTION && fs.existsSync(path.join(__dirname, '/secret/private.key'))) {
   // Listening
   let httpsServer = https.createServer(
@@ -93,11 +90,16 @@ if (PRODUCTION && fs.existsSync(path.join(__dirname, '/secret/private.key'))) {
     timer.stop()
   })
 
-  /*
   memwatch.on('leak', (e) => {
     console.log('LEAK', e)
   })
-  */
 }
+*/
+
+
+app.listen(3000, () => {
+  debug.log('Start to listen on PORT %d ...', 3000)
+  timer.stop()
+})
 
 debug.log('Server initialized done')

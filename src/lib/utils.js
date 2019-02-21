@@ -6,8 +6,8 @@ import { Exception } from './debug'
  * Using `set NODE_ENV=development` or `set NODE_ENV=production` for
  * determining the environment.
  */
-export const PRODUCTION = !(process.env.NODE_ENV === 'development')
-
+export const PRODUCTION = process.env.NODE_ENV === 'production'
+console.log(`process.env.NODE_ENV`,process.env.ASDASD)
 export function toArray (obj) {
   if (typeof obj !== 'object') {
     throw new Exception('toArray: obj should be an object.')
