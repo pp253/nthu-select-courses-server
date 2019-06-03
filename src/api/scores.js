@@ -109,7 +109,7 @@ export function getScores(sessionToken) {
         let scores = {}
         let courses = {}
         let table = $('table')
-        let table1 = table.get(1).children[1].children // table[1] > tbody.children
+        let table1 = table.get(1).children[1].children
 
         for (let trIdx in table1) {
           let tr = table1[trIdx]
@@ -157,87 +157,121 @@ export function getScores(sessionToken) {
           courses[score.courseNumber] = score
         }
 
-        // table[4] > tbody.children
-        let table4 = $(table.get(4))
-          .find('tr')
-          .toArray()
-        table4.splice(0, 2)
         let overview = {}
-        for (let tr of table4) {
-          let semester =
-            $(tr.children[1].children[0])
-              .text()
-              .trim() +
-            $(tr.children[3].children[0])
+        try {
+          let table4 = $(table.get(4))
+            .find('tr')
+            .toArray()
+          table4.splice(0, 2)
+          for (let tr of table4) {
+            let semester =
+              $(tr.children[1].children[0])
+                .text()
+                .trim() +
+              $(tr.children[3].children[0])
+                .text()
+                .trim()
+            let gpa =
+              tr.children[5].children[0] &&
+              $(tr.children[5].children[0])
+                .text()
+                .trim()
+            gpa = gpa === '-' ? '' : gpa
+            let relativeGradeAverage =
+              tr.children[7].children[0].type === 'tag'
+                ? ''
+                : $(tr.children[7].children[0])
+                    .text()
+                    .trim()
+            let credit =
+              tr.children[9].children[0].type === 'tag'
+                ? ''
+                : $(tr.children[9].children[0])
+                    .text()
+                    .trim()
+            let deservedCredit =
+              tr.children[11].children[0].type === 'tag'
+                ? ''
+                : $(tr.children[11].children[0])
+                    .text()
+                    .trim()
+            let courses =
+              tr.children[13].children[0].type === 'tag'
+                ? ''
+                : $(tr.children[13].children[0])
+                    .text()
+                    .trim()
+            let summerVacationCredit =
+              tr.children[15].children[0].type === 'tag'
+                ? ''
+                : $(tr.children[15].children[0])
+                    .text()
+                    .trim()
+            let transferCredit =
+              tr.children[17].children[0].type === 'tag'
+                ? ''
+                : $(tr.children[17].children[0])
+                    .text()
+                    .trim()
+            let classRanking = $(tr.children[19].children[0])
               .text()
               .trim()
-          let gpa =
-            tr.children[5].children[0] &&
-            $(tr.children[5].children[0])
+            classRanking = classRanking === '-' ? '' : classRanking
+            let departmentRanking = $(tr.children[21].children[0])
               .text()
               .trim()
-          gpa = gpa === '-' ? '' : gpa
-          let credit =
-            tr.children[7].children[0].type === 'tag'
-              ? ''
-              : $(tr.children[7].children[0])
-                  .text()
-                  .trim()
-          let deservedCredit =
-            tr.children[9].children[0].type === 'tag'
-              ? ''
-              : $(tr.children[9].children[0])
-                  .text()
-                  .trim()
-          let courses =
-            tr.children[11].children[0].type === 'tag'
-              ? ''
-              : $(tr.children[11].children[0])
-                  .text()
-                  .trim()
-          let summerVacationCredit =
-            tr.children[13].children[0].type === 'tag'
-              ? ''
-              : $(tr.children[13].children[0])
-                  .text()
-                  .trim()
-          let transferCredit =
-            tr.children[15].children[0].type === 'tag'
-              ? ''
-              : $(tr.children[15].children[0])
-                  .text()
-                  .trim()
-          let classRanking = $(tr.children[17].children[0])
-            .text()
-            .trim()
-          classRanking = classRanking === '-' ? '' : classRanking
-          let departmentRanking = $(tr.children[19].children[0])
-            .text()
-            .trim()
-          departmentRanking = departmentRanking === '-' ? '' : departmentRanking
-          let comments = $(tr.children[21].children[0])
-            .text()
-            .trim()
+            departmentRanking = departmentRanking === '-' ? '' : departmentRanking
+            let relativeGradeClassRanking = $(tr.children[23].children[0])
+              .text()
+              .trim()
+            relativeGradeClassRanking = relativeGradeClassRanking === '-' ? '' : relativeGradeClassRanking
+            let relativeGradeDepartmentRanking = $(tr.children[25].children[0])
+              .text()
+              .trim()
+            relativeGradeDepartmentRanking = relativeGradeDepartmentRanking === '-' ? '' : relativeGradeDepartmentRanking
+            let comments = $(tr.children[27].children[0])
+              .text()
+              .trim()
 
-          overview[semester] = {
-            semester,
-            gpa,
-            credit,
-            deservedCredit,
-            courses,
-            summerVacationCredit,
-            transferCredit,
-            classRanking,
-            departmentRanking,
-            comments
+            overview[semester] = {
+              semester,
+              gpa,
+              relativeGradeAverage,
+              credit,
+              deservedCredit,
+              courses,
+              summerVacationCredit,
+              transferCredit,
+              classRanking,
+              departmentRanking,
+              relativeGradeClassRanking,
+              relativeGradeDepartmentRanking,
+              comments
+            }
           }
+        } catch (error) {
+          console.error('overview error', error)
+        }
+
+        // cumulative
+        let cumulative = {}
+        try {
+          let table5 = $(table.get(5))
+            .find('tr:nth-child(1) td div:nth-child(1)')
+            .toArray()
+          let words = table5[0].children[0].data.split('：')[1].trim().split('、')
+          cumulative.cumulativeRanking = words[0]
+          cumulative.gpa = words[1]
+        } catch (error) {
+          console.error('cumulative error', error)
         }
 
         resolve(
           response.ResponseSuccessJSON({
             scores: scores,
             courses: courses,
-            overview: overview
+            overview: overview,
+            cumulative: cumulative
           })
         )
       })
@@ -246,6 +280,8 @@ export function getScores(sessionToken) {
       })
   })
 }
+
+getScores('4247mg2c9f4e2s5dgkao9gcas5').then(d => console.log(d)).catch(err => console.error(err))
 
 /**
  * @api {post} api/scores/getDistribution Get distribution
