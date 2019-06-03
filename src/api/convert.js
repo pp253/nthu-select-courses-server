@@ -2,7 +2,9 @@ const fs = require('fs')
 const request = require('request-promise-native')
 
 // const openCourseData = require('./open_course_data.json')
-const coursesDB = require('./courses_db.json')
+const VERIFY = false
+const coursesDB = VERIFY ? require('./courses_db.json') : {}
+
 let geDegreeTypes = []
 let languageTypes = []
 let doubleTypes = []
@@ -11,6 +13,7 @@ let requiredTypes = []
 let courses = {}
 
 let url = `https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/OPENDATA/open_course_data.json`
+
 
 request({ method: 'GET', url: url })
   .then(body => {
@@ -24,7 +27,7 @@ request({ method: 'GET', url: url })
         title_eng: course['課程英文名稱'],
         credit: parseInt(course['學分數']),
         random:
-          (number in coursesDB.courses && coursesDB.courses[number].random) || 0
+          (coursesDB.courses && number in coursesDB.courses && coursesDB.courses[number].random) || 0
       }
 
       if (course['授課教師']) {
@@ -97,34 +100,36 @@ request({ method: 'GET', url: url })
     }
 
     // verify
-    for (let c in courses) {
-      if (!(c in coursesDB.courses)) {
-        console.error('error:', c)
-      }
-    }
-
-    // verify
-    for (let c in coursesDB.courses) {
-      delete coursesDB.courses[c].sc_code
-      delete coursesDB.courses[c].sc_div
-      delete coursesDB.courses[c].sc_real
-      delete coursesDB.courses[c].sc_ctime
-      delete coursesDB.courses[c].sc_glimit
-      delete coursesDB.courses[c].sc_type
-      delete coursesDB.courses[c].sc_pre
-      delete coursesDB.courses[c].sc_range
-
-      if (!(c in courses)) {
-        console.error(c, 'not in courses.')
-
-        if (coursesDB.courses[c].professor) {
-          coursesDB.courses[c].professor = [coursesDB.courses[c].professor]
-          console.log('convert!')
+    if (VERIFY) {
+      for (let c in courses) {
+        if (!(c in coursesDB.courses)) {
+          console.error('error:', c)
         }
+      }
 
-        if (coursesDB.courses[c].required) {
-          coursesDB.courses[c].required = undefined
-          console.log('convert required!')
+      // verify
+      for (let c in coursesDB.courses) {
+        delete coursesDB.courses[c].sc_code
+        delete coursesDB.courses[c].sc_div
+        delete coursesDB.courses[c].sc_real
+        delete coursesDB.courses[c].sc_ctime
+        delete coursesDB.courses[c].sc_glimit
+        delete coursesDB.courses[c].sc_type
+        delete coursesDB.courses[c].sc_pre
+        delete coursesDB.courses[c].sc_range
+
+        if (!(c in courses)) {
+          console.error(c, 'not in courses.')
+
+          if (coursesDB.courses[c].professor) {
+            coursesDB.courses[c].professor = [coursesDB.courses[c].professor]
+            console.log('convert!')
+          }
+
+          if (coursesDB.courses[c].required) {
+            coursesDB.courses[c].required = undefined
+            console.log('convert required!')
+          }
         }
       }
     }

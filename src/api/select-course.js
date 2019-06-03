@@ -4,7 +4,7 @@ import { request, correctRequest, correctFormRequest } from '../lib/request'
 import cheerio from 'cheerio'
 import config from '../../config'
 import response from './response'
-import coursesDB from './courses_db.json'
+import coursesDB from './courses_db.min.json'
 import grabHelper from './grab-helper'
 // import { grabData } from './grab-data'
 
