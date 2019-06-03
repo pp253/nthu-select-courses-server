@@ -1,26 +1,38 @@
 export default {
   grabdata: {
-    nthuBase: 'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/',
+    base: 'https://www.ccxp.nthu.edu.tw/ccxp/',
+    home: 'COURSE/',
     authImg:
       'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/auth_img.php?pwdstr={0}',
+    logoutPage:
+      'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/logout.php?ACIXSTORE={0}',
+
     authPage: 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/pre_select_entry.php',
     inquirePage: 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/',
+
     selectPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/select_entry.php?ACIXSTORE={0}&hint={1}',
+
     preloadSelectedCoursesPage0:
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713001.php?ACIXSTORE={0}',
     preloadSelectedCoursesPage1:
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH7130011.php',
     preloadSelectedCoursesPage2:
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713002.php?ACIXSTORE={0}',
-    teacherPasswordPage:
-      'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713003.php?ACIXSTORE={0}&ts_pwd={1}',
     preSelectCoursesPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH7130041.php',
+    teacherPasswordPage:
+      'COURSE/JH/7/7.1/7.1.3/JH713003.php?ACIXSTORE={0}&ts_pwd={1}',
     preSelectCoursesRefererPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713004.php?ACIXSTORE={0}',
     currentSelectedCoursesPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713005.php?ACIXSTORE={0}',
+
+    tenPreloadSelectedCoursesPage0: 'COURSE/JH/7/7.6/7.6.1/JH761002.php?ACIXSTORE={0}',
+    tenPreloadSelectedCoursesPage1: 'COURSE/JH/7/7.6/7.6.1/JH761003.php?ACIXSTORE={0}&eng_name=N',
+    tenCoursesPage: 'COURSE/JH/7/7.6/7.6.1/JH761004.php?toChk=2&ACIXSTORE={0}',
+    tenCurrentSelectedCoursesPage: 'COURSE/JH/7/7.6/7.6.1/JH761005.php?ACIXSTORE={0}',
+
     scoresPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/8/R/6.3/JH8R63002.php?ACIXSTORE={0}',
     syllabusPage:
@@ -33,14 +45,13 @@ export default {
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.2/7.2.1/JH721002.php',
     selectionResultDetailPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.2/7.2.1/JH721003.php',
-    logoutPage:
-      'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/logout.php?ACIXSTORE={0}',
     getClassmatesListPreloadPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.2/7.2.16/JH72g001.php',
     getClassmatesListPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.2/7.2.16/JH72g002.php?ACIXSTORE={0}',
     getClassmatesPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.2/7.2.16/JH72g003.php',
+
     errCantGetClassmates: "<script>alert('科號有誤');",
     waitingForRandomProcessText: '未亂數(Wait for random process)',
     infoWaitingForRandomProcess:

@@ -2,7 +2,7 @@ const fs = require('fs')
 const request = require('request-promise-native')
 
 // const openCourseData = require('./open_course_data.json')
-const VERIFY = false
+const VERIFY = true
 const coursesDB = VERIFY ? require('./courses_db.json') : {}
 
 let geDegreeTypes = []
@@ -128,9 +128,20 @@ request({ method: 'GET', url: url })
 
           if (coursesDB.courses[c].required) {
             coursesDB.courses[c].required = undefined
-            console.log('convert required!')
+            console.log('convert: required')
           }
         }
+      }
+    }
+
+    // verify department
+    console.log('verify department')
+    for (let dept in coursesDB.departments) {
+      // abbr, chineseName, englishName, classes should exist
+      let d = coursesDB.departments[dept]
+      if (!d.abbr || !d.chineseName || !d.englishName || !d.classes) {
+        console.error(dept, 'not exist!')
+        console.error(d)
       }
     }
 

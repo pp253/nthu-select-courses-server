@@ -23,7 +23,7 @@ import response from './response'
 export function getLoginToken() {
   return new Promise((resolve, reject) => {
     correctRequest({
-      url: config.grabdata.nthuBase,
+      url: config.grabdata.base + config.grabdata.home,
       method: 'GET'
     })
       .then(body => {

@@ -4,6 +4,8 @@ const cheerio = require('cheerio')
 const asyncPool = require('tiny-async-pool')
 const fs = require('fs')
 
+const TENTATIVE = true
+
 function grabHelper(node, level = 0, initIndex = 0) {
   if (node instanceof Array) {
     let idx = initIndex
@@ -35,22 +37,43 @@ function grabHelper(node, level = 0, initIndex = 0) {
 }
 
 function grabDepartmentsByBody(body) {
+  console.log('grabDepartmentsByBody')
   const $ = cheerio.load(body)
   let departments = {}
 
   // get departments
   for (let dept of $('select[name=new_dept] option').toArray()) {
-    let parsedDeptName = /([A-Z0-9]+) ([^\s]+)(?: (.*))?/.exec(
-      dept.children[0].data
-    )
-    let deptAbbr = parsedDeptName[1]
-    let deptChineseName = parsedDeptName[2]
-    let deptEnglishName = parsedDeptName[3] ? parsedDeptName[3] : deptAbbr
-    departments[deptAbbr] = {
-      abbr: deptAbbr,
-      chineseName: deptChineseName,
-      englishName: deptEnglishName,
-      classes: []
+    if (TENTATIVE) {
+      let parsedDeptNameReg = /^(.+)\(([^\(\)]+)\)$/
+
+      let parsedDeptName = parsedDeptNameReg.exec(
+        dept.children[0].data
+      )
+      let deptAbbr = parsedDeptName[2]
+      let deptChineseName = parsedDeptName[1]
+      let deptEnglishName = deptAbbr
+
+      departments[deptAbbr] = {
+        abbr: deptAbbr,
+        chineseName: deptChineseName,
+        englishName: deptEnglishName,
+        classes: []
+      }
+    } else {
+      let parsedDeptNameReg = /([A-Z0-9]+) ([^\s]+)(?: (.*))?/
+      let parsedDeptName = parsedDeptNameReg.exec(
+        dept.children[0].data
+      )
+      let deptAbbr = parsedDeptName[1].trim()
+      let deptChineseName = parsedDeptName[2]
+      let deptEnglishName = parsedDeptName[3] ? parsedDeptName[3] : deptAbbr
+
+      departments[deptAbbr] = {
+        abbr: deptAbbr,
+        chineseName: deptChineseName,
+        englishName: deptEnglishName,
+        classes: []
+      }
     }
   }
 
@@ -83,65 +106,91 @@ function grabDepartmentsByBody(body) {
 function grabCoursesByBody(body) {
   const $ = cheerio.load(body)
   let courses = {}
-
-  for (let tr of $('table#T1 tbody tr.word').toArray()) {
+  // grabHelper($('table#T1 tbody tr'))
+  // console.log( $('table#T1 tbody tr').toArray())
+  for (let tr of $(TENTATIVE ? 'table#T1 tbody tr' : 'table#T1 tbody tr.word').toArray()) {
     let trArray = $(tr).find('td')
+    // console.log(trArray)
 
     let random = 0
     let canceled = false
     let arguText = ''
+    let argus
     try {
-      if (trArray.get(0).children[0].children.length > 5) {
-        // random for 5
-        arguText = trArray.get(0).children[0].children[1].attribs.onclick
-        random = 5
-      } else if (trArray.get(0).children[0].children.length > 3) {
-        // random for 20
-        arguText = trArray.get(0).children[0].children[3].attribs.onclick
-        random = 20
-      } else if (trArray.get(0).children[0].children.length > 2) {
-        arguText = trArray.get(0).children[0].children[1].attribs.onclick
+      if (!TENTATIVE) {
+        let elem = trArray.get(0).children[0].children
+        if (elem.length > 5) {
+          // random for 5
+          arguText = elem[1].attribs.onclick
+          random = 5
+        } else if (elem.length > 3) {
+          // random for 20
+          arguText = elem[3].attribs.onclick
+          random = 20
+        } else if (elem.length > 2) {
+          arguText = elem[1].attribs.onclick
+        } else {
+          arguText = []
+          canceled = true
+        }
+
+        argus = /[^;]*;checks\(this\.form, '([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)'\);/.exec(arguText)
       } else {
-        arguText = []
-        canceled = true
+        canceled = false
       }
     } catch (e) {
       grabHelper(tr)
       process.abort()
     }
-    let argus = /[^;]*;checks\(this\.form, '([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)'\);/.exec(
-      arguText
-    )
 
     try {
-      let course = {
-        number: trArray.get(1).children[0].children[0].data.trim(),
-        title: trArray.get(2).children[0].children[0].data.trim(),
-        credit: trArray.get(3).children[0].children[0].data.trim(),
-        time: $(trArray.get(4))
-          .text()
-          .trim(),
-        room: trArray.get(5).children[0].children[0].data.trim(),
-        professor: trArray.get(6).children[0].children[0].data.trim(),
-        size_limit: trArray.get(8).children[0].children[0].data.trim(),
-        required: trArray.get(7).children[0].children[0].data.trim(),
-        previous_size: trArray.get(9).children[0].children[0].data.trim(),
-        prerequirement: $(trArray.get(11).children[0])
-          .text()
-          .trim(),
-        memo: $(trArray.get(12).children[0])
-          .text()
-          .trim(),
-        sc_code: !canceled && argus[2],
-        sc_div: !canceled && argus[3],
-        sc_real: !canceled && argus[4],
-        sc_ctime: !canceled && argus[6],
-        sc_glimit: !canceled && argus[8],
-        sc_type: !canceled && argus[9],
-        sc_pre: !canceled && argus[10],
-        sc_range: !canceled && argus[11],
-        random: random,
-        canceled: canceled
+      let course
+      if (!TENTATIVE) {
+        course = {
+          number: trArray.get(1).children[0].children[0].data.trim(),
+          title: trArray.get(2).children[0].children[0].data.trim(),
+          credit: trArray.get(3).children[0].children[0].data.trim(),
+          time: $(trArray.get(4))
+            .text()
+            .trim(),
+          room: trArray.get(5).children[0].children[0].data.trim(),
+          professor: trArray.get(6).children[0].children[0].data.trim(),
+          size_limit: trArray.get(8).children[0].children[0].data.trim(),
+          required: trArray.get(7).children[0].children[0].data.trim(),
+          previous_size: trArray.get(9).children[0].children[0].data.trim(),
+          prerequirement: $(trArray.get(11).children[0])
+            .text()
+            .trim(),
+          memo: $(trArray.get(12).children[0])
+            .text()
+            .trim(),
+          sc_code: !canceled && argus && argus[2],
+          sc_div: !canceled && argus && argus[3],
+          sc_real: !canceled && argus && argus[4],
+          sc_ctime: !canceled && argus && argus[6],
+          sc_glimit: !canceled && argus && argus[8],
+          sc_type: !canceled && argus && argus[9],
+          sc_pre: !canceled && argus && argus[10],
+          sc_range: !canceled && argus && argus[11],
+          random: random,
+          canceled: canceled
+        }
+      } else {
+        course = {
+          number: $(trArray.get(1)).text().trim(),
+          title: $(trArray.get(2)).text().trim(),
+          credit: $(trArray.get(3)).text().trim(),
+          time: $(trArray.get(4)).text().trim(),
+          room: $(trArray.get(5)).text().trim(),
+          professor: $(trArray.get(6)).text().trim(),
+          required: $(trArray.get(7)).text().trim(),
+          size_limit: $(trArray.get(8)).text().trim(),
+          previous_size: 0,
+          prerequirement: '',
+          memo: $(trArray.get(10)).text().trim(),
+          random: random,
+          canceled: canceled
+        }
       }
       courses[course.number] = course
     } catch (error) {
@@ -157,7 +206,7 @@ function grabCoursesByBody(body) {
 export function grabData(ACIXSTORE) {
   console.log('Starting grabbing data.')
 
-  const url = `https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713004.php?ACIXSTORE=${ACIXSTORE}`
+  const url = TENTATIVE ? `https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.6/7.6.1/JH761004.php?ACIXSTORE=${ACIXSTORE}` : `https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713004.php?ACIXSTORE=${ACIXSTORE}`
 
   const formData = {
     ACIXSTORE: ACIXSTORE,
@@ -197,7 +246,7 @@ export function grabData(ACIXSTORE) {
               toChk: '1',
               new_dept: deptAbbr,
               new_class: 'IEEM105B',
-              chks: '%C1%60%BF%FD'
+              chks: TENTATIVE ? 'dept' : '%C1%60%BF%FD'
             },
             encoding: null
           })
@@ -222,6 +271,7 @@ export function grabData(ACIXSTORE) {
                 }
               }
               resolve()
+              console.log('DEPT ', deptAbbr, data.catalog[deptAbbr] ? data.catalog[deptAbbr].length : 0, Object.keys(data.courses).length)
             })
             .catch(err => {
               console.error(err)
@@ -238,7 +288,9 @@ export function grabData(ACIXSTORE) {
             formData: {
               ACIXSTORE: ACIXSTORE,
               toChk: '2',
-              new_class: classAbbr
+              new_class: classAbbr,
+              chks: TENTATIVE ? 'code' : '',
+              new_dept: 'ENE '
             },
             encoding: null
           })
@@ -265,6 +317,7 @@ export function grabData(ACIXSTORE) {
                 }
               }
               resolve()
+              console.log('CLASS', classAbbr, data.catalog[classAbbr] ? data.catalog[classAbbr].length : 0, Object.keys(data.courses).length)
             })
             .catch(err => {
               console.error(err)
@@ -339,4 +392,4 @@ export function grabData(ACIXSTORE) {
     })
 }
 
-grabData('')
+grabData('rlvaopeb78qt17u6khk7k6i2d6')
