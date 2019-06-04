@@ -53,6 +53,10 @@ function grabDepartmentsByBody(body) {
       let deptChineseName = parsedDeptName[1]
       let deptEnglishName = deptAbbr
 
+      if (TENTATIVE) {
+        deptAbbr = deptAbbr.trim()
+      }
+
       departments[deptAbbr] = {
         abbr: deptAbbr,
         chineseName: deptChineseName,
@@ -64,7 +68,7 @@ function grabDepartmentsByBody(body) {
       let parsedDeptName = parsedDeptNameReg.exec(
         dept.children[0].data
       )
-      let deptAbbr = parsedDeptName[1].trim()
+      let deptAbbr = parsedDeptName[1]
       let deptChineseName = parsedDeptName[2]
       let deptEnglishName = parsedDeptName[3] ? parsedDeptName[3] : deptAbbr
 
@@ -82,9 +86,11 @@ function grabDepartmentsByBody(body) {
     let parsedClassName = /([A-Z]+)(\s*[0-9A-Z]+)\s+([^\s]+)/.exec(
       cls.children[0].data
     )
+
     let deptAbbr = parsedClassName[1]
     let classLevel = parsedClassName[2]
     let className = parsedClassName[3]
+
     if (!departments[deptAbbr]) {
       departments[deptAbbr] = {
         abbr: deptAbbr,
@@ -99,7 +105,6 @@ function grabDepartmentsByBody(body) {
       name: className
     })
   }
-
   return departments
 }
 
@@ -203,6 +208,16 @@ function grabCoursesByBody(body) {
   return courses
 }
 
+function fillWithEmpty(dept) {
+  switch(dept.length) {
+    case 4: return dept
+    case 3: return dept + ' '
+    case 2: return dept + '  '
+    case 1: return dept + '   '
+    default: throw new Error('wrong format:', dept)
+  }
+}
+
 export function grabData(ACIXSTORE) {
   console.log('Starting grabbing data.')
 
@@ -244,7 +259,7 @@ export function grabData(ACIXSTORE) {
             formData: {
               ACIXSTORE: ACIXSTORE,
               toChk: '1',
-              new_dept: deptAbbr,
+              new_dept: TENTATIVE ? fillWithEmpty(deptAbbr) : deptAbbr,
               new_class: 'IEEM105B',
               chks: TENTATIVE ? 'dept' : '%C1%60%BF%FD'
             },
@@ -271,7 +286,8 @@ export function grabData(ACIXSTORE) {
                 }
               }
               resolve()
-              console.log('DEPT ', deptAbbr, data.catalog[deptAbbr] ? data.catalog[deptAbbr].length : 0, Object.keys(data.courses).length)
+              console.log('DEPT ', deptAbbr, data.catalog[deptAbbr] ? data.catalog[deptAbbr].length : 'EMPTY', Object.keys(data.courses).length)
+              console.log(data.catalog[deptAbbr] ? data.catalog[deptAbbr][0] : '')
             })
             .catch(err => {
               console.error(err)
@@ -317,7 +333,8 @@ export function grabData(ACIXSTORE) {
                 }
               }
               resolve()
-              console.log('CLASS', classAbbr, data.catalog[classAbbr] ? data.catalog[classAbbr].length : 0, Object.keys(data.courses).length)
+              console.log('CLASS', classAbbr, data.catalog[classAbbr] ? data.catalog[classAbbr].length : 'EMPTY', Object.keys(data.courses).length)
+              console.log(data.catalog[classAbbr] ? data.catalog[classAbbr][0] : '')
             })
             .catch(err => {
               console.error(err)
@@ -392,4 +409,4 @@ export function grabData(ACIXSTORE) {
     })
 }
 
-grabData('rlvaopeb78qt17u6khk7k6i2d6')
+grabData('')
