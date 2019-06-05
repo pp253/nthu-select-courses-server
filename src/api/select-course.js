@@ -6,6 +6,7 @@ import config from '../../config'
 import response from './response'
 import coursesDB from './courses_db.min.json'
 import grabHelper from './grab-helper'
+import * as counter from '../db/counter'
 // import { grabData } from './grab-data'
 
 function grabCurrentSelectedCoursesByBody(body) {
@@ -61,6 +62,7 @@ export function isAvailable(sessionToken) {
           return
         } else if (body.startsWith(config.grabdata.errNotAvailable)) {
           reject(response.ResponseErrorMsg.NotAvailable())
+          counter.add('select_course/isAvailable:NotAvailable')
           return
         }
 
@@ -69,6 +71,7 @@ export function isAvailable(sessionToken) {
             isAvailable: true
           })
         )
+        counter.add('select_course/isAvailable')
       })
       .catch(err => {
         reject(err)
@@ -132,6 +135,7 @@ export function getCurrentSelectedCourses(sessionToken) {
       })
         .then(body => {
           reject(response.ResponseErrorMsg.NotInSelectionPhase())
+          counter.add('select_course/getCurrentSelectedCourses:NotInSelectionPhase')
         })
         .catch(err => {
           resolve(err)
@@ -173,6 +177,7 @@ export function getCurrentSelectedCourses(sessionToken) {
             currentSelectedCourses: grabCurrentSelectedCoursesByBody(body)
           })
         )
+        counter.add('select_course/getCurrentSelectedCourses')
       })
       .catch(err => {
         reject(err)
@@ -293,35 +298,45 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             return
           } else if (body.startsWith(config.grabdata.errDuplicatedCourse)) {
             reject(response.ResponseErrorMsg.DuplicatedCourse())
+            counter.add('select_course/addCourse:DuplicatedCourse')
             return
           } else if (body.startsWith(config.grabdata.errCoursesTimeConflict)) {
             reject(response.ResponseErrorMsg.CoursesTimeConflict())
+            counter.add('select_course/addCourse:CoursesTimeConflict')
             return
           } else if (body.startsWith(config.grabdata.errSameCourse)) {
             reject(response.ResponseErrorMsg.SameCourse())
+            counter.add('select_course/addCourse:SameCourse')
             return
           } else if (body.startsWith(config.grabdata.errViolatePrerequisite)) {
             reject(response.ResponseErrorMsg.ViolatePrerequisite())
+            counter.add('select_course/addCourse:ViolatePrerequisite')
             return
           } else if (body.startsWith(config.grabdata.errNotAvailable)) {
             reject(response.ResponseErrorMsg.NotAvailable())
+            counter.add('select_course/addCourse:NotAvailable')
             return
           } else if (
             body.startsWith(config.grabdata.errGeneralCoursesNotMoreThanThree)
           ) {
             reject(response.ResponseErrorMsg.GeneralCoursesNotMoreThanThree())
+            counter.add('select_course/addCourse:GeneralCoursesNotMoreThanThree')
             return
           } else if (body.startsWith(config.grabdata.errNotValid)) {
             reject(response.ResponseErrorMsg.NotValid())
+            counter.add('select_course/addCourse:NotValid')
             return
           } else if (body.startsWith(config.grabdata.errWrongPE)) {
             reject(response.ResponseErrorMsg.WrongPE())
+            counter.add('select_course/addCourse:WrongPE')
             return
           } else if (body.startsWith(config.grabdata.errCantAddCourse)) {
             reject(response.ResponseErrorMsg.CantAddCourse())
+            counter.add('select_course/addCourse:CantAddCourse')
             return
           } else if (body.startsWith(config.grabdata.errWaitingForThirdPhase)) {
             reject(response.ResponseErrorMsg.WaitingForThirdPhase())
+            counter.add('select_course/addCourse:WaitingForThirdPhase')
             return
           } else if (body.startsWith(config.grabdata.warnCantBeGE)) {
             resolve(
@@ -332,6 +347,7 @@ export function addCourse(sessionToken, courseNumber, order = '') {
                 more: ''
               })
             )
+            counter.add('select_course/addCourse:warnCantBeGE')
             return
           }
 
@@ -345,6 +361,7 @@ export function addCourse(sessionToken, courseNumber, order = '') {
                 errMsg ? errMsg[1] : ''
               )
             )
+            counter.add('select_course/addCourse:ViolateCourseRule')
             return
           }
 
@@ -353,6 +370,7 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             reject(
               response.ResponseErrorMsg.OtherError(errMsg ? errMsg[1] : '')
             )
+            counter.add('select_course/addCourse:OtherError')
             console.log(errMsg)
             return
           }
@@ -363,6 +381,7 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             currentSelectedCourses: grabCurrentSelectedCoursesByBody(body)
           })
         )
+        counter.add('select_course/addCourse')
       })
       .catch(err => {
         reject(err)
@@ -430,6 +449,7 @@ export function quitCourse(sessionToken, courseNumber) {
             currentSelectedCourses: grabCurrentSelectedCoursesByBody(body)
           })
         )
+        counter.add('select_course/quitCourse')
       })
       .catch(err => {
         reject(err)
@@ -561,6 +581,7 @@ export function editOrder(sessionToken, newOrder, oldOrder) {
       })
       .then(res => {
         resolve(response.ResponseSuccessJSON(res))
+        counter.add('select_course/editOrder')
       })
       .catch(err => {
         reject(err)
@@ -665,6 +686,7 @@ export function getSyllabus(sessionToken, courseNumber) {
             }
           })
         )
+        counter.add('select_course/getSyllabus')
       })
       .catch(err => {
         reject(err)
@@ -797,6 +819,7 @@ export function getAvailableSelectionResult(sessionToken) {
             editable: true
           })
         )
+        counter.add('select_course/getAvailableSelectionResult')
       })
       .catch(err => {
         reject(err)
@@ -986,6 +1009,7 @@ export function getSelectionResult(sessionToken, studentId, semester, phase) {
             randomFailed: randomFailed
           })
         )
+        counter.add('select_course/getSelectionResult')
       })
       .catch(err => {
         reject(err)

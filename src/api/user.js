@@ -2,6 +2,7 @@ import { request, correctRequest } from '../lib/request'
 import cheerio from 'cheerio'
 import config from '../../config'
 import response from './response'
+import * as counter from '../db/counter'
 
 /**
  * @api {post} api/user/getLoginToken Get login token
@@ -39,6 +40,7 @@ export function getLoginToken() {
               authImg: Buffer.from(authImg).toString('base64')
             })
           )
+          counter.add('user/getLoginToken')
         })
       })
       .catch(err => {
@@ -98,6 +100,7 @@ export function getSessionToken(username, userpass, authCheckCode, loginToken) {
         } else if (body.startsWith(config.grabdata.errAuthCheckCodeWrongText)) {
           // response with Authentication ID Error!
           reject(response.ResponseErrorMsg.AuthCheckCodeNotCorrect())
+          counter.add('user/getSessionToken:AuthCheckCodeNotCorrect')
         } else {
           let [
             ,
@@ -116,6 +119,7 @@ export function getSessionToken(username, userpass, authCheckCode, loginToken) {
             if (body.startsWith(config.grabdata.errUserInfoWrongText)) {
               // response with Error account or password!
               reject(response.ResponseErrorMsg.UserInfoNotCorrect())
+              counter.add('user/getSessionToken:UserInfoNotCorrect')
             } else {
               // Success!
               resolve(
@@ -124,6 +128,7 @@ export function getSessionToken(username, userpass, authCheckCode, loginToken) {
                   username: username
                 })
               )
+              counter.add('user/getSessionToken')
             }
           })
         }
@@ -166,6 +171,7 @@ export function logout(sessionToken) {
             sessionToken: sessionToken
           })
         )
+        counter.add('user/logout')
       })
       .then(err => {
         reject(err)

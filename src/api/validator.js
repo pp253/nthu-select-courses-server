@@ -57,5 +57,10 @@ export default {
     in: 'body',
     notEmpty: true,
     errorMessage: 'Invalid phase.'
+  },
+  key: {
+    in: 'body',
+    notEmpty: true,
+    errorMessage: 'Invalid key.'
   }
 }

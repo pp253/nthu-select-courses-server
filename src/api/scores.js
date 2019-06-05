@@ -3,6 +3,7 @@ import cheerio from 'cheerio'
 import config from '../../config'
 import response from './response'
 import grabHelper from './grab-helper'
+import * as counter from '../db/counter'
 
 /**
  * @api {post} api/scores/getScores Get scores
@@ -274,14 +275,13 @@ export function getScores(sessionToken) {
             cumulative: cumulative
           })
         )
+        counter.add('scores/getScores')
       })
       .catch(err => {
         reject(err)
       })
   })
 }
-
-getScores('4247mg2c9f4e2s5dgkao9gcas5').then(d => console.log(d)).catch(err => console.error(err))
 
 /**
  * @api {post} api/scores/getDistribution Get distribution
@@ -369,6 +369,7 @@ export function getDistribution(sessionToken, courseNumber) {
             distribution: distribution
           })
         )
+        counter.add('scores/getDistribution')
       })
       .catch(err => {
         reject(err)
@@ -465,6 +466,7 @@ export function getClassmates(sessionToken, courseNumber) {
             courseNumber: courseNumber
           })
         )
+        counter.add('scores/getClassmates')
       })
       .catch(err => {
         reject(err)

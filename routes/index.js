@@ -1,6 +1,7 @@
 import * as selectCourse from '../src/api/select-course'
 import * as scores from '../src/api/scores'
 import * as user from '../src/api/user'
+import * as counter from '../src/api/counter'
 import response from '../src/api/response'
 import validation from '../src/api/validator'
 import debug from '../src/lib/debug'
@@ -40,6 +41,14 @@ export default function initialize(app) {
 
   app.post('/api/:module/:method', (req, res, next) => {
     const apiRoute = {
+      counter: {
+        query: apiMethodWrapper(counter.query, [
+          'key'
+        ]),
+        list(req, res, next) {
+          return counter.list()
+        },
+      },
       user: {
         getLoginToken(req, res, next) {
           return user.getLoginToken()
