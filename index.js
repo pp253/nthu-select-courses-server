@@ -9,6 +9,12 @@ import bodyParser from 'body-parser'
 import expressValidator from 'express-validator'
 import compression from 'compression'
 import cors from 'cors'
+import io from '@pm2/io'
+
+io.init({
+  transactions: true, // will enable the transaction tracing
+  http: true // will enable metrics about the http server (optional)
+})
 
 // import memwatch from 'memwatch-next'
 import debug from './src/lib/debug'
