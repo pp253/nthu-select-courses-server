@@ -62,5 +62,6 @@ typings/
 .env
 
 src/api/courses_db.*.json
+src/api/old/courses_db.*.json
 src/api/courses_db.json
 src/api/open_course_data.json
