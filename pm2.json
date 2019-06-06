@@ -1,9 +1,11 @@
 {
-  "apps": [{
-    "name": "nthu-course",
-    "script": "./index.pm2.js",
-    "instances": 1,
-    "exec_mode": "cluster",
-    "watch": true
-  }]
+  "apps": [
+    {
+      "name": "nthu-course",
+      "script": "./index.pm2.js",
+      "instances": 2,
+      "exec_mode": "cluster",
+      "watch": true
+    }
+  ]
 }
