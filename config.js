@@ -22,7 +22,7 @@ export default {
     preSelectCoursesPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH7130041.php',
     teacherPasswordPage:
-      'COURSE/JH/7/7.1/7.1.3/JH713003.php?ACIXSTORE={0}&ts_pwd={1}',
+      'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713003.php?ACIXSTORE={0}&ts_pwd={1}',
     preSelectCoursesRefererPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713004.php?ACIXSTORE={0}',
     currentSelectedCoursesPage:
