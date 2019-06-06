@@ -3,7 +3,6 @@ import https from 'https'
 import http from 'http'
 import fs from 'fs'
 import express from 'express'
-import session from 'express-session'
 import helmet from 'helmet'
 import bodyParser from 'body-parser'
 import expressValidator from 'express-validator'
@@ -40,20 +39,7 @@ app.use(compression({ credentials: true, origin: true }))
 // Body parser and Validator
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.use(
-  expressValidator({
-    customValidators: {}
-  })
-)
-
-// Session
-app.use(
-  session({
-    secret: 'nthu-select-course',
-    resave: false,
-    saveUninitialized: false
-  })
-)
+app.use(expressValidator())
 
 // Setting
 app.set('port', 3000 || process.env.PORT || (PRODUCTION ? 443 : 80))
