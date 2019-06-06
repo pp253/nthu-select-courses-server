@@ -4,7 +4,7 @@ import { request, correctRequest, correctFormRequest } from '../lib/request'
 import cheerio from 'cheerio'
 import config from '../../config'
 import response from './response'
-import coursesDB from './courses_db.min.json'
+import coursesDB from './courses_db.json'
 import grabHelper from './grab-helper'
 import * as counter from '../db/counter'
 // import { grabData } from './grab-data'
@@ -29,6 +29,7 @@ function grabCurrentSelectedCoursesByBody(body) {
     }
 
     let orderText = tr.children[21].children[0].data.trim()
+    orderText = orderText.replace('Offered in English', '')
     const orderReg = /^([^\d]+)(\d+)/
     if (orderText.length > 0) {
       if (orderReg.test(orderText)) {
@@ -231,6 +232,9 @@ export function addCourse(sessionToken, courseNumber, order = '') {
     let course = coursesDB.courses[courseNumber]
     let formData = {
       ACIXSTORE: sessionToken,
+      toChk: '',
+      new_dept: 'GEC',
+      new_class: 'IEEM105B  ',
       aspr: `${order}`,
       ckey: courseNumber,
       code: course.sc_code,
@@ -238,26 +242,37 @@ export function addCourse(sessionToken, courseNumber, order = '') {
       real: course.sc_real,
       cred: course.credit,
       ctime: course.sc_ctime,
-      num: course.size_limit,
+      num: course.sc_num.length > 0 ? course.sc_num : ' ',
       glimit: course.sc_glimit,
       type: course.sc_type,
       pre: course.sc_pre,
       range: course.sc_range,
-      chkbtn: 'add'
+      chkbtn: 'add',
+      chks: order ? '%C1%60%BF%FD' : '%A5%B2%BF%EF%AD%D7'
     }
 
     new Promise((resolve, reject) => {
+      let temp =  Object.assign({}, formData)
+      let ref = config.grabdata.preSelectCoursesRefererPage.replace(
+        '{0}',
+        sessionToken
+      )
+
+      console.log(temp, ref)
+
       correctFormRequest({
-        url: config.grabdata.preSelectCoursesPage,
-        formData: Object.assign({}, formData),
+        url: 'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH7130041.php',
+        formData: temp,
         headers: {
-          Referer: config.grabdata.preSelectCoursesRefererPage.replace(
-            '{0}',
-            sessionToken
-          )
+          Referer: ref,
+          Origin: 'https://www.ccxp.nthu.edu.tw',
+          Host: 'www.ccxp.nthu.edu.tw'
         }
       })
         .then(body => {
+          /**
+           * error! should return http status code 307
+           */
           if (body === config.grabdata.errSessionInterrupted) {
             reject(response.ResponseErrorMsg.SessionInterrupted())
             return
@@ -265,7 +280,7 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             reject(response.ResponseErrorMsg.NotAvailable())
             return
           }
-          reject(response.ResponseErrorMsg.NTHUServerError(body.slice(0, 200)))
+          reject(response.ResponseErrorMsg.NTHUServerError(body.slice(0, 200), courseNumber))
         })
         .catch(() => {
           correctFormRequest({

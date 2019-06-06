@@ -27,7 +27,7 @@ export function correctRequest (argu) {
 
 export function correctFormRequest (argu) {
   if (argu.formData) {
-    let formDataString = querystring.stringify(argu.formData).replace(/%20/g, '+')
+    let formDataString = querystring.stringify(argu.formData).replace(/%20/g, '+').replace(/%25/g, '%').replace(/%2A/g, '*')
     argu.body = formDataString
     if (!argu.headers) {
       argu.headers = {}
