@@ -38,6 +38,8 @@ export function correctFormRequest (argu) {
     delete argu.formData
   }
 
+  // console.log(argu)
+
   return new Promise((resolve, reject) => {
     if (typeof argu !== 'object') {
       reject(new Exception('correctRequest: argu should be an object.'))

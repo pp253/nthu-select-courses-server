@@ -1,4 +1,5 @@
 export function ResponseJSON(obj) {
+  
   return Object.assign(
     {
       error: 0,
@@ -125,11 +126,12 @@ export const ResponseErrorMsg = {
       more: errMsg
     })
   },
-  OtherError(errMsg) {
+  OtherError(errMsg, number) {
     return ResponseErrorJSON({
       id: 36,
       msg: `Other error, see more.`,
-      more: errMsg
+      more: errMsg,
+      number: number
     })
   },
   NotAvailable(errMsg) {

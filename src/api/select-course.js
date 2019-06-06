@@ -258,7 +258,8 @@ export function addCourse(sessionToken, courseNumber, order = '') {
         sessionToken
       )
 
-      console.log(temp, ref)
+      // FIXME:
+      // console.log(temp, ref)
 
       correctFormRequest({
         url: 'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH7130041.php',
@@ -277,10 +278,11 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             reject(response.ResponseErrorMsg.SessionInterrupted())
             return
           } else if (body.startsWith(config.grabdata.errNotAvailable)) {
-            reject(response.ResponseErrorMsg.NotAvailable())
+            reject(response.ResponseErrorMsg.NotAvailable(courseNumber))
             return
           }
           reject(response.ResponseErrorMsg.NTHUServerError(body.slice(0, 200), courseNumber))
+          console.error(courseNumber, body.slice(0, 200))
         })
         .catch(() => {
           correctFormRequest({
@@ -328,7 +330,7 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             counter.add('select_course/addCourse:ViolatePrerequisite')
             return
           } else if (body.startsWith(config.grabdata.errNotAvailable)) {
-            reject(response.ResponseErrorMsg.NotAvailable())
+            reject(response.ResponseErrorMsg.NotAvailable(courseNumber))
             counter.add('select_course/addCourse:NotAvailable')
             return
           } else if (
@@ -338,15 +340,15 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             counter.add('select_course/addCourse:GeneralCoursesNotMoreThanThree')
             return
           } else if (body.startsWith(config.grabdata.errNotValid)) {
-            reject(response.ResponseErrorMsg.NotValid())
+            reject(response.ResponseErrorMsg.NotValid(courseNumber))
             counter.add('select_course/addCourse:NotValid')
             return
           } else if (body.startsWith(config.grabdata.errWrongPE)) {
-            reject(response.ResponseErrorMsg.WrongPE())
+            reject(response.ResponseErrorMsg.WrongPE(courseNumber))
             counter.add('select_course/addCourse:WrongPE')
             return
           } else if (body.startsWith(config.grabdata.errCantAddCourse)) {
-            reject(response.ResponseErrorMsg.CantAddCourse())
+            reject(response.ResponseErrorMsg.CantAddCourse(courseNumber))
             counter.add('select_course/addCourse:CantAddCourse')
             return
           } else if (body.startsWith(config.grabdata.errWaitingForThirdPhase)) {
@@ -383,10 +385,10 @@ export function addCourse(sessionToken, courseNumber, order = '') {
           if (body.startsWith('<script>')) {
             let errMsg = /^<script>alert\('(.*)'\);<\/script>/g.exec(body)
             reject(
-              response.ResponseErrorMsg.OtherError(errMsg ? errMsg[1] : '')
+              response.ResponseErrorMsg.OtherError(errMsg ? errMsg[1] : '', courseNumber)
             )
             counter.add('select_course/addCourse:OtherError')
-            console.log(errMsg)
+            console.log(errMsg.slice(0, 200))
             return
           }
         }
@@ -455,7 +457,7 @@ export function quitCourse(sessionToken, courseNumber) {
           reject(response.ResponseErrorMsg.SessionInterrupted())
           return
         } else if (body.startsWith(config.grabdata.errNotAvailable)) {
-          reject(response.ResponseErrorMsg.NotAvailable())
+          reject(response.ResponseErrorMsg.NotAvailable(courseNumber))
           return
         }
 
