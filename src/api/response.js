@@ -68,11 +68,12 @@ export const ResponseErrorMsg = {
       more: errMsg
     })
   },
-  NTHUServerError(errMsg) {
+  NTHUServerError(errMsg, number) {
     return ResponseErrorJSON({
       id: 22,
       msg: `NTHU server responses with an error.`,
-      more: errMsg
+      more: errMsg,
+      number: number
     })
   },
   SessionInterrupted() {
