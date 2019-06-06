@@ -8,6 +8,9 @@ export const db = {
   })
 }
 
+const updateInerval = 10 * 60 * 1000
+db.counter.persistence.setAutocompactionInterval(updateInerval)
+
 export default {
   db,
   counter
