@@ -4,7 +4,7 @@ const cheerio = require('cheerio')
 const asyncPool = require('tiny-async-pool')
 const fs = require('fs')
 
-const TENTATIVE = true
+const TENTATIVE = false
 
 function grabHelper(node, level = 0, initIndex = 0) {
   if (node instanceof Array) {
@@ -173,6 +173,7 @@ function grabCoursesByBody(body) {
           sc_div: !canceled && argus && argus[3],
           sc_real: !canceled && argus && argus[4],
           sc_ctime: !canceled && argus && argus[6],
+          sc_num: !canceled && argus && argus[7],
           sc_glimit: !canceled && argus && argus[8],
           sc_type: !canceled && argus && argus[9],
           sc_pre: !canceled && argus && argus[10],

@@ -116,6 +116,7 @@ request({ method: 'GET', url: url })
         delete coursesDB.courses[c].sc_glimit
         delete coursesDB.courses[c].sc_type
         delete coursesDB.courses[c].sc_pre
+        delete coursesDB.courses[c].sc_num
         delete coursesDB.courses[c].sc_range
 
         if (!(c in courses)) {
