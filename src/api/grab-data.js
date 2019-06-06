@@ -83,7 +83,7 @@ function grabDepartmentsByBody(body) {
 
   // get classes
   for (let cls of $('select[name=new_class] option').toArray()) {
-    let parsedClassName = /([A-Z]+)(\s*[0-9A-Z]+)\s+([^\s]+)/.exec(
+    let parsedClassName = /([A-Z]+)(\s*[0-9A-Z\s]+)\s+([^\s]+)/.exec(
       cls.children[0].data
     )
 
@@ -410,4 +410,4 @@ export function grabData(ACIXSTORE) {
     })
 }
 
-grabData('')
+grabData('f3dn85k1dvu2ap28vkjseljtl3')
