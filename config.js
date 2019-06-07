@@ -28,10 +28,13 @@ export default {
     currentSelectedCoursesPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713005.php?ACIXSTORE={0}',
 
-    tenPreloadSelectedCoursesPage0: 'COURSE/JH/7/7.6/7.6.1/JH761002.php?ACIXSTORE={0}',
-    tenPreloadSelectedCoursesPage1: 'COURSE/JH/7/7.6/7.6.1/JH761003.php?ACIXSTORE={0}&eng_name=N',
+    tenPreloadSelectedCoursesPage0:
+      'COURSE/JH/7/7.6/7.6.1/JH761002.php?ACIXSTORE={0}',
+    tenPreloadSelectedCoursesPage1:
+      'COURSE/JH/7/7.6/7.6.1/JH761003.php?ACIXSTORE={0}&eng_name=N',
     tenCoursesPage: 'COURSE/JH/7/7.6/7.6.1/JH761004.php?toChk=2&ACIXSTORE={0}',
-    tenCurrentSelectedCoursesPage: 'COURSE/JH/7/7.6/7.6.1/JH761005.php?ACIXSTORE={0}',
+    tenCurrentSelectedCoursesPage:
+      'COURSE/JH/7/7.6/7.6.1/JH761005.php?ACIXSTORE={0}',
 
     scoresPage:
       'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/8/R/6.3/JH8R63002.php?ACIXSTORE={0}',

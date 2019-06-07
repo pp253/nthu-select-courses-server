@@ -42,12 +42,10 @@ export default function initialize(app) {
   app.post('/api/:module/:method', (req, res, next) => {
     const apiRoute = {
       counter: {
-        query: apiMethodWrapper(counter.query, [
-          'key'
-        ]),
+        query: apiMethodWrapper(counter.query, ['key']),
         list(req, res, next) {
           return counter.list()
-        },
+        }
       },
       user: {
         getLoginToken(req, res, next) {

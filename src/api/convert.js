@@ -14,7 +14,6 @@ let courses = {}
 
 let url = `https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/OPENDATA/open_course_data.json`
 
-
 request({ method: 'GET', url: url })
   .then(body => {
     const openCourseData = JSON.parse(body)
@@ -27,7 +26,10 @@ request({ method: 'GET', url: url })
         title_eng: course['課程英文名稱'],
         credit: parseInt(course['學分數']),
         random:
-          (coursesDB.courses && number in coursesDB.courses && coursesDB.courses[number].random) || 0
+          (coursesDB.courses &&
+            number in coursesDB.courses &&
+            coursesDB.courses[number].random) ||
+          0
       }
 
       if (course['授課教師']) {

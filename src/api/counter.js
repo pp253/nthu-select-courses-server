@@ -3,7 +3,8 @@ import * as counter from '../db/counter'
 
 export function query(key) {
   return new Promise((resolve, reject) => {
-    counter.query(key)
+    counter
+      .query(key)
       .then(doc => {
         if (doc === null) {
           resolve(
@@ -29,7 +30,8 @@ export function query(key) {
 
 export function list() {
   return new Promise((resolve, reject) => {
-    counter.list()
+    counter
+      .list()
       .then(docs => {
         resolve(
           response.ResponseSuccessJSON({

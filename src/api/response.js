@@ -1,5 +1,4 @@
 export function ResponseJSON(obj) {
-  
   return Object.assign(
     {
       error: 0,

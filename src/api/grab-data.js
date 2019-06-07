@@ -46,9 +46,7 @@ function grabDepartmentsByBody(body) {
     if (TENTATIVE) {
       let parsedDeptNameReg = /^(.+)\(([^\(\)]+)\)$/
 
-      let parsedDeptName = parsedDeptNameReg.exec(
-        dept.children[0].data
-      )
+      let parsedDeptName = parsedDeptNameReg.exec(dept.children[0].data)
       let deptAbbr = parsedDeptName[2]
       let deptChineseName = parsedDeptName[1]
       let deptEnglishName = deptAbbr
@@ -65,9 +63,7 @@ function grabDepartmentsByBody(body) {
       }
     } else {
       let parsedDeptNameReg = /([A-Z0-9]+) ([^\s]+)(?: (.*))?/
-      let parsedDeptName = parsedDeptNameReg.exec(
-        dept.children[0].data
-      )
+      let parsedDeptName = parsedDeptNameReg.exec(dept.children[0].data)
       let deptAbbr = parsedDeptName[1]
       let deptChineseName = parsedDeptName[2]
       let deptEnglishName = parsedDeptName[3] ? parsedDeptName[3] : deptAbbr
@@ -113,7 +109,9 @@ function grabCoursesByBody(body) {
   let courses = {}
   // grabHelper($('table#T1 tbody tr'))
   // console.log( $('table#T1 tbody tr').toArray())
-  for (let tr of $(TENTATIVE ? 'table#T1 tbody tr' : 'table#T1 tbody tr.word').toArray()) {
+  for (let tr of $(
+    TENTATIVE ? 'table#T1 tbody tr' : 'table#T1 tbody tr.word'
+  ).toArray()) {
     let trArray = $(tr).find('td')
     // console.log(trArray)
 
@@ -139,7 +137,9 @@ function grabCoursesByBody(body) {
           canceled = true
         }
 
-        argus = /[^;]*;checks\(this\.form, '([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)'\);/.exec(arguText)
+        argus = /[^;]*;checks\(this\.form, '([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)','([^']*)'\);/.exec(
+          arguText
+        )
       } else {
         canceled = false
       }
@@ -183,17 +183,35 @@ function grabCoursesByBody(body) {
         }
       } else {
         course = {
-          number: $(trArray.get(1)).text().trim(),
-          title: $(trArray.get(2)).text().trim(),
-          credit: $(trArray.get(3)).text().trim(),
-          time: $(trArray.get(4)).text().trim(),
-          room: $(trArray.get(5)).text().trim(),
-          professor: $(trArray.get(6)).text().trim(),
-          required: $(trArray.get(7)).text().trim(),
-          size_limit: $(trArray.get(8)).text().trim(),
+          number: $(trArray.get(1))
+            .text()
+            .trim(),
+          title: $(trArray.get(2))
+            .text()
+            .trim(),
+          credit: $(trArray.get(3))
+            .text()
+            .trim(),
+          time: $(trArray.get(4))
+            .text()
+            .trim(),
+          room: $(trArray.get(5))
+            .text()
+            .trim(),
+          professor: $(trArray.get(6))
+            .text()
+            .trim(),
+          required: $(trArray.get(7))
+            .text()
+            .trim(),
+          size_limit: $(trArray.get(8))
+            .text()
+            .trim(),
           previous_size: 0,
           prerequirement: '',
-          memo: $(trArray.get(10)).text().trim(),
+          memo: $(trArray.get(10))
+            .text()
+            .trim(),
           random: random,
           canceled: canceled
         }
@@ -210,19 +228,26 @@ function grabCoursesByBody(body) {
 }
 
 function fillWithEmpty(dept) {
-  switch(dept.length) {
-    case 4: return dept
-    case 3: return dept + ' '
-    case 2: return dept + '  '
-    case 1: return dept + '   '
-    default: throw new Error('wrong format:', dept)
+  switch (dept.length) {
+    case 4:
+      return dept
+    case 3:
+      return dept + ' '
+    case 2:
+      return dept + '  '
+    case 1:
+      return dept + '   '
+    default:
+      throw new Error('wrong format:', dept)
   }
 }
 
 export function grabData(ACIXSTORE) {
   console.log('Starting grabbing data.')
 
-  const url = TENTATIVE ? `https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.6/7.6.1/JH761004.php?ACIXSTORE=${ACIXSTORE}` : `https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713004.php?ACIXSTORE=${ACIXSTORE}`
+  const url = TENTATIVE
+    ? `https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.6/7.6.1/JH761004.php?ACIXSTORE=${ACIXSTORE}`
+    : `https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH713004.php?ACIXSTORE=${ACIXSTORE}`
 
   const formData = {
     ACIXSTORE: ACIXSTORE,
@@ -287,8 +312,17 @@ export function grabData(ACIXSTORE) {
                 }
               }
               resolve()
-              console.log('DEPT ', deptAbbr, data.catalog[deptAbbr] ? data.catalog[deptAbbr].length : 'EMPTY', Object.keys(data.courses).length)
-              console.log(data.catalog[deptAbbr] ? data.catalog[deptAbbr][0] : '')
+              console.log(
+                'DEPT ',
+                deptAbbr,
+                data.catalog[deptAbbr]
+                  ? data.catalog[deptAbbr].length
+                  : 'EMPTY',
+                Object.keys(data.courses).length
+              )
+              console.log(
+                data.catalog[deptAbbr] ? data.catalog[deptAbbr][0] : ''
+              )
             })
             .catch(err => {
               console.error(err)
@@ -334,8 +368,17 @@ export function grabData(ACIXSTORE) {
                 }
               }
               resolve()
-              console.log('CLASS', classAbbr, data.catalog[classAbbr] ? data.catalog[classAbbr].length : 'EMPTY', Object.keys(data.courses).length)
-              console.log(data.catalog[classAbbr] ? data.catalog[classAbbr][0] : '')
+              console.log(
+                'CLASS',
+                classAbbr,
+                data.catalog[classAbbr]
+                  ? data.catalog[classAbbr].length
+                  : 'EMPTY',
+                Object.keys(data.courses).length
+              )
+              console.log(
+                data.catalog[classAbbr] ? data.catalog[classAbbr][0] : ''
+              )
             })
             .catch(err => {
               console.error(err)
