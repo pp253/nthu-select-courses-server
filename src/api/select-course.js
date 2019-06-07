@@ -136,7 +136,9 @@ export function getCurrentSelectedCourses(sessionToken) {
       })
         .then(body => {
           reject(response.ResponseErrorMsg.NotInSelectionPhase())
-          counter.add('select_course/getCurrentSelectedCourses:NotInSelectionPhase')
+          counter.add(
+            'select_course/getCurrentSelectedCourses:NotInSelectionPhase'
+          )
         })
         .catch(err => {
           resolve(err)
@@ -252,7 +254,7 @@ export function addCourse(sessionToken, courseNumber, order = '') {
     }
 
     new Promise((resolve, reject) => {
-      let temp =  Object.assign({}, formData)
+      let temp = Object.assign({}, formData)
       let ref = config.grabdata.preSelectCoursesRefererPage.replace(
         '{0}',
         sessionToken
@@ -262,7 +264,8 @@ export function addCourse(sessionToken, courseNumber, order = '') {
       // console.log(temp, ref)
 
       correctFormRequest({
-        url: 'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH7130041.php',
+        url:
+          'https://www.ccxp.nthu.edu.tw/ccxp/COURSE/JH/7/7.1/7.1.3/JH7130041.php',
         formData: temp,
         headers: {
           Referer: ref,
@@ -281,7 +284,12 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             reject(response.ResponseErrorMsg.NotAvailable(courseNumber))
             return
           }
-          reject(response.ResponseErrorMsg.NTHUServerError(body.slice(0, 200), courseNumber))
+          reject(
+            response.ResponseErrorMsg.NTHUServerError(
+              body.slice(0, 200),
+              courseNumber
+            )
+          )
           console.error(courseNumber, body.slice(0, 200))
         })
         .catch(() => {
@@ -337,7 +345,9 @@ export function addCourse(sessionToken, courseNumber, order = '') {
             body.startsWith(config.grabdata.errGeneralCoursesNotMoreThanThree)
           ) {
             reject(response.ResponseErrorMsg.GeneralCoursesNotMoreThanThree())
-            counter.add('select_course/addCourse:GeneralCoursesNotMoreThanThree')
+            counter.add(
+              'select_course/addCourse:GeneralCoursesNotMoreThanThree'
+            )
             return
           } else if (body.startsWith(config.grabdata.errNotValid)) {
             reject(response.ResponseErrorMsg.NotValid(courseNumber))
@@ -383,9 +393,14 @@ export function addCourse(sessionToken, courseNumber, order = '') {
           }
 
           if (body.startsWith('<script>')) {
-            let errMsg = /^<script>alert\('(.*)'\);<\/script>/g.exec(body)
+            let errMsg = /^<script>alert\(\\?'(.*?)\\?'\);.*<\/script>/g.exec(
+              body
+            )
             reject(
-              response.ResponseErrorMsg.OtherError(errMsg ? errMsg[1] : '', courseNumber)
+              response.ResponseErrorMsg.OtherError(
+                errMsg ? errMsg[1] : body.slice(0, 200),
+                courseNumber
+              )
             )
             counter.add('select_course/addCourse:OtherError')
             console.log(errMsg.slice(0, 200))
