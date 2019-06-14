@@ -37,6 +37,8 @@ request({ method: 'GET', url: url })
       }
       if (course['人限']) {
         data.size_limit = parseInt(course['人限'])
+      } else if (coursesDB.courses[number] && coursesDB.courses[number].size_limit) {
+        data.size_limit = parseInt(coursesDB.courses[number].size_limit)
       }
       if (course['新生保留人數']) {
         data.reserved = parseInt(course['新生保留人數'])
@@ -96,6 +98,12 @@ request({ method: 'GET', url: url })
       }
       if (course['不可加簽說明']) {
         data.add = course['不可加簽說明'].trim()
+      }
+
+      if (coursesDB.courses[number]) {
+        if (coursesDB.courses[number].previous_size) {
+          data.previous_size = parseInt(coursesDB.courses[number].previous_size)
+        }
       }
 
       courses[number] = data
