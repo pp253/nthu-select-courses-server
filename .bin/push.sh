@@ -1,5 +1,5 @@
 #!/bin/bash
-host='140.114.212.43'
+host='nthu-courses.duckdns.org'
 username='linaro'
 
 sftp $username@$host < ./.bin/script-ftp.sh
